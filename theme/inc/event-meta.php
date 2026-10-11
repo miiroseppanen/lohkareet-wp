@@ -29,6 +29,8 @@ function lohkareet_event_meta_fields() {
 		'lohkareet_artist_name'           => 'lohkareet_sanitize_plain_text',
 		'lohkareet_artist_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_artist_status'         => 'lohkareet_sanitize_artist_status',
+		'lohkareet_artist_image'          => 'lohkareet_sanitize_image_id',
+		'lohkareet_work_ids'              => 'lohkareet_sanitize_work_id_list',
 	);
 }
 
@@ -54,6 +56,8 @@ function lohkareet_shared_event_meta_keys() {
 		'lohkareet_map_url',
 		'lohkareet_artist_name',
 		'lohkareet_artist_status',
+		'lohkareet_artist_image',
+		'lohkareet_work_ids',
 	);
 }
 
@@ -144,13 +148,14 @@ function lohkareet_render_event_meta_box( $post ) {
 	$artist      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_name' );
 	$artist_text = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_description' );
 	$status      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_status' );
+	$artist_image = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_image' );
 
 	if ( '' === $status ) {
 		$status = 'unannounced';
 	}
 
 	echo '<p class="description">' . esc_html__( 'Leave a field empty when that fact is still unknown. Do not type a “will be announced later” sentence into a field.', 'lohkareet' ) . '</p>';
-	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, map URL, artist name, artist status, and the featured image are shared with the other language version. Translate the location description and the artist description on each version.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, map URL, performing artist, artist status, artist image, and assigned works are shared. Translate the location description and the artist description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
 	?>
 	<fieldset>
 		<legend><strong><?php esc_html_e( 'Date', 'lohkareet' ); ?></strong></legend>
@@ -215,8 +220,9 @@ function lohkareet_render_event_meta_box( $post ) {
 		<span class="description"><?php esc_html_e( 'https only. Leave this empty to hide the map on this event.', 'lohkareet' ); ?></span>
 	</p>
 	<p>
-		<label for="lohkareet_artist_name"><strong><?php esc_html_e( 'Artist', 'lohkareet' ); ?></strong></label><br>
+		<label for="lohkareet_artist_name"><strong><?php esc_html_e( 'Performing artist', 'lohkareet' ); ?></strong></label><br>
 		<input type="text" class="widefat" id="lohkareet_artist_name" name="lohkareet_artist_name" value="<?php echo esc_attr( $artist ); ?>">
+		<span class="description"><?php esc_html_e( 'This is the main performing artist. Recurring works are assigned below and are not additional artists.', 'lohkareet' ); ?></span>
 	</p>
 	<p>
 		<label for="lohkareet_artist_status"><strong><?php esc_html_e( 'Artist status', 'lohkareet' ); ?></strong></label><br>
@@ -231,7 +237,24 @@ function lohkareet_render_event_meta_box( $post ) {
 		<label for="lohkareet_artist_description"><strong><?php esc_html_e( 'Artist description', 'lohkareet' ); ?></strong></label><br>
 		<textarea class="widefat" rows="4" id="lohkareet_artist_description" name="lohkareet_artist_description"><?php echo esc_textarea( $artist_text ); ?></textarea>
 	</p>
-	<p class="description"><?php esc_html_e( 'Write the event description in the content editor. Set the image as the featured image.', 'lohkareet' ); ?></p>
+	<p>
+		<label for="lohkareet_artist_image"><strong><?php esc_html_e( 'Artist image', 'lohkareet' ); ?></strong></label><br>
+		<input type="hidden" id="lohkareet_artist_image" name="lohkareet_artist_image" value="<?php echo esc_attr( $artist_image ); ?>">
+		<span id="lohkareet-artist-image-preview">
+			<?php
+			if ( '' !== $artist_image ) {
+				echo wp_get_attachment_image( (int) $artist_image, 'medium' );
+			}
+			?>
+		</span><br>
+		<button type="button" class="button" id="lohkareet-artist-image-button"><?php esc_html_e( 'Select image', 'lohkareet' ); ?></button>
+		<button type="button" class="button-link" id="lohkareet-artist-image-remove"><?php esc_html_e( 'Remove image', 'lohkareet' ); ?></button>
+		<span class="description"><?php esc_html_e( 'Separate from the event’s featured image.', 'lohkareet' ); ?></span>
+	</p>
+	<?php
+	lohkareet_render_event_works_field( $post->ID );
+	?>
+	<p class="description"><?php esc_html_e( 'Write the event description in the content editor. Set the event image as the featured image.', 'lohkareet' ); ?></p>
 	<?php
 }
 
@@ -274,8 +297,18 @@ function lohkareet_save_event_meta( $post_id ) {
 	$values = array();
 
 	foreach ( lohkareet_event_meta_fields() as $key => $sanitize_callback ) {
+		if ( 'lohkareet_work_ids' === $key ) {
+			continue;
+		}
+
 		$raw            = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : '';
 		$values[ $key ] = call_user_func( $sanitize_callback, $raw );
+	}
+
+	$work_ids = lohkareet_event_work_ids_from_request();
+
+	if ( null !== $work_ids ) {
+		$values['lohkareet_work_ids'] = lohkareet_sanitize_work_id_list( $work_ids );
 	}
 
 	if ( '' !== $values['lohkareet_date_day'] && '' === $values['lohkareet_date_month'] ) {
@@ -466,6 +499,22 @@ function lohkareet_sanitize_https_url( $value, ...$unused ) {
 }
 
 /**
+ * Sanitizes an attachment ID. Only an image attachment is kept.
+ *
+ * @param mixed $value Raw value.
+ */
+function lohkareet_sanitize_image_id( $value, ...$unused ) {
+	unset( $unused );
+	$attachment_id = absint( $value );
+
+	if ( $attachment_id <= 0 || ! wp_attachment_is_image( $attachment_id ) ) {
+		return '';
+	}
+
+	return (string) $attachment_id;
+}
+
+/**
  * Sanitizes the artist status.
  *
  * @param mixed $value Raw value.
@@ -481,3 +530,30 @@ function lohkareet_sanitize_artist_status( $value, ...$unused ) {
 
 	return 'unannounced';
 }
+
+/**
+ * Loads the media picker used for the performing artist’s image.
+ *
+ * @param string $hook Current admin page.
+ */
+function lohkareet_enqueue_event_editor( $hook ) {
+	if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+		return;
+	}
+
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	if ( ! $screen || 'event' !== $screen->post_type ) {
+		return;
+	}
+
+	wp_enqueue_media();
+	wp_enqueue_script(
+		'lohkareet-event-editor',
+		get_theme_file_uri( 'assets/js/event-editor.js' ),
+		array( 'media-editor' ),
+		wp_get_theme()->get( 'Version' ),
+		true
+	);
+}
+add_action( 'admin_enqueue_scripts', 'lohkareet_enqueue_event_editor' );

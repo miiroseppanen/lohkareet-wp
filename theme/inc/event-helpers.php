@@ -67,17 +67,17 @@ function lohkareet_get_event_int( $post_id, $key ) {
 }
 
 /**
- * Date format for one precision. The Finnish translation changes punctuation only.
+ * Date format for one precision.
  *
- * Month names come from wp_date() and the active locale. WordPress declines
- * the month when the locale asks it to, which is how Finnish produces
- * "15. marraskuuta 2026" from the format "j. F Y".
+ * A complete date is numeric day.month.year, so 1 November 2026 renders as
+ * 1.11.2026. Partial dates still use the month name, because a missing part
+ * must not be filled in with a zero.
  *
  * @param string $precision day-month-year, month-year, or day-month.
  */
 function lohkareet_event_date_format( $precision ) {
 	if ( 'day-month-year' === $precision ) {
-		return _x( 'j F Y', 'event date format: day, month, and year', 'lohkareet' );
+		return _x( 'j.n.Y', 'event date format: day, month, and year', 'lohkareet' );
 	}
 
 	if ( 'day-month' === $precision ) {

@@ -16,7 +16,10 @@ require get_theme_file_path( 'inc/i18n.php' );
 require get_theme_file_path( 'inc/event-post-type.php' );
 require get_theme_file_path( 'inc/event-helpers.php' );
 require get_theme_file_path( 'inc/event-meta.php' );
+require get_theme_file_path( 'inc/works.php' );
 require get_theme_file_path( 'inc/blocks.php' );
+require get_theme_file_path( 'inc/hero.php' );
+require get_theme_file_path( 'inc/navigation.php' );
 
 /**
  * Loads theme translations for the active WordPress locale.
@@ -28,17 +31,66 @@ require get_theme_file_path( 'inc/blocks.php' );
 function lohkareet_setup() {
 	load_theme_textdomain( 'lohkareet', get_template_directory() . '/languages' );
 	add_editor_style( 'assets/css/theme.css' );
+	add_editor_style( 'assets/css/layout.css' );
 }
+
+/**
+ * Adds the page slug as a layout hook.
+ *
+ * Editorial placements use this class. They do not depend on a copied template.
+ *
+ * @param string[] $classes Body classes.
+ */
+function lohkareet_body_class( $classes ) {
+	if ( ! is_singular() ) {
+		return $classes;
+	}
+
+	$post = get_queried_object();
+
+	if ( $post instanceof WP_Post && '' !== $post->post_name ) {
+		$classes[] = 'lohkareet-entry-' . sanitize_html_class( $post->post_name );
+	}
+
+	return $classes;
+}
+add_filter( 'body_class', 'lohkareet_body_class' );
 add_action( 'after_setup_theme', 'lohkareet_setup' );
 
 /**
+ * Registers the Adobe Fonts kit that serves Presicav.
+ *
+ * The CSS family name in kit lgz0wqd is "presicav". This does not enqueue it.
+ */
+function lohkareet_register_typekit() {
+	wp_register_style(
+		'lohkareet-typekit',
+		'https://use.typekit.net/lgz0wqd.css',
+		array(),
+		null
+	);
+}
+add_action( 'init', 'lohkareet_register_typekit', 5 );
+
+/**
  * Enqueues front-end CSS.
+ *
+ * The kit stylesheet is loaded here only. Do not import it from CSS.
  */
 function lohkareet_enqueue_assets() {
+	wp_enqueue_style( 'lohkareet-typekit' );
+
 	wp_enqueue_style(
 		'lohkareet-theme',
 		get_theme_file_uri( 'assets/css/theme.css' ),
-		array(),
+		array( 'lohkareet-typekit' ),
+		wp_get_theme()->get( 'Version' )
+	);
+
+	wp_enqueue_style(
+		'lohkareet-layout',
+		get_theme_file_uri( 'assets/css/layout.css' ),
+		array( 'lohkareet-theme' ),
 		wp_get_theme()->get( 'Version' )
 	);
 }

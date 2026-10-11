@@ -164,7 +164,9 @@ function lohkareet_register_translatable_event_type( $post_types, $is_settings =
 		$post_types = array();
 	}
 
-	$post_types['event'] = 'event';
+	$post_types['event']       = 'event';
+	$post_types['contributor'] = 'contributor';
+	$post_types['work']        = 'work';
 
 	return $post_types;
 }
@@ -186,10 +188,20 @@ function lohkareet_filter_copied_event_meta( $metas, $sync = false, $from = 0, $
 		$metas = array();
 	}
 
-	$metas = array_merge( $metas, lohkareet_shared_event_meta_keys(), array( '_thumbnail_id' ) );
+	$metas = array_merge(
+		$metas,
+		lohkareet_shared_event_meta_keys(),
+		lohkareet_shared_work_meta_keys(),
+		array( '_thumbnail_id' )
+	);
 
 	if ( $sync ) {
-		$metas = array_diff( $metas, lohkareet_translatable_event_meta_keys() );
+		$metas = array_diff(
+			$metas,
+			lohkareet_translatable_event_meta_keys(),
+			lohkareet_translatable_work_meta_keys(),
+			lohkareet_translatable_contributor_meta_keys()
+		);
 	}
 
 	return array_values( array_unique( array_map( 'strval', $metas ) ) );
@@ -204,7 +216,7 @@ add_filter( 'pll_copy_post_metas', 'lohkareet_filter_copied_event_meta', 10, 4 )
  *
  * @param int $post_id Event that was just saved.
  */
-function lohkareet_sync_shared_event_meta( $post_id ) {
+function lohkareet_sync_shared_event_meta( $post_id, $keys = null ) {
 	if ( ! function_exists( 'pll_get_post_translations' ) ) {
 		return;
 	}
@@ -234,7 +246,9 @@ function lohkareet_sync_shared_event_meta( $post_id ) {
 			continue;
 		}
 
-		foreach ( lohkareet_shared_event_meta_keys() as $key ) {
+		$shared_keys = is_array( $keys ) ? $keys : lohkareet_shared_event_meta_keys();
+
+		foreach ( $shared_keys as $key ) {
 			$value = get_post_meta( $post_id, $key, true );
 
 			if ( ! is_string( $value ) || '' === $value ) {
@@ -270,7 +284,7 @@ function lohkareet_sync_event_featured_image( $post_id ) {
 
 	$post_id = (int) $post_id;
 
-	if ( $post_id <= 0 || 'event' !== get_post_type( $post_id ) ) {
+	if ( $post_id <= 0 || ! in_array( get_post_type( $post_id ), array( 'event', 'contributor' ), true ) ) {
 		return;
 	}
 
@@ -290,7 +304,7 @@ function lohkareet_sync_event_featured_image( $post_id ) {
 	foreach ( $translations as $translated_id ) {
 		$translated_id = (int) $translated_id;
 
-		if ( $translated_id <= 0 || $translated_id === $post_id || 'event' !== get_post_type( $translated_id ) ) {
+		if ( $translated_id <= 0 || $translated_id === $post_id || get_post_type( $translated_id ) !== get_post_type( $post_id ) ) {
 			continue;
 		}
 
@@ -428,21 +442,34 @@ function lohkareet_get_language_switcher_markup() {
 		return '';
 	}
 
+	$current = $items[0];
+
+	foreach ( $items as $item ) {
+		if ( $item['current'] ) {
+			$current = $item;
+			break;
+		}
+	}
+
 	$html  = '<nav ' . get_block_wrapper_attributes(
 		array(
 			'class'      => 'lohkareet-language-switcher',
 			'aria-label' => __( 'Language', 'lohkareet' ),
 		)
 	) . '>';
-	$html .= '<ul>';
+	$html .= '<button type="button" class="lohkareet-language-switcher__trigger" aria-expanded="false" aria-controls="lohkareet-languages" aria-haspopup="true">';
+	$html .= '<span class="lohkareet-language-switcher__label">' . esc_html( strtoupper( $current['slug'] ) ) . '</span>';
+	$html .= '<span class="lohkareet-language-switcher__mark" aria-hidden="true"></span>';
+	$html .= '</button>';
+	$html .= '<ul id="lohkareet-languages">';
 
 	foreach ( $items as $item ) {
-		$label = strtoupper( $item['slug'] );
+		$label        = strtoupper( $item['slug'] );
+		$hreflang     = str_replace( '_', '-', $item['locale'] );
+		$current_item = $item['slug'] === $current['slug'];
 
-		$hreflang = str_replace( '_', '-', $item['locale'] );
-
-		if ( $item['current'] ) {
-			$html .= '<li><span aria-current="page" lang="' . esc_attr( $item['slug'] ) . '">' . esc_html( $label ) . '</span></li>';
+		if ( $current_item ) {
+			$html .= '<li class="is-current"><span aria-current="page" lang="' . esc_attr( $item['slug'] ) . '">' . esc_html( $label ) . '</span></li>';
 			continue;
 		}
 
@@ -494,6 +521,13 @@ function lohkareet_inject_editor_translations() {
 		'Event list',
 		'Event details',
 		'Language switcher',
+		'Hero',
+		'Menu toggle',
+		'Menu',
+		'Close',
+		'Home',
+		'Page hero',
+		'Site mark',
 	);
 	$data   = array(
 		'' => array(

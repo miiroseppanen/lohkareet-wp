@@ -1,9 +1,3 @@
-.lohkareet-map {
-	width: 100%;
-	min-height: 24rem;
-	height: min(70vh, 40rem);
-}
-
 .lohkareet-map__frame {
 	display: block;
 	width: 100%;
@@ -37,8 +31,41 @@
 	margin-bottom: 0.75rem;
 }
 
-.lohkareet-event-facts .lohkareet-map {
-	margin-top: 1rem;
+.lohkareet-programme__artist,
+.lohkareet-programme__work {
+	margin-top: 2.75rem;
+}
+
+.lohkareet-programme h2,
+.lohkareet-programme__type,
+.lohkareet-programme__title {
+	font-weight: 400;
+	margin: 0;
+}
+
+.lohkareet-programme h2 {
+	font-size: clamp(1.35rem, 2vw, 1.85rem);
+	letter-spacing: 0.03em;
+}
+
+.lohkareet-programme__type,
+.lohkareet-programme__title {
+	margin-top: 0.35rem;
+}
+
+.lohkareet-programme__image {
+	display: block;
+	width: min(100%, 28rem);
+	height: auto;
+	margin-top: 0.85rem;
+}
+
+.lohkareet-programme__description {
+	margin-top: 0.85rem;
+}
+
+.lohkareet-programme__description p {
+	margin: 0 0 0.75rem;
 }
 
 .lohkareet-language-switcher ul {
@@ -59,8 +86,3 @@
 	text-underline-offset: 0.2em;
 }
 
-@media (max-width: 40rem) {
-	.lohkareet-map {
-		min-height: 20rem;
-	}
-}

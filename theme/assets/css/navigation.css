@@ -1,0 +1,535 @@
+header.wp-block-template-part {
+	--lohkareet-nav-inset-y: 1.05rem;
+	--lohkareet-nav-inset-x: clamp(1.25rem, 4vw, 3rem);
+	position: fixed;
+	z-index: 30;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+	color: #141414;
+	mix-blend-mode: normal;
+	pointer-events: none;
+}
+
+body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) {
+	color: #fff;
+	mix-blend-mode: difference;
+}
+
+body:has(.lohkareet-page-hero) header.wp-block-template-part:not(.is-past-hero) {
+	color: #fff;
+	mix-blend-mode: normal;
+}
+
+body.admin-bar header.wp-block-template-part {
+	top: var(--wp-admin--admin-bar--height, 32px);
+}
+
+.wp-site-blocks > header.wp-block-template-part + * {
+	margin-block-start: 0;
+}
+
+header.wp-block-template-part .lohkareet-header__bar,
+header.wp-block-template-part .lohkareet-header__links {
+	max-width: none;
+	margin: 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+}
+
+.lohkareet-header__bar {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1.5rem;
+	padding: var(--lohkareet-nav-inset-y) var(--page-gutter, clamp(1.25rem, 3vw, 3.5rem));
+	pointer-events: none;
+}
+
+.lohkareet-header__links {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: clamp(1.5rem, 4vw, 3rem);
+	width: 100%;
+	pointer-events: none;
+}
+
+header.wp-block-template-part a,
+header.wp-block-template-part button,
+header.wp-block-template-part .lohkareet-language-switcher [aria-current="page"] {
+	pointer-events: auto;
+	color: inherit;
+}
+
+header.wp-block-template-part .wp-block-navigation,
+header.wp-block-template-part .wp-block-navigation__responsive-container,
+header.wp-block-template-part .wp-block-navigation__container,
+header.wp-block-template-part .wp-block-navigation__submenu-container {
+	background: none;
+	border: 0;
+	box-shadow: none;
+	color: inherit;
+	font-family: var(--wp--preset--font-family--presicav, "presicav", "Helvetica Neue", Helvetica, Arial, sans-serif);
+	font-size: clamp(0.7rem, 0.85vw, 0.84rem);
+	font-weight: 400;
+	letter-spacing: 0.12em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+header.wp-block-template-part .wp-block-navigation__container {
+	gap: clamp(1rem, 2.2vw, 2.15rem);
+}
+
+header.wp-block-template-part .wp-block-navigation-item__content {
+	padding: 0;
+	color: inherit;
+	text-decoration: none;
+}
+
+.lohkareet-header__mark {
+	align-self: start;
+	color: inherit;
+	font-family: var(--wp--preset--font-family--presicav, "presicav", "Helvetica Neue", Helvetica, Arial, sans-serif);
+	font-size: clamp(0.72rem, 2.8vw, 0.84rem);
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	line-height: 1;
+	text-decoration: none;
+	text-transform: uppercase;
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.2s ease, visibility 0s linear;
+}
+
+body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) .lohkareet-header__mark,
+header.wp-block-template-part.is-menu-open .lohkareet-header__mark {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+header.wp-block-template-part .wp-block-navigation__responsive-container-open,
+header.wp-block-template-part .wp-block-navigation__responsive-container-close {
+	display: none;
+}
+
+.lohkareet-header__toggle {
+	display: none;
+	margin: 0 0 0 auto;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	color: inherit;
+	font-family: var(--wp--preset--font-family--presicav, "presicav", "Helvetica Neue", Helvetica, Arial, sans-serif);
+	font-size: clamp(0.72rem, 2.8vw, 0.84rem);
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	line-height: 1;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+header.wp-block-template-part .lohkareet-language-switcher {
+	position: relative;
+	font-family: var(--wp--preset--font-family--presicav, "presicav", "Helvetica Neue", Helvetica, Arial, sans-serif);
+	font-size: clamp(0.68rem, 0.8vw, 0.78rem);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+header.wp-block-template-part .lohkareet-language-switcher ul {
+	gap: 0.9rem;
+}
+
+header.wp-block-template-part .lohkareet-language-switcher a,
+header.wp-block-template-part .lohkareet-language-switcher [aria-current="page"] {
+	text-decoration: none;
+}
+
+.lohkareet-language-switcher__trigger {
+	display: none;
+	align-items: center;
+	gap: 0.32em;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	color: inherit;
+	font: inherit;
+	letter-spacing: inherit;
+	line-height: 1;
+	text-transform: inherit;
+	cursor: pointer;
+}
+
+.lohkareet-language-switcher__mark {
+	display: inline-block;
+	width: 0.32em;
+	height: 0.32em;
+	border-right: 1px solid currentColor;
+	border-bottom: 1px solid currentColor;
+	transform: translateY(-0.12em) rotate(45deg);
+	transition: transform 0.16s ease;
+}
+
+html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-open .lohkareet-language-switcher__mark {
+	transform: translateY(0.08em) rotate(-135deg);
+}
+
+@media (min-width: 60.01rem) {
+	header.wp-block-template-part .lohkareet-header__bar {
+		display: grid;
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		column-gap: var(--grid-gap, clamp(0.75rem, 1.25vw, 1.5rem));
+		align-items: start;
+		justify-content: stretch;
+	}
+
+	header.wp-block-template-part .lohkareet-header__links {
+		display: flex;
+		grid-column: 5 / -1;
+		grid-row: 1;
+		align-items: baseline;
+		justify-content: flex-end;
+		width: auto;
+		column-gap: clamp(1rem, 2.2vw, 2.15rem);
+		gap: clamp(1rem, 2.2vw, 2.15rem);
+	}
+
+	header.wp-block-template-part .lohkareet-header__home {
+		display: none;
+	}
+
+	header.wp-block-template-part .lohkareet-header__mark {
+		grid-column: 1 / 5;
+		grid-row: 1;
+		justify-self: start;
+		z-index: 1;
+		font-size: clamp(0.7rem, 0.85vw, 0.84rem);
+		letter-spacing: 0.12em;
+		line-height: 1.2;
+	}
+
+	header.wp-block-template-part .wp-block-navigation,
+	header.wp-block-template-part .wp-block-navigation__responsive-container,
+	header.wp-block-template-part .wp-block-navigation__container {
+		width: auto;
+	}
+
+	header.wp-block-template-part .lohkareet-language-switcher {
+		justify-self: end;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher__trigger {
+		display: inline-flex;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher li.is-current {
+		display: none;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher ul {
+		position: absolute;
+		z-index: 1;
+		top: calc(100% + 0.45rem);
+		right: 0;
+		left: auto;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.4rem;
+		margin: 0;
+		padding: 0;
+		background: none;
+		border: 0;
+		box-shadow: none;
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(-4px);
+		transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-open ul {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: none;
+		transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+	}
+}
+
+header.wp-block-template-part a:focus-visible,
+header.wp-block-template-part button:focus-visible {
+	outline: 1px solid currentColor;
+	outline-offset: 0.35rem;
+	opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	header.wp-block-template-part .wp-block-navigation__container:hover .wp-block-navigation-item__content,
+	header.wp-block-template-part .lohkareet-language-switcher ul:hover > li > a,
+	header.wp-block-template-part .lohkareet-language-switcher ul:hover > li > span {
+		opacity: 0.42;
+		transition: opacity 0.18s linear;
+	}
+
+	header.wp-block-template-part .wp-block-navigation__container:hover .wp-block-navigation-item__content:hover,
+	header.wp-block-template-part .lohkareet-language-switcher ul:hover > li > a:hover,
+	header.wp-block-template-part .lohkareet-language-switcher ul:hover > li > span:hover {
+		opacity: 1;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation__container:hover .wp-block-navigation-item__content {
+		transition: opacity 0.18s linear, transform 0.18s ease;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation__container:hover .wp-block-navigation-item__content:hover {
+		transform: translateX(0.1em);
+	}
+}
+
+@media (max-width: 60rem) {
+	html.lohkareet-js header.wp-block-template-part .lohkareet-header__links {
+		display: none;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-header__bar {
+		justify-content: space-between;
+	}
+
+	body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) .lohkareet-header__mark {
+		position: absolute;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-header__toggle {
+		display: block;
+		margin-left: auto;
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open,
+	html.lohkareet-js body.home header.wp-block-template-part.is-menu-open {
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100dvh;
+		mix-blend-mode: normal;
+		background: #000;
+		color: #fff;
+		pointer-events: auto;
+	}
+
+	body.admin-bar header.wp-block-template-part.is-menu-open {
+		top: var(--wp-admin--admin-bar--height, 32px);
+		height: calc(100dvh - var(--wp-admin--admin-bar--height, 32px));
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open .lohkareet-header__bar {
+		height: 100%;
+		padding: 0;
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open .lohkareet-header__toggle {
+		position: absolute;
+		z-index: 2;
+		top: var(--lohkareet-nav-inset-y);
+		right: var(--lohkareet-nav-inset-x);
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open .lohkareet-header__links {
+		display: flex;
+		position: absolute;
+		inset: 0;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-end;
+		width: auto;
+		padding: clamp(4.5rem, 16vh, 7rem) clamp(1.25rem, 5vw, 2.5rem) clamp(2rem, 8vh, 4rem);
+		pointer-events: auto;
+		gap: 0;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation,
+	header.wp-block-template-part.is-menu-open .wp-block-navigation__container {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
+		font-size: clamp(1.7rem, 7.2vw, 4.25rem);
+		letter-spacing: -0.03em;
+		line-height: 0.92;
+		text-transform: uppercase;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation__container {
+		gap: clamp(0.85rem, 2.4vh, 1.6rem);
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open {
+		animation: lohkareet-menu-overlay 0.22s ease both;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher {
+		margin-top: clamp(2.75rem, 8vh, 4.75rem);
+		font-size: clamp(0.9rem, 3.57vw, 1.78rem);
+		letter-spacing: 0.16em;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher a {
+		opacity: 0.45;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher [aria-current="page"] {
+		opacity: 1;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-header__home {
+		display: block;
+		margin: 0 0 clamp(0.85rem, 2.4vh, 1.6rem);
+		color: inherit;
+		font-size: clamp(1.7rem, 7.2vw, 4.25rem);
+		font-weight: 400;
+		letter-spacing: -0.03em;
+		line-height: 0.92;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-header__home,
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item,
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher {
+		animation-name: lohkareet-menu-link;
+		animation-duration: 0.4s;
+		animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+		animation-fill-mode: both;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-header__home {
+		animation-delay: 0.07s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(1) {
+		animation-delay: 0.115s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(2) {
+		animation-delay: 0.16s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(3) {
+		animation-delay: 0.205s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(4) {
+		animation-delay: 0.25s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(5) {
+		animation-delay: 0.295s;
+	}
+
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item:nth-child(6) {
+		animation-delay: 0.34s;
+	}
+
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher {
+		animation-delay: 0.385s;
+	}
+
+	html.lohkareet-js header.wp-block-template-part.is-menu-open.is-menu-closing {
+		animation: lohkareet-menu-overlay-out 0.16s ease 0.14s both;
+	}
+
+	header.wp-block-template-part.is-menu-open.is-menu-closing .lohkareet-header__home,
+	header.wp-block-template-part.is-menu-open.is-menu-closing .wp-block-navigation-item,
+	header.wp-block-template-part.is-menu-open.is-menu-closing .lohkareet-language-switcher {
+		animation: none;
+		opacity: 0;
+		transform: translateY(6px);
+		transition: opacity 0.16s ease, transform 0.16s ease;
+	}
+}
+
+html.is-nav-open,
+html.is-nav-open body {
+	overflow: hidden;
+}
+
+@keyframes lohkareet-menu-overlay {
+	from {
+		background-color: transparent;
+	}
+
+	to {
+		background-color: #000;
+	}
+}
+
+@keyframes lohkareet-menu-overlay-out {
+	from {
+		background-color: #000;
+	}
+
+	to {
+		background-color: transparent;
+	}
+}
+
+@keyframes lohkareet-menu-link {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.lohkareet-js header.wp-block-template-part.is-menu-open,
+	header.wp-block-template-part.is-menu-open .lohkareet-header__home,
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item,
+	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher,
+	header.wp-block-template-part.is-menu-open.is-menu-closing,
+	header.wp-block-template-part.is-menu-open.is-menu-closing .lohkareet-header__home,
+	header.wp-block-template-part.is-menu-open.is-menu-closing .wp-block-navigation-item,
+	header.wp-block-template-part.is-menu-open.is-menu-closing .lohkareet-language-switcher,
+	header.wp-block-template-part .wp-block-navigation-item__content,
+	header.wp-block-template-part.is-menu-open .wp-block-navigation__container:hover .wp-block-navigation-item__content:hover,
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher ul,
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-open ul {
+		animation: none;
+		transition: none;
+		transform: none;
+	}
+
+	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-open .lohkareet-language-switcher__mark {
+		transform: translateY(0.08em) rotate(-135deg);
+	}
+
+	header.wp-block-template-part .lohkareet-language-switcher__mark {
+		transform: translateY(-0.12em) rotate(45deg);
+	}
+
+	.lohkareet-header__mark,
+	body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) .lohkareet-header__mark,
+	header.wp-block-template-part.is-menu-open .lohkareet-header__mark {
+		transition: none;
+	}
+}

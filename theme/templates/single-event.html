@@ -1,14 +1,16 @@
 <!-- wp:template-part {"slug":"header","tagName":"header","area":"header"} /-->
 
-<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
-<main class="wp-block-group">
-	<!-- wp:post-title {"level":1} /-->
+<!-- wp:lohkareet/page-hero /-->
 
+<!-- wp:group {"tagName":"main","className":"lohkareet-grid","layout":{"type":"default"}} -->
+<main class="wp-block-group lohkareet-grid">
 	<!-- wp:post-featured-image /-->
 
-	<!-- wp:lohkareet/event-details /-->
+	<!-- wp:lohkareet/event-details {"part":"programme"} /-->
 
-	<!-- wp:post-content {"layout":{"type":"constrained"}} /-->
+	<!-- wp:post-content {"layout":{"type":"default"}} /-->
+
+	<!-- wp:lohkareet/event-details {"part":"context"} /-->
 </main>
 <!-- /wp:group -->
 

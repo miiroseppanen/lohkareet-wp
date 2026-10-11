@@ -4,21 +4,40 @@
 	"settings": {
 		"appearanceTools": true,
 		"layout": {
-			"contentSize": "720px",
-			"wideSize": "1200px"
+			"contentSize": "100%",
+			"wideSize": "100%"
 		},
 		"typography": {
-			"fluid": true
+			"fluid": true,
+			"fontFamilies": [
+				{
+					"fontFamily": "\"presicav\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+					"name": "Presicav",
+					"slug": "presicav"
+				}
+			]
 		},
 		"useRootPaddingAwareAlignments": true
 	},
 	"styles": {
+		"typography": {
+			"fontFamily": "var:preset|font-family|presicav",
+			"fontWeight": "400"
+		},
+		"elements": {
+			"heading": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|presicav",
+					"fontWeight": "400"
+				}
+			}
+		},
 		"spacing": {
 			"padding": {
 				"top": "0",
-				"right": "var:preset|spacing|40",
+				"right": "0",
 				"bottom": "0",
-				"left": "var:preset|spacing|40"
+				"left": "0"
 			}
 		}
 	},

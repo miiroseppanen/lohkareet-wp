@@ -103,9 +103,9 @@ A per-event map is the event’s own `lohkareet_map_url`. It is shared data, not
 
 ### Language switcher
 
-`parts/header.html` places a Navigation block and `lohkareet/language-switcher` together. The switcher prints FI / EN from Polylang’s language list. The visible letters come from the slug. The link’s `hreflang` comes from the WordPress locale (`fi`, `en-US`). With Polylang inactive, or only one language configured, the switcher prints nothing and does not raise a PHP error. The Site Editor shows a non-linked FI / EN placeholder so the slot stays visible.
+`parts/header.html` places one Navigation block and `lohkareet/language-switcher` together. Page URLs stay in that menu. Polylang translates the menu; the theme does not store a second one. The switcher reads Polylang’s language list. The visible letters come from the slug. The link’s `hreflang` comes from the WordPress locale (`fi`, `en-US`). On desktop the current language is a small trigger; the other languages appear underneath it, without a panel. In the mobile menu the languages stay in a row, smaller than the page links. With Polylang inactive, or only one language configured, the switcher prints nothing and does not raise a PHP error. The Site Editor shows a non-linked FI / EN placeholder so the slot stays visible. Without JavaScript the desktop trigger is hidden and the language links stay in the row.
 
-Create the Finnish navigation and its English translation in Polylang. The theme does not store a second menu.
+The header is fixed over the page, with no bar, background, or blur. White type uses `mix-blend-mode: difference`, so it inverts against the hero video and reads as black on a light page. Below `60rem`, where the Finnish labels no longer fit one quiet line, the same links move into a black fullscreen menu opened by a Menu / Sulje button. The Siirtymä logo stays in the hero, not in the navigation.
 
 ### Pages
 
@@ -134,12 +134,14 @@ theme/
 │   ├── event-post-type.php   # CPT registration, permalinks, admin columns
 │   ├── event-helpers.php     # Reading, sorting, and formatting event data
 │   ├── event-meta.php        # Meta registration, sanitizing, editor form
-│   └── blocks.php            # Map, next event, event list, event details
+│   ├── blocks.php            # Map, next event, event list, event details
+│   ├── hero.php              # Front-page hero block
+│   └── navigation.php        # Mobile menu button only
 ├── languages/
 │   └── fi.l10n.php           # Finnish translations of theme UI strings
 ├── templates/
 │   ├── index.html            # Fallback: posts, other archives, search
-│   ├── front-page.html       # Home: page content, map, next event, all events
+│   ├── front-page.html       # Home: hero, page content, map, next event, all events
 │   ├── page.html             # About, preparation, and other pages
 │   ├── singular.html         # Single blog posts
 │   ├── archive-event.html    # /tapahtumat/
@@ -148,9 +150,41 @@ theme/
 │   ├── header.html
 │   └── footer.html
 └── assets/
-    ├── css/theme.css         # Map, event list, and language switcher
-    └── js/blocks-editor.js   # Editor preview only
+    ├── css/
+    │   ├── theme.css         # Map, event list, and language switcher
+    │   ├── hero.css          # Hero frame, type, and overlay
+    │   └── navigation.css    # Header over the hero, and the mobile menu
+    ├── images/
+    │   └── siirtyma-Eventimage-profilelogo-white.svg
+    ├── js/
+    │   ├── blocks-editor.js  # Editor preview only
+    │   ├── hero-video.js     # Subtle scroll influence on the hero video
+    │   └── navigation.js     # Mobile menu open, close, and focus
+    └── video/
+        └── hero-anim.mp4
 ```
+
+Presicav is not in `assets/`. The hero video and the Siirtymä logo are the files above. Do not add a second copy of either.
+
+## Typography
+
+Presicav is the identity typeface. It is served by Adobe Fonts, kit `lgz0wqd`. The public site loads `https://use.typekit.net/lgz0wqd.css` from `lohkareet_enqueue_assets()` in `functions.php`. Do not add a second import in CSS or in a template.
+
+The kit’s CSS family name is `presicav` (lowercase). That is the name in `theme.json`. The stack is `"presicav", "Helvetica Neue", Helvetica, Arial, sans-serif`. No Presicav files are stored in this repository, and the theme does not declare its own `@font-face` for it.
+
+The Adobe Fonts kit must allow the site’s domain, including a local host if you preview there.
+
+## Front page hero
+
+`templates/front-page.html` places `lohkareet/hero` between the header and the page content. The block is registered in `inc/hero.php`. The introduction, the next-event and event-list blocks, the map, and the short note on Siirtymä are the front page’s own content in WordPress, so the copy stays editable. The theme file does not contain that copy.
+
+`.lohkareet-hero` is a normal document section, `90svh` tall, and it is not sticky. The next block follows it in document flow, so a strip of that block is already visible at the bottom of the first screen. There is no extra scroll region and no scrub distance. The video is `theme/assets/video/hero-anim.mp4`, with `object-fit: cover`. The white Siirtymä mark is `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg`, shown above the text LOHKAREET. Both stay the same in Finnish and English.
+
+On load the video plays when the browser allows it. Page scroll stays ordinary. While the hero is at least 20% visible, `assets/js/hero-video.js` reads the change in `scrollY` on animation frames and queues a small timeline nudge: about `0.0012` seconds per pixel, at most `0.28` seconds waiting, and at most `0.06` seconds applied in one frame. Scrolling down advances the playhead a little. Scrolling up eases it slightly backward. When scrolling stops, that queue drains and normal forward playback continues. Scroll position is not mapped to the video duration. The script is enqueued only when the hero renders on the public site.
+
+`prefers-reduced-motion: reduce` leaves the video on a still frame and does not couple scroll to the timeline. Without JavaScript the video does not autoplay, and the logo and LOHKAREET still show. The video is decorative.
+
+`hero-anim.mp4` is about 8.9 seconds at 24fps, with a keyframe every second. Re-encoding it with more frequent keyframes may make the small seeks smoother. Do not paper over that in JavaScript.
 
 `templates/index.html` remains the required fallback. WordPress uses a more specific template when it has one.
 
@@ -190,12 +224,29 @@ Empty means unknown. Do not type “julkaistaan myöhemmin” into a field. Thos
 | Artist name | `lohkareet_artist_name` | Shared | No public name |
 | Artist description | `lohkareet_artist_description` | Translated | No description |
 | Artist status | `lohkareet_artist_status` | Shared | `confirmed`, `tentative`, or `unannounced` |
+| Artist image | `lohkareet_artist_image` | Shared | No performing-artist image |
+| Assigned works | `lohkareet_work_ids` | Shared | No recurring works at this event |
 
 Municipality is separate from the venue. The select list is the nine municipalities of this series, in program order. Change the list with the `lohkareet_municipalities` filter in a small plugin or a child theme. A value outside the list is discarded.
 
 A day cannot be saved without a month. An impossible calendar day is discarded. February 29 is allowed when the year is a leap year, and also when the year is still unknown.
 
-The artist name is shown only when the status is confirmed or tentative. Unannounced keeps a stored name off the public page. The status value is shared; the label is a theme string.
+The artist name is shown only when the status is confirmed or tentative. Unannounced keeps a stored name off the public page. The status value is shared; the label is a theme string. The performing artist is not where recurring works are entered.
+
+### Recurring works
+
+A work that appears at more than one event is stored once and assigned to each event.
+
+| Record | Where it is edited | What it holds |
+| --- | --- | --- |
+| Performing artist | The event | Name, status, description, and an optional image. The image is not the event’s featured image. |
+| Contributor | Contributors | Public name (the title), an optional biography, an optional image, and a role. The name stays the same in every language. |
+| Work | Works | Work type, an optional public title, the description, and one or more contributors. |
+| Assignment | Works at this event, on the event | Which works appear, and their order. |
+
+The description is edited on the work. Assigning that work to another event reuses the same text. Do not paste it into the event. Contributor names are read from the original-language contributor. The work type and description can be translated on the linked Polylang version. There is no separate English copy of the assignment list.
+
+A role is kept for editors. The public event page shows the contributor’s name, the work type, and the description. It does not turn those works into additional performing artists.
 
 ### Dates
 
@@ -217,7 +268,7 @@ The next event is the earliest event that has a year and is not certainly past. 
 
 ### What the templates hide
 
-Single event pages always show a date line, a place line, and an artist line, using the “will be announced later” sentence when that fact is unknown. Time, street address, location description, per-event map, and artist description render only when they contain something. Cards show the date sentence when the date is unknown, and show venue and time only when those values exist.
+Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” Time, street address, location description, and a per-event map render only when they contain something. Cards do not list works or the performing artist. They show the date sentence when the date is unknown, and show venue and time only when those values exist.
 
 The series map on the home page is separate from a per-event map. Its URL comes from `lohkareet_get_zoneatlas_urls()`. Only https URLs are accepted.
 
@@ -252,7 +303,9 @@ Because Punkalaidun has no year in the source notes, it is not selected as the n
 
 | Task | Where |
 | --- | --- |
-| Colors, fonts, spacing, content width | `theme/theme.json` |
+| Colors, fonts, spacing, content width | `theme/theme.json`. Presicav itself is Adobe Fonts kit `lgz0wqd`, enqueued in `functions.php` |
+| Hero video or Siirtymä logo | `theme/assets/video/hero-anim.mp4` and `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg` |
+| Hero scroll and overlay | `theme/assets/css/hero.css` and `theme/assets/js/hero-video.js` |
 | Header or footer | `theme/parts/` |
 | Home page structure | `theme/templates/front-page.html` |
 | Event page structure | `theme/templates/single-event.html` |
@@ -260,6 +313,7 @@ Because Punkalaidun has no year in the source notes, it is not selected as the n
 | How dates sort or how “next” is chosen | `theme/inc/event-helpers.php` |
 | Editor fields, shared versus translated meta | `theme/inc/event-meta.php` |
 | Zoneatlas URL for Finnish or English | `lohkareet_get_zoneatlas_urls()` in `theme/inc/i18n.php` |
+| Header and mobile menu | `theme/parts/header.html`, `theme/assets/css/navigation.css`, `theme/assets/js/navigation.js` |
 | Language switcher | `theme/inc/i18n.php` and `theme/parts/header.html` |
 | Map, card, and switcher layout | `theme/assets/css/theme.css` |
 
@@ -298,6 +352,7 @@ No deploy script is set up yet. Add one when the Hostaan workflow is decided, an
 - Prefix functions, hooks, and handles with `lohkareet_`. Use the text domain `lohkareet`.
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
-- Keep focus outlines. The header site title is not a heading, so the page title can be the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.3.0`.
+- Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.17`.
+- Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.

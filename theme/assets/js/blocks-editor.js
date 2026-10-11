@@ -82,4 +82,9 @@
 	simple( 'lohkareet/event-list', __( 'Event list', 'lohkareet' ) );
 	simple( 'lohkareet/event-details', __( 'Event details', 'lohkareet' ) );
 	simple( 'lohkareet/language-switcher', __( 'Language switcher', 'lohkareet' ) );
+	simple( 'lohkareet/hero', __( 'Hero', 'lohkareet' ) );
+	simple( 'lohkareet/menu-toggle', __( 'Menu toggle', 'lohkareet' ) );
+	simple( 'lohkareet/site-mark', __( 'Site mark', 'lohkareet' ) );
+	simple( 'lohkareet/menu-home', __( 'Home', 'lohkareet' ) );
+	simple( 'lohkareet/page-hero', __( 'Page hero', 'lohkareet' ) );
 }( window.wp ) );

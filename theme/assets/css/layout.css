@@ -1,0 +1,739 @@
+/**
+ * Page grid and editorial measure.
+ *
+ * Four columns below 48rem, six from 48rem, twelve from 64rem.
+ * The hero and the Zoneatlas map stay outside this grid.
+ */
+
+:root {
+	--space-1: 0.5rem;
+	--space-2: 1rem;
+	--space-3: 1.5rem;
+	--space-4: 2rem;
+	--space-6: 3rem;
+	--space-8: 4rem;
+	--space-12: 6rem;
+	--space-16: 8rem;
+	--space-24: 12rem;
+	--page-gutter: clamp(1.25rem, 3vw, 3.5rem);
+	--grid-gap: clamp(0.75rem, 1.25vw, 1.5rem);
+	--section-space: clamp(4.5rem, 10vw, 11rem);
+	--measure: 36rem;
+	--header-clearance: 4.75rem;
+}
+
+html {
+	scroll-padding-top: 5.5rem;
+}
+
+body {
+	background: #fff;
+	color: #141414;
+	font-size: clamp(0.9375rem, 0.9vw, 1rem);
+	line-height: 1.7;
+}
+
+body,
+.wp-site-blocks,
+.wp-site-blocks > header.wp-block-template-part + .lohkareet-hero {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.lohkareet-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	column-gap: var(--grid-gap);
+	row-gap: var(--space-4);
+	align-items: start;
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	padding: calc(var(--header-clearance) + var(--space-12)) var(--page-gutter) var(--section-space);
+}
+
+.home .lohkareet-grid {
+	padding-top: var(--section-space);
+}
+
+body:has(.lohkareet-page-hero) .lohkareet-grid {
+	padding-top: var(--space-12);
+}
+
+.lohkareet-grid > *,
+.lohkareet-grid .wp-block-post-content > * {
+	min-width: 0;
+	max-width: none;
+	margin: 0;
+}
+
+.lohkareet-grid > .wp-block-post-content,
+.lohkareet-grid > .wp-block-post-featured-image,
+.lohkareet-grid > .lohkareet-event-details,
+.lohkareet-grid > .lohkareet-event-list-block,
+.lohkareet-grid > .wp-block-query {
+	grid-column: 1 / -1;
+}
+
+.lohkareet-grid > .wp-block-post-content {
+	display: grid;
+	grid-template-columns: subgrid;
+	row-gap: var(--space-4);
+}
+
+.lohkareet-grid .wp-block-post-title,
+.lohkareet-grid .wp-block-query-title,
+.home .lohkareet-grid .wp-block-post-content > h1 {
+	grid-column: 1 / -1;
+	margin: 0;
+	padding: 0 0 var(--space-12);
+	font-size: clamp(2.5rem, 7.2vw, 5.6rem);
+	font-weight: 400;
+	letter-spacing: -0.035em;
+	line-height: 0.9;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.lohkareet-grid .wp-block-post-content > p,
+.lohkareet-grid .wp-block-post-content > ul,
+.lohkareet-grid .wp-block-post-content > ol,
+.lohkareet-programme__description {
+	max-width: var(--measure);
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.lohkareet-grid .wp-block-post-content > h2,
+.lohkareet-next-event > h2,
+.lohkareet-event-list-block > h2,
+.lohkareet-programme h2 {
+	margin: 0;
+	font-weight: 400;
+	letter-spacing: 0.06em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.lohkareet-grid .wp-block-post-content > h2 {
+	grid-column: 1 / -1;
+	align-self: end;
+	padding-top: var(--section-space);
+	font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+}
+
+.lohkareet-grid .wp-block-post-content a {
+	color: inherit;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+}
+
+.lohkareet-footer {
+	padding: var(--space-16) var(--page-gutter) var(--space-8);
+}
+
+.lohkareet-footer .wp-block-site-title,
+.lohkareet-footer .wp-block-site-title a {
+	font-size: clamp(0.72rem, 0.85vw, 0.84rem);
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	line-height: 1.2;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.lohkareet-grid .lohkareet-map,
+.lohkareet-grid .wp-block-post-content > .lohkareet-map {
+	grid-column: 1 / -1;
+	justify-self: stretch;
+	width: calc(100% + (2 * var(--page-gutter)));
+	max-width: none;
+	height: 58svh;
+	min-height: 22rem;
+	margin-block: var(--section-space);
+	margin-inline: calc(var(--page-gutter) * -1);
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	background: transparent;
+}
+
+.lohkareet-event-list-block,
+.lohkareet-next-event,
+.lohkareet-event-list,
+.lohkareet-event-card,
+.lohkareet-event-details--programme,
+.lohkareet-event-details--context,
+.lohkareet-programme,
+.lohkareet-programme__artist,
+.lohkareet-programme__work {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	align-items: start;
+}
+
+.lohkareet-event-summary {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	align-items: baseline;
+}
+
+.lohkareet-event-list-block,
+.lohkareet-next-event {
+	row-gap: var(--space-6);
+	padding-top: var(--section-space);
+}
+
+.lohkareet-event-list {
+	row-gap: var(--space-6);
+}
+
+.lohkareet-event-card,
+.lohkareet-event-summary {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.lohkareet-event-summary > * {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+.lohkareet-event-summary__name,
+.lohkareet-event-summary__name a {
+	font-size: clamp(1.35rem, 2vw, 1.85rem);
+	font-weight: 400;
+	letter-spacing: -0.02em;
+	line-height: 1.05;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.lohkareet-event-summary p {
+	font-size: 0.95em;
+	line-height: 1.45;
+}
+
+.lohkareet-event-details--facts {
+	display: contents;
+}
+
+.lohkareet-event-details--facts p {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 0.95em;
+	line-height: 1.45;
+}
+
+.single-event .lohkareet-programme__artist,
+.single-event .lohkareet-programme__work {
+	row-gap: var(--space-2);
+	padding-top: var(--section-space);
+}
+
+.lohkareet-programme__image {
+	grid-column: 1 / -1;
+	width: 100%;
+	max-width: none;
+	height: auto;
+	margin: 0;
+}
+
+.lohkareet-programme h2,
+.lohkareet-programme__type,
+.lohkareet-programme__title,
+.lohkareet-programme__description {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+.lohkareet-programme h2 {
+	font-size: clamp(1.35rem, 2vw, 1.9rem);
+	letter-spacing: 0.02em;
+}
+
+.lohkareet-programme__type,
+.lohkareet-programme__title {
+	margin-top: var(--space-1);
+}
+
+@media (min-width: 48rem) {
+	.lohkareet-grid {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+
+	.lohkareet-grid .wp-block-post-title,
+	.lohkareet-grid .wp-block-query-title,
+	.home .lohkareet-grid .wp-block-post-content > h1 {
+		grid-column: 1 / 6;
+		padding-bottom: var(--space-16);
+		font-size: clamp(3.2rem, 6vw, 5.6rem);
+	}
+
+	.lohkareet-grid .wp-block-post-content > p,
+	.lohkareet-grid .wp-block-post-content > ul,
+	.lohkareet-grid .wp-block-post-content > ol {
+		grid-column: 2 / 7;
+	}
+
+	.lohkareet-grid .wp-block-post-content > h2 {
+		grid-column: 1 / 4;
+	}
+
+	.lohkareet-grid .wp-block-post-content > h2 ~ p {
+		grid-column: 3 / 7;
+	}
+
+	.lohkareet-event-summary__name {
+		grid-column: 1 / 3;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__date {
+		grid-column: 3 / 5;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__time {
+		grid-column: 5 / 7;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__venue,
+	.lohkareet-event-summary__municipality {
+		grid-column: 3 / 7;
+		grid-row: 2;
+	}
+
+	.single-event main .wp-block-post-title {
+		grid-column: 1 / 5;
+		grid-row: 1;
+		align-self: end;
+		padding-bottom: 0;
+	}
+
+	.single-event main .lohkareet-event-facts__date,
+	.single-event main .lohkareet-event-facts__time {
+		grid-column: 5 / 7;
+		grid-row: 1;
+		align-self: end;
+	}
+
+	.single-event main .lohkareet-event-facts__venue,
+	.single-event main .lohkareet-event-facts__address,
+	.single-event main .lohkareet-event-facts__municipality {
+		grid-column: 5 / 7;
+		grid-row: 2;
+	}
+
+	.single-event .lohkareet-programme__image {
+		grid-column: 1 / 4;
+		grid-row: 1;
+		align-self: start;
+	}
+
+	.single-event .lohkareet-programme__artist:not(:has(.lohkareet-programme__image)) h2,
+	.single-event .lohkareet-programme__artist:not(:has(.lohkareet-programme__image)) .lohkareet-programme__description {
+		grid-column: 1 / 5;
+	}
+
+	.single-event .lohkareet-programme__artist h2,
+	.single-event .lohkareet-programme__artist .lohkareet-programme__description,
+	.single-event .lohkareet-programme__work h2,
+	.single-event .lohkareet-programme__work .lohkareet-programme__type,
+	.single-event .lohkareet-programme__work .lohkareet-programme__title,
+	.single-event .lohkareet-programme__work .lohkareet-programme__description {
+		grid-column: 4 / 7;
+	}
+
+	.lohkareet-grid .wp-block-post-content > .lohkareet-map,
+	.lohkareet-grid .lohkareet-map {
+		height: 64svh;
+		min-height: 26rem;
+	}
+}
+
+@media (min-width: 64rem) {
+	.lohkareet-grid {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	.lohkareet-grid .wp-block-post-title,
+	.lohkareet-grid .wp-block-query-title {
+		grid-column: 1 / 8;
+		padding-bottom: var(--space-16);
+	}
+
+	.lohkareet-grid .wp-block-post-content > p:not(h2 ~ p),
+	.lohkareet-grid .wp-block-post-content > ul:not(h2 ~ ul),
+	.lohkareet-grid .wp-block-post-content > ol:not(h2 ~ ol) {
+		grid-column: 5 / 10;
+	}
+
+	.lohkareet-grid .wp-block-post-content > h2 {
+		grid-column: 1 / 5;
+		max-width: 14rem;
+	}
+
+	.lohkareet-grid .wp-block-post-content > h2 + p {
+		padding-top: var(--section-space);
+		align-self: start;
+	}
+
+	.lohkareet-grid .wp-block-post-content > h2 ~ p,
+	.lohkareet-grid .wp-block-post-content > h2 ~ ul,
+	.lohkareet-grid .wp-block-post-content > h2 ~ ol {
+		grid-column: 5 / 10;
+	}
+
+	.home .lohkareet-grid .wp-block-post-content > h1 {
+		grid-column: 1 / 8;
+		padding-bottom: var(--space-16);
+	}
+
+	.home .lohkareet-grid .wp-block-post-content > p:not(section ~ p) {
+		grid-column: 6 / 11;
+	}
+
+	.home .lohkareet-grid .wp-block-post-content > section ~ p:not(h2 ~ p) {
+		grid-column: 2 / 7;
+		padding-top: var(--space-8);
+	}
+
+	.home .lohkareet-grid .wp-block-post-content > h2 {
+		grid-column: 1 / 5;
+	}
+
+	.home .lohkareet-grid .wp-block-post-content > h2 ~ p {
+		grid-column: 6 / 11;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-title {
+		grid-column: 1 / 7;
+		padding-bottom: var(--space-24);
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > p:not(h2 ~ p) {
+		grid-column: 6 / 12;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > p:not(h2 ~ p):first-child {
+		font-size: clamp(1.2rem, 1.45vw, 1.55rem);
+		line-height: 1.45;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(1) {
+		grid-column: 1 / 7;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(1) ~ p {
+		grid-column: 7 / 12;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(2) {
+		grid-column: 2 / 8;
+		max-width: 12rem;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(2) ~ p {
+		grid-column: 8 / 13;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(3) {
+		grid-column: 1 / 9;
+		max-width: 16rem;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(3) ~ p {
+		grid-column: 5 / 11;
+	}
+
+	.lohkareet-entry-lohkareista .wp-block-post-content > h2:nth-of-type(3) + p {
+		padding-top: 0;
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-title {
+		grid-column: 1 / 8;
+		padding-bottom: var(--space-24);
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(1) {
+		grid-column: 6 / 11;
+		font-size: clamp(1.2rem, 1.45vw, 1.55rem);
+		line-height: 1.45;
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(n + 2):nth-child(-n + 4) {
+		grid-column: 2 / 8;
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(5) {
+		grid-column: 7 / 13;
+		padding-top: var(--section-space);
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(6),
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(7) {
+		grid-column: 7 / 13;
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(n + 8) {
+		grid-column: 1 / 8;
+	}
+
+	.lohkareet-entry-varustautuminen .wp-block-post-content > p:nth-child(8) {
+		padding-top: var(--space-16);
+	}
+
+	.single-event main .wp-block-post-title {
+		grid-column: 1 / 8;
+		grid-row: 1;
+		align-self: end;
+		padding-bottom: 0;
+	}
+
+	.single-event main .lohkareet-event-facts__date {
+		grid-column: 8 / 10;
+		grid-row: 1;
+		align-self: end;
+	}
+
+	.single-event main .lohkareet-event-facts__time {
+		grid-column: 10 / 12;
+		grid-row: 1;
+		align-self: end;
+	}
+
+	.single-event main .lohkareet-event-facts__venue,
+	.single-event main .lohkareet-event-facts__address,
+	.single-event main .lohkareet-event-facts__municipality {
+		grid-column: 8 / 13;
+		grid-row: 2;
+	}
+
+	.single-event .wp-block-post-featured-image {
+		grid-column: 1 / 8;
+		grid-row: 3;
+		padding-top: var(--space-8);
+	}
+
+	.single-event .wp-block-post-featured-image img {
+		width: 100%;
+		height: auto;
+	}
+
+	.single-event .lohkareet-programme__image {
+		grid-column: 1 / 8;
+		grid-row: 1;
+		align-self: start;
+	}
+
+	.single-event .lohkareet-programme__artist h2,
+	.single-event .lohkareet-programme__artist .lohkareet-programme__description {
+		grid-column: 8 / 13;
+	}
+
+	.single-event .lohkareet-programme__artist:not(:has(.lohkareet-programme__image)) h2,
+	.single-event .lohkareet-programme__artist:not(:has(.lohkareet-programme__image)) .lohkareet-programme__description {
+		grid-column: 1 / 7;
+	}
+
+	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) h2,
+	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) .lohkareet-programme__type,
+	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) .lohkareet-programme__title,
+	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) .lohkareet-programme__description {
+		grid-column: 1 / 7;
+	}
+
+	.single-event .lohkareet-programme__work:nth-child(2 of .lohkareet-programme__work) h2,
+	.single-event .lohkareet-programme__work:nth-child(2 of .lohkareet-programme__work) .lohkareet-programme__type,
+	.single-event .lohkareet-programme__work:nth-child(2 of .lohkareet-programme__work) .lohkareet-programme__title,
+	.single-event .lohkareet-programme__work:nth-child(2 of .lohkareet-programme__work) .lohkareet-programme__description {
+		grid-column: 8 / 13;
+	}
+
+	.single-event .lohkareet-programme__work:nth-child(3 of .lohkareet-programme__work) h2,
+	.single-event .lohkareet-programme__work:nth-child(3 of .lohkareet-programme__work) .lohkareet-programme__type,
+	.single-event .lohkareet-programme__work:nth-child(3 of .lohkareet-programme__work) .lohkareet-programme__title,
+	.single-event .lohkareet-programme__work:nth-child(3 of .lohkareet-programme__work) .lohkareet-programme__description {
+		grid-column: 3 / 9;
+	}
+
+	.single-event .wp-block-post-content > p,
+	.single-event .lohkareet-event-details--context > p {
+		grid-column: 5 / 10;
+	}
+
+	.lohkareet-event-summary__name {
+		grid-column: 1 / 5;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__date {
+		grid-column: 5 / 8;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__time {
+		grid-column: 8 / 10;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__venue {
+		grid-column: 10 / 13;
+		grid-row: 1;
+	}
+
+	.lohkareet-event-summary__municipality {
+		grid-column: 5 / 8;
+		grid-row: 2;
+	}
+
+	.lohkareet-grid .wp-block-post-content > .lohkareet-map,
+	.lohkareet-grid .lohkareet-map {
+		height: 72svh;
+		min-height: 32rem;
+		max-height: 80svh;
+	}
+}
+
+@media (max-width: 47.99rem) {
+	.lohkareet-grid .wp-block-post-content > p,
+	.lohkareet-grid .wp-block-post-content > h2,
+	.lohkareet-grid .wp-block-post-title,
+	.lohkareet-grid .wp-block-query-title {
+		grid-column: 1 / -1;
+	}
+}
+
+.wp-block-post-featured-image:not(:has(img)) {
+	display: none;
+}
+
+/*
+ * Subpage hero. 61.8svh is the larger golden section of the viewport (1 / φ).
+ * The black field is full bleed. The type sits on the same column grid as the page.
+ */
+.lohkareet-page-hero {
+	display: flex;
+	align-items: flex-end;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 58svh;
+	margin: 0;
+	padding: var(--header-clearance) var(--page-gutter) var(--space-8);
+	background: #000;
+	color: #fff;
+}
+
+.lohkareet-page-hero__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	column-gap: var(--grid-gap);
+	row-gap: var(--space-3);
+	align-items: end;
+	width: 100%;
+}
+
+.lohkareet-page-hero__title,
+.lohkareet-page-hero p {
+	grid-column: 1 / -1;
+	margin: 0;
+	color: inherit;
+}
+
+.lohkareet-page-hero__title {
+	font-size: clamp(2.5rem, 7.2vw, 5.6rem);
+	font-weight: 400;
+	letter-spacing: -0.035em;
+	line-height: 0.9;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.lohkareet-page-hero p {
+	font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+	font-weight: 400;
+	letter-spacing: 0.06em;
+	line-height: 1.35;
+	text-transform: uppercase;
+}
+
+@media (min-width: 48rem) {
+	.lohkareet-page-hero {
+		min-height: 61.8svh;
+		padding-bottom: var(--space-12);
+	}
+
+	.lohkareet-page-hero__grid {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+
+	.lohkareet-page-hero__title {
+		grid-column: 1 / 6;
+	}
+
+	.lohkareet-entry-varustautuminen .lohkareet-page-hero__title {
+		grid-column: 1 / 7;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__date {
+		grid-column: 1 / 4;
+		grid-row: 2;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__time {
+		grid-column: 4 / 7;
+		grid-row: 2;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__venue,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__address,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__municipality {
+		grid-column: 4 / 7;
+		grid-row: 3;
+	}
+}
+
+@media (min-width: 64rem) {
+	.lohkareet-page-hero__grid {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	.lohkareet-page-hero__title,
+	.lohkareet-entry-lohkareista .lohkareet-page-hero__title,
+	.post-type-archive-event .lohkareet-page-hero__title {
+		grid-column: 1 / 8;
+	}
+
+	.lohkareet-entry-varustautuminen .lohkareet-page-hero__title {
+		grid-column: 1 / 11;
+	}
+
+	.single-event .lohkareet-page-hero__title {
+		grid-column: 1 / 8;
+		grid-row: 1;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__date {
+		grid-column: 1 / 5;
+		grid-row: 2;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__time {
+		grid-column: 8 / 13;
+		grid-row: 2;
+	}
+
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__venue,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__address,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__municipality {
+		grid-column: 8 / 13;
+		grid-row: 3;
+	}
+}

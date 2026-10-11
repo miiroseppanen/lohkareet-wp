@@ -1,17 +1,17 @@
-<!-- wp:group {"layout":{"type":"constrained"}} -->
-<div class="wp-block-group">
-	<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40"}}},"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"}} -->
-	<div class="wp-block-group alignwide" style="padding-top:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40)">
-		<!-- wp:site-title {"level":0} /-->
+<!-- wp:group {"className":"lohkareet-header__bar","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"top"}} -->
+<div class="wp-block-group lohkareet-header__bar">
+	<!-- wp:lohkareet/site-mark /-->
 
-		<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"right"}} -->
-		<div class="wp-block-group">
-			<!-- wp:navigation {"layout":{"type":"flex","justifyContent":"right"}} /-->
+	<!-- wp:group {"anchor":"lohkareet-menu","className":"lohkareet-header__links","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"left","verticalAlignment":"center"}} -->
+	<div class="wp-block-group lohkareet-header__links" id="lohkareet-menu">
+		<!-- wp:lohkareet/menu-home /-->
 
-			<!-- wp:lohkareet/language-switcher /-->
-		</div>
-		<!-- /wp:group -->
+		<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","justifyContent":"left"}} /-->
+
+		<!-- wp:lohkareet/language-switcher /-->
 	</div>
 	<!-- /wp:group -->
+
+	<!-- wp:lohkareet/menu-toggle /-->
 </div>
 <!-- /wp:group -->
