@@ -1,0 +1,244 @@
+/**
+ * Footer poster.
+ *
+ * Same column counts and gutters as the page grid: 4, then 6 at 48rem, then 12 at 64rem.
+ */
+
+footer.wp-block-template-part {
+	margin: 0;
+	background: #000;
+	color: #fff;
+}
+
+.lohkareet-footer {
+	padding: var(--space-12) var(--page-gutter) var(--space-8);
+}
+
+.lohkareet-footer__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	column-gap: var(--grid-gap);
+	row-gap: var(--space-12);
+	align-content: start;
+	width: 100%;
+}
+
+.lohkareet-footer__grid > * {
+	min-width: 0;
+	max-width: 100%;
+}
+
+.lohkareet-footer__identity,
+.lohkareet-footer__nav,
+.lohkareet-footer__credit,
+.lohkareet-footer__colophon {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+.lohkareet-footer__identity {
+	font-size: clamp(2.35rem, 14vw, 7.5rem);
+	font-weight: 400;
+	letter-spacing: -0.035em;
+	line-height: 0.86;
+	text-transform: uppercase;
+	hyphens: auto;
+	overflow-wrap: break-word;
+}
+
+.lohkareet-footer__line {
+	display: block;
+	width: fit-content;
+	max-width: 100%;
+}
+
+.lohkareet-footer__nav ul,
+.lohkareet-footer__languages ul {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.42em;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.lohkareet-footer__nav {
+	font-size: clamp(1.05rem, 4.6vw, 1.45rem);
+	font-weight: 400;
+	letter-spacing: 0.08em;
+	line-height: 1.15;
+	text-transform: uppercase;
+}
+
+.lohkareet-footer__nav a {
+	display: inline-block;
+	max-width: 100%;
+	hyphens: auto;
+	overflow-wrap: break-word;
+}
+
+.lohkareet-footer__credit img {
+	display: block;
+	width: clamp(6.75rem, 22vw, 9.5rem);
+	height: auto;
+}
+
+.lohkareet-footer__colophon {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.85rem;
+	font-size: clamp(0.68rem, 2.4vw, 0.75rem);
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	line-height: 1.35;
+	text-transform: uppercase;
+}
+
+.lohkareet-footer__languages ul {
+	flex-direction: row;
+	align-items: baseline;
+	gap: 0.55em;
+}
+
+.lohkareet-footer__languages li + li::before {
+	content: "/";
+	margin-right: 0.55em;
+	opacity: 0.45;
+}
+
+.lohkareet-footer__languages a {
+	opacity: 0.45;
+}
+
+.lohkareet-footer__languages .is-current span {
+	opacity: 1;
+}
+
+.lohkareet-footer__copyright {
+	margin: 0;
+}
+
+.lohkareet-footer a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.lohkareet-footer a:focus-visible {
+	outline: 1px solid currentColor;
+	outline-offset: 0.35rem;
+	opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.lohkareet-footer a {
+		transition: opacity 0.18s linear, transform 0.18s ease;
+	}
+
+	.lohkareet-footer__nav:hover a {
+		opacity: 0.4;
+	}
+
+	.lohkareet-footer__nav a:hover,
+	.lohkareet-footer__nav a:focus-visible {
+		opacity: 1;
+		transform: translateX(0.1em);
+	}
+
+	.lohkareet-footer__identity a:hover,
+	.lohkareet-footer__identity a:focus-visible {
+		opacity: 0.72;
+	}
+
+	.lohkareet-footer__languages a:hover,
+	.lohkareet-footer__languages a:focus-visible,
+	.lohkareet-footer__privacy:hover,
+	.lohkareet-footer__privacy:focus-visible {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lohkareet-footer a {
+		transition: none;
+	}
+
+	.lohkareet-footer__nav a:hover,
+	.lohkareet-footer__nav a:focus-visible {
+		transform: none;
+	}
+}
+
+@media (min-width: 48rem) {
+	.lohkareet-footer {
+		padding-block: var(--space-16) var(--space-12);
+	}
+
+	.lohkareet-footer__grid {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		min-height: 56svh;
+		align-content: space-between;
+		row-gap: var(--space-16);
+	}
+
+	.lohkareet-footer__identity {
+		grid-column: 1 / 5;
+		grid-row: 1;
+		font-size: clamp(3.4rem, 8vw, 6.4rem);
+	}
+
+	.lohkareet-footer__nav {
+		grid-column: 4 / -1;
+		grid-row: 1;
+		justify-self: end;
+		align-self: end;
+		font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+		text-align: right;
+	}
+
+	.lohkareet-footer__nav ul {
+		align-items: flex-end;
+	}
+
+	.lohkareet-footer__credit {
+		grid-column: 1 / 4;
+		grid-row: 2;
+		align-self: end;
+	}
+
+	.lohkareet-footer__colophon {
+		grid-column: 4 / -1;
+		grid-row: 2;
+		justify-self: end;
+		align-self: end;
+		align-items: flex-end;
+		text-align: right;
+	}
+}
+
+@media (min-width: 64rem) {
+	.lohkareet-footer__grid {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		min-height: 62svh;
+	}
+
+	.lohkareet-footer__identity {
+		grid-column: 1 / 8;
+		font-size: clamp(4.6rem, 7.4vw, 8.4rem);
+	}
+
+	.lohkareet-footer__nav {
+		grid-column: 9 / -1;
+		align-self: start;
+		padding-top: 0.35em;
+	}
+
+	.lohkareet-footer__credit {
+		grid-column: 5 / 9;
+	}
+
+	.lohkareet-footer__colophon {
+		grid-column: 10 / -1;
+	}
+}

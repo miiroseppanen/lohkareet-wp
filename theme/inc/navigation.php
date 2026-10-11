@@ -63,11 +63,12 @@ function lohkareet_render_site_mark() {
 }
 
 /**
- * Front-page link for the mobile menu.
+ * Front-page URL for the current language.
  *
- * Desktop hides it. The small LOHKAREET mark already links home there.
+ * Polylang's home URL wins when the plugin is active. Otherwise this is the
+ * static front page, then the site root.
  */
-function lohkareet_render_menu_home() {
+function lohkareet_get_front_page_url() {
 	$front_id = (int) get_option( 'page_on_front' );
 	$url      = '';
 
@@ -88,7 +89,16 @@ function lohkareet_render_menu_home() {
 		$url = home_url( '/' );
 	}
 
-	$url = esc_url_raw( $url );
+	return esc_url_raw( $url );
+}
+
+/**
+ * Front-page link for the mobile menu.
+ *
+ * Desktop hides it. The small LOHKAREET mark already links home there.
+ */
+function lohkareet_render_menu_home() {
+	$url = lohkareet_get_front_page_url();
 
 	$attrs = array(
 		'class' => 'lohkareet-header__home',

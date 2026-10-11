@@ -128,20 +128,6 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 	text-underline-offset: 0.18em;
 }
 
-.lohkareet-footer {
-	padding: var(--space-16) var(--page-gutter) var(--space-8);
-}
-
-.lohkareet-footer .wp-block-site-title,
-.lohkareet-footer .wp-block-site-title a {
-	font-size: clamp(0.72rem, 0.85vw, 0.84rem);
-	font-weight: 400;
-	letter-spacing: 0.14em;
-	line-height: 1.2;
-	text-decoration: none;
-	text-transform: uppercase;
-}
-
 .lohkareet-grid .lohkareet-map,
 .lohkareet-grid .wp-block-post-content > .lohkareet-map {
 	grid-column: 1 / -1;

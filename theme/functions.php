@@ -20,6 +20,7 @@ require get_theme_file_path( 'inc/works.php' );
 require get_theme_file_path( 'inc/blocks.php' );
 require get_theme_file_path( 'inc/hero.php' );
 require get_theme_file_path( 'inc/navigation.php' );
+require get_theme_file_path( 'inc/footer.php' );
 
 /**
  * Loads theme translations for the active WordPress locale.

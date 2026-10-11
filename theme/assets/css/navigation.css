@@ -26,6 +26,11 @@ body:has(.lohkareet-page-hero) header.wp-block-template-part:not(.is-past-hero) 
 	mix-blend-mode: normal;
 }
 
+header.wp-block-template-part.is-over-footer {
+	color: #fff;
+	mix-blend-mode: normal;
+}
+
 body.admin-bar header.wp-block-template-part {
 	top: var(--wp-admin--admin-bar--height, 32px);
 }

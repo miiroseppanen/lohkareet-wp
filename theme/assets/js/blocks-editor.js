@@ -87,4 +87,5 @@
 	simple( 'lohkareet/site-mark', __( 'Site mark', 'lohkareet' ) );
 	simple( 'lohkareet/menu-home', __( 'Home', 'lohkareet' ) );
 	simple( 'lohkareet/page-hero', __( 'Page hero', 'lohkareet' ) );
+	simple( 'lohkareet/site-footer', __( 'Footer', 'lohkareet' ) );
 }( window.wp ) );

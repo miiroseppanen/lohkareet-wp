@@ -212,17 +212,53 @@
 
 	if ( ! hero || typeof window.IntersectionObserver !== 'function' ) {
 		header.classList.add( 'is-past-hero' );
+	} else {
+		var heroWatch = new IntersectionObserver(
+			function ( entries ) {
+				var visible = entries[ 0 ] && entries[ 0 ].isIntersecting;
+				header.classList.toggle( 'is-over-hero', visible );
+				header.classList.toggle( 'is-past-hero', ! visible );
+			},
+			{ threshold: 0 }
+		);
+
+		heroWatch.observe( hero );
+	}
+
+	var footer = document.querySelector( 'footer.wp-block-template-part' );
+
+	if ( ! footer || typeof window.IntersectionObserver !== 'function' ) {
 		return;
 	}
 
-	var heroWatch = new IntersectionObserver(
-		function ( entries ) {
-			var visible = entries[ 0 ] && entries[ 0 ].isIntersecting;
-			header.classList.toggle( 'is-over-hero', visible );
-			header.classList.toggle( 'is-past-hero', ! visible );
-		},
-		{ threshold: 0 }
-	);
+	var footerWatch = null;
 
-	heroWatch.observe( hero );
+	function watchFooter() {
+		if ( footerWatch ) {
+			footerWatch.disconnect();
+		}
+
+		var band = 88;
+
+		if ( document.body.classList.contains( 'admin-bar' ) ) {
+			band += window.matchMedia( '(max-width: 782px)' ).matches ? 46 : 32;
+		}
+
+		var inset = Math.max( 0, window.innerHeight - band );
+
+		footerWatch = new IntersectionObserver(
+			function ( entries ) {
+				header.classList.toggle( 'is-over-footer', !!( entries[ 0 ] && entries[ 0 ].isIntersecting ) );
+			},
+			{
+				rootMargin: '0px 0px -' + inset + 'px 0px',
+				threshold: 0,
+			}
+		);
+
+		footerWatch.observe( footer );
+	}
+
+	watchFooter();
+	window.addEventListener( 'resize', watchFooter );
 }() );

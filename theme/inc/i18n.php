@@ -528,6 +528,7 @@ function lohkareet_inject_editor_translations() {
 		'Home',
 		'Page hero',
 		'Site mark',
+		'Footer',
 	);
 	$data   = array(
 		'' => array(
