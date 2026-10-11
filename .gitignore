@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+.env
+.env.*
+wp-config.php
+node_modules/
+vendor/
+uploads/

@@ -1,0 +1,66 @@
+.lohkareet-map {
+	width: 100%;
+	min-height: 24rem;
+	height: min(70vh, 40rem);
+}
+
+.lohkareet-map__frame {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background: transparent;
+}
+
+.lohkareet-event-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.lohkareet-event-card {
+	margin-block: 0 1.5rem;
+}
+
+.lohkareet-event-summary h2,
+.lohkareet-event-summary h3,
+.lohkareet-event-summary p,
+.lohkareet-event-facts p {
+	margin: 0 0 0.35rem;
+}
+
+.lohkareet-event-card__image {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	margin-bottom: 0.75rem;
+}
+
+.lohkareet-event-facts .lohkareet-map {
+	margin-top: 1rem;
+}
+
+.lohkareet-language-switcher ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.lohkareet-language-switcher a {
+	text-decoration: none;
+}
+
+.lohkareet-language-switcher [aria-current="true"] {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+@media (max-width: 40rem) {
+	.lohkareet-map {
+		min-height: 20rem;
+	}
+}
