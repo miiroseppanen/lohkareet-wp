@@ -76,7 +76,7 @@ These facts are language-independent. The field names do not have `_fi` or `_en`
 - start and end time
 - municipality
 - venue and street address
-- per-event map URL
+- Google Maps URL and Zoneatlas embed URL
 - artist name and artist status (`confirmed`, `tentative`, `unannounced`)
 
 Sorting is calculated from the date fields. It is not stored and it is not translated.
@@ -99,7 +99,7 @@ The home-page map URL depends on the current Polylang slug. The only place to se
 
 The `/en/` segment is not assumed to mean English. Replace the `fi` and `en` entries when the final Zoneatlas URLs are known. The helper adds `cooperativeGesturesEnabled=true` if a replacement URL omits it. The map block’s URL field is an optional override for one instance; leave it empty on the home page so the language URLs are used. The iframe stays responsive, has an accessible name, and keeps `allow="fullscreen; geolocation"`.
 
-Until an event has its own Zoneatlas map, the compact map beside the place text is the front-page Zoneatlas embed. `lohkareet_map_point` says whether the stored coordinates are the event location or only the arrival point. `lohkareet_map_url` is the optional external Google Maps link. It is shared data, not switched by language, and it does not fall back to the series map. The embedded map does not load Google.
+The map beside the place text uses `lohkareet_zoneatlas_url` when that event has its own Zoneatlas embed. That map is 600px tall and the width of the viewport. An empty value keeps the compact front-page series map. The address is shared, not switched by language, and the theme adds `cooperativeGesturesEnabled=true` when it is missing. `lohkareet_map_point` says whether the stored coordinates are the event location or only the arrival point. `lohkareet_map_url` is the optional external Google Maps link. It is shared data and it does not fall back to the series map. The embedded map does not load Google.
 
 ### Language switcher
 
@@ -230,6 +230,7 @@ Empty means unknown. Do not type “julkaistaan myöhemmin” into a field. Thos
 | Map longitude | `lohkareet_map_longitude` | Shared | No verified longitude |
 | Mapped point | `lohkareet_map_point` | Shared | `event` or `arrival`; empty hides the map and the Maps button |
 | Google Maps URL | `lohkareet_map_url` | Shared | Optional https link; empty builds the button from the coordinates |
+| Zoneatlas URL | `lohkareet_zoneatlas_url` | Shared | Optional https embed; empty shows the series map |
 | Artist name | `lohkareet_artist_name` | Shared | No public name |
 | Artist description | `lohkareet_artist_description` | Translated | No description |
 | Artist status | `lohkareet_artist_status` | Shared | `confirmed`, `tentative`, or `unannounced` |
@@ -277,7 +278,7 @@ The next event is the earliest event that has a year and is not certainly past. 
 
 ### What the templates hide
 
-Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” After that, Paikka renders only when a location description or a verified map point exists, and Saapuminen renders only when arrival instructions or a verified Google Maps destination exists. The compact map is the front-page Zoneatlas map, used as a placeholder until the event has its own Zoneatlas map. It does not load Google. The Maps link is a separate https URL. A point marked `arrival` is labeled as an arrival point, not as the event location. Listings do not show works.
+Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” After that, Paikka renders only when a location description or a verified map point exists, and Saapuminen renders only when arrival instructions or a verified Google Maps destination exists. The event’s own Zoneatlas map is 600px tall and the width of the viewport. An empty Zoneatlas URL keeps the compact front-page series map. It does not load Google. The Maps link is a separate https URL. A point marked `arrival` is labeled as an arrival point, not as the event location. Listings do not show works.
 
 Event listings show a complete date and its time on one line, the venue when it is known, and a confirmed artist. A year or a month without a day stays stored and is left off the listing. Tentative and unannounced artists are left off the listing. The single event page still shows the fuller facts, including a partial date and a tentative artist.
 
@@ -392,6 +393,6 @@ Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.46`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.47`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.

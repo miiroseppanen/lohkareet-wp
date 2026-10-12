@@ -31,6 +31,7 @@ function lohkareet_event_meta_fields() {
 		'lohkareet_map_longitude'         => 'lohkareet_sanitize_longitude',
 		'lohkareet_map_point'             => 'lohkareet_sanitize_map_point',
 		'lohkareet_map_url'               => 'lohkareet_sanitize_https_url',
+		'lohkareet_zoneatlas_url'         => 'lohkareet_sanitize_https_url',
 		'lohkareet_artist_name'           => 'lohkareet_sanitize_plain_text',
 		'lohkareet_artist_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_artist_status'         => 'lohkareet_sanitize_artist_status',
@@ -65,6 +66,7 @@ function lohkareet_shared_event_meta_keys() {
 		'lohkareet_map_longitude',
 		'lohkareet_map_point',
 		'lohkareet_map_url',
+		'lohkareet_zoneatlas_url',
 		'lohkareet_artist_name',
 		'lohkareet_artist_status',
 		'lohkareet_artist_image',
@@ -164,6 +166,7 @@ function lohkareet_render_event_meta_box( $post ) {
 	$longitude   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_longitude' );
 	$map_point   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_point' );
 	$map_url     = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_url' );
+	$zoneatlas   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_zoneatlas_url' );
 	$artist      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_name' );
 	$artist_text = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_description' );
 	$status      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_status' );
@@ -174,7 +177,7 @@ function lohkareet_render_event_meta_box( $post ) {
 	}
 
 	echo '<p class="description">' . esc_html__( 'Leave a field empty when that fact is still unknown. Do not type a “will be announced later” sentence into a field.', 'lohkareet' ) . '</p>';
-	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, map URL, performing artist, artist status, artist image, social image, and assigned works are shared. Translate the location description, the arrival instructions, the artist description, and the social description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, Google Maps URL, Zoneatlas URL, performing artist, artist status, artist image, social image, and assigned works are shared. Translate the location description, the arrival instructions, the artist description, and the social description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
 	?>
 	<fieldset>
 		<legend><strong><?php esc_html_e( 'Date', 'lohkareet' ); ?></strong></legend>
@@ -264,6 +267,11 @@ function lohkareet_render_event_meta_box( $post ) {
 		<label for="lohkareet_map_url"><strong><?php esc_html_e( 'Google Maps URL', 'lohkareet' ); ?></strong></label><br>
 		<input type="url" class="widefat" id="lohkareet_map_url" name="lohkareet_map_url" value="<?php echo esc_attr( $map_url ); ?>" placeholder="https://">
 		<span class="description"><?php esc_html_e( 'Optional https link for the Google Maps button. Leave this empty to build the link from the coordinates. This is not the embedded map.', 'lohkareet' ); ?></span>
+	</p>
+	<p>
+		<label for="lohkareet_zoneatlas_url"><strong><?php esc_html_e( 'Zoneatlas URL', 'lohkareet' ); ?></strong></label><br>
+		<input type="url" class="widefat" id="lohkareet_zoneatlas_url" name="lohkareet_zoneatlas_url" value="<?php echo esc_attr( $zoneatlas ); ?>" placeholder="https://">
+		<span class="description"><?php esc_html_e( 'Https address of this event’s Zoneatlas map. Leave this empty to show the series map.', 'lohkareet' ); ?></span>
 	</p>
 	<p>
 		<label for="lohkareet_artist_name"><strong><?php esc_html_e( 'Performing artist', 'lohkareet' ); ?></strong></label><br>

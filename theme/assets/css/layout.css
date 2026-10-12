@@ -401,6 +401,14 @@ a.lohkareet-event-summary {
 	border: 0;
 }
 
+.lohkareet-place__map--event {
+	width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
+	max-width: none;
+	height: 600px;
+	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
+	background: transparent;
+}
+
 .lohkareet-arrival__link a {
 	display: inline-flex;
 	align-items: center;
@@ -756,6 +764,16 @@ a.lohkareet-event-summary {
 	.single-event .lohkareet-place__map {
 		grid-column: 9 / 13;
 		height: clamp(14rem, 18vw, 18rem);
+	}
+
+	.single-event .lohkareet-place__map.lohkareet-place__map--event {
+		grid-column: 1 / -1;
+		grid-row: 3;
+		width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
+		max-width: none;
+		height: 600px;
+		margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
+		background: transparent;
 	}
 
 	.lohkareet-event-summary > .lohkareet-event-summary__body {

@@ -233,6 +233,7 @@ foreach ( $content['events'] as $event ) {
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_longitude', isset( $event['longitude'] ) ? $event['longitude'] : '' );
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_point', isset( $event['map_point'] ) ? $event['map_point'] : '' );
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_url', isset( $event['map_url'] ) ? $event['map_url'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_zoneatlas_url', isset( $event['zoneatlas'] ) ? $event['zoneatlas'] : '' );
 
 	$image_id = 0;
 

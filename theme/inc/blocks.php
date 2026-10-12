@@ -606,10 +606,9 @@ function lohkareet_get_event_context_html( $post_id ) {
 }
 
 /**
- * Editorial place text and the series map as a compact placeholder.
+ * Editorial place text and the event’s Zoneatlas map.
  *
- * A per-event Zoneatlas map can replace the placeholder later. Until then
- * the embed is the same map as the front page.
+ * An empty Zoneatlas URL keeps the series map as a compact placeholder.
  *
  * @param int $post_id Event ID.
  */
@@ -623,7 +622,7 @@ function lohkareet_get_event_place_html( $post_id ) {
 	$html  = '<section class="lohkareet-place">';
 	$html .= '<h2>' . esc_html__( 'Place', 'lohkareet' ) . '</h2>';
 	$html .= '<div class="lohkareet-place__text">' . lohkareet_plain_paragraphs_html( $location ) . '</div>';
-	$html .= lohkareet_get_event_place_map_html();
+	$html .= lohkareet_get_event_place_map_html( $post_id );
 	$html .= '</section>';
 
 	return $html;
@@ -704,24 +703,39 @@ function lohkareet_get_event_map_coordinates( $post_id ) {
 }
 
 /**
- * Compact Zoneatlas placeholder beside the place text.
+ * Zoneatlas map beside the place text.
  *
- * This is the front-page map until the event has its own Zoneatlas map.
+ * The event’s own embed replaces the series map when its URL is stored.
+ *
+ * @param int $post_id Event ID.
  */
-function lohkareet_get_event_place_map_html() {
-	$url = lohkareet_get_zoneatlas_map_url();
+function lohkareet_get_event_place_map_html( $post_id ) {
+	$event_url = lohkareet_with_cooperative_gestures( lohkareet_get_event_meta_string( $post_id, 'lohkareet_zoneatlas_url' ) );
+	$url       = '' !== $event_url ? $event_url : lohkareet_get_zoneatlas_map_url();
 
 	if ( '' === $url ) {
 		return '';
 	}
 
-	$iframe = lohkareet_get_map_iframe( $url, __( 'Lohkareet', 'lohkareet' ) );
+	$title = lohkareet_get_event_meta_string( $post_id, 'lohkareet_municipality' );
+
+	if ( '' === $title ) {
+		$title = __( 'Lohkareet', 'lohkareet' );
+	}
+
+	$iframe = lohkareet_get_map_iframe( $url, $title );
 
 	if ( '' === $iframe ) {
 		return '';
 	}
 
-	return '<div class="lohkareet-place__map">' . $iframe . '</div>';
+	$class = 'lohkareet-place__map';
+
+	if ( '' !== $event_url ) {
+		$class .= ' lohkareet-place__map--event';
+	}
+
+	return '<div class="' . esc_attr( $class ) . '">' . $iframe . '</div>';
 }
 
 /**
