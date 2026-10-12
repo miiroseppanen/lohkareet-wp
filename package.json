@@ -1,0 +1,13 @@
+{
+  "name": "lohkareet",
+  "private": true,
+  "scripts": {
+    "wp:start": "bash scripts/local-wordpress.sh start",
+    "wp:stop": "bash scripts/local-wordpress.sh stop",
+    "wp:restart": "bash scripts/local-wordpress.sh restart",
+    "wp:status": "bash scripts/local-wordpress.sh status",
+    "wp:backup": "bash scripts/local-wordpress.sh backup",
+    "wp:restore": "bash scripts/local-wordpress.sh restore",
+    "wp:bootstrap": "bash scripts/local-wordpress.sh bootstrap"
+  }
+}

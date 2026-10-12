@@ -9,3 +9,6 @@ wp-config.php
 node_modules/
 vendor/
 uploads/
+
+# Persistent local WordPress runtime. The theme stays in git.
+.local/

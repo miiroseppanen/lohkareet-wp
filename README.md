@@ -272,9 +272,11 @@ The next event is the earliest event that has a year and is not certainly past. 
 
 ### What the templates hide
 
-Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” Time, street address, location description, and a per-event map render only when they contain something. Cards do not list works or the performing artist. They show the date sentence when the date is unknown, and show venue and time only when those values exist.
+Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” Time, street address, location description, and a per-event map render only when they contain something. Listings do not show works.
 
-The series map on the home page is separate from a per-event map. Its URL comes from `lohkareet_get_zoneatlas_urls()`. Only https URLs are accepted.
+Event listings show a complete date and its time on one line, the venue when it is known, and a confirmed artist. A year or a month without a day stays stored and is left off the listing. Tentative and unannounced artists are left off the listing. The single event page still shows the fuller facts, including a partial date and a tentative artist.
+
+The series map on the home page sits between the next event and the full event list. It is separate from a per-event map. Its URL comes from `lohkareet_get_zoneatlas_urls()`. Only https URLs are accepted.
 
 ## Pages to create in WordPress
 
@@ -301,6 +303,8 @@ These notes are for the person entering events. They are not stored in the theme
 | Lempäälä | year 2027 only | empty | empty | Aho, alustava |
 | Pälkäne | February 2027, day empty | empty | empty | status Ei julkaistu, name empty |
 
+QODOVV and Heikki and Melanie Lindgren are one contributor and one work each. Both works are assigned to Nokia, Sastamala, Ylöjärvi, Valkeakoski, Pirkkala, and Lempäälä. They are not assigned to Punkalaidun, Hämeenkyrö, or Pälkäne.
+
 With these dates, the next complete event on 12 October 2026 is Punkalaidun. The theme does not hardcode that result. It chooses the earliest event that has a year and is not past.
 
 ## Where to change something
@@ -323,29 +327,55 @@ With these dates, the next complete event on 12 October 2026 is Punkalaidun. The
 
 ## Local development
 
-1. Install WordPress locally. PHP 8.1 or newer and WordPress 6.6 or newer are required. This repository does not include a local environment.
-2. Link or copy `/theme` to `wp-content/themes/lohkareet`.
-3. Activate **Lohkareet**.
-4. Install Polylang on the server, not in this theme. Add the predefined languages Suomi (slug `fi`, locale `fi`, default) and English (slug `en`, locale `en_US`). Leave those locale values unchanged. Create the pages and events, and set a static front page. The theme also runs without this step.
-5. Edit files in `/theme` and reload. There is no build step.
+The local site is a persistent WordPress Playground installation. Its database and uploads stay in this project. They are not kept in an anonymous temporary directory, and they are not committed.
+
+Do not use `npx @wp-playground/cli server` by itself for editorial work. That command creates `node-playground-cli-site-<pid>-*` under the operating-system temp directory and deletes it when the process ends.
+
+Node is required. There is no PHP or Docker install on the machine. The theme source remains `theme/` and is mounted into the local site on every start.
 
 ```bash
-ln -s /absolute/path/to/siirtyma-wp/theme /absolute/path/to/wordpress/wp-content/themes/lohkareet
+npm run wp:start
+npm run wp:stop
+npm run wp:restart
+npm run wp:status
+npm run wp:bootstrap
+npm run wp:backup
+npm run wp:restore -- .local/backups/<timestamp>
 ```
 
-## Deploying to Hostaan
+`wp:start` always reopens `.local/wordpress`. The first start downloads WordPress into that directory. Later starts reuse it. The site listens on http://127.0.0.1:9400/ and logs in as `admin` / `password`.
 
-Copy the contents of `/theme` to `wp-content/themes/lohkareet` on the Hostaan server, then activate the theme if it is not already active. Deploy the theme directory only.
+Run `wp:bootstrap` after the first start, with the server stopped or running. It writes the known pages, nine events, Nokia works, and the primary navigation from `dev/site-content.php`. Run it again only when those known posts should be reset to the fixture. It does not edit posts that are not in the fixture.
 
-Leave these on the server, out of Git:
+| What | Where |
+| --- | --- |
+| WordPress core and `wp-config.php` | `.local/wordpress/` |
+| Database (SQLite) | `.local/wordpress/wp-content/database/` |
+| Uploads | `.local/wordpress/wp-content/uploads/` |
+| Server pid and log | `.local/run/` |
+| Local backups | `.local/backups/<timestamp>/` |
+| Theme source | `theme/` (git) |
+| Content fixture and importer | `dev/site-content.php`, `dev/bootstrap.php` (git) |
 
-- WordPress core
-- `wp-config.php` and secrets
-- `wp-content/uploads`
-- the database
-- plugins
+In git: the theme, the fixture, the blueprint, and `scripts/local-wordpress.sh`.
 
-No deploy script is set up yet. Add one when the Hostaan workflow is decided, and document the command here.
+Not in git: `.local/`, including the database, uploads, WordPress core, logs, and backups.
+
+A backup copies the database, uploads, and `wp-config.php`. Restore only while the server is stopped. Then start the site again.
+
+## Migrating to Hostaan later
+
+Do not deploy until the server is available. The local site is the working copy until then.
+
+1. Export the database with WordPress’s export tool, or copy `.local/wordpress/wp-content/database` and convert SQLite to MySQL with WP-CLI or the SQLite plugin’s export. Prefer a WXR export plus the uploads directory if the host is MySQL.
+2. Copy `.local/wordpress/wp-content/uploads/` to the server’s `wp-content/uploads/`.
+3. Copy `theme/` to `wp-content/themes/lohkareet` and activate it. Do not copy `.local/wordpress` core over the host.
+4. Replace `http://127.0.0.1:9400` in the database, including serialized options, with the production URL. Use WP-CLI `search-replace` so serialized lengths stay valid.
+5. Save permalinks once, or run `wp rewrite flush`.
+6. Install plugins on the server. Polylang is not part of this local site yet. Add Suomi (`fi` / `fi`) and English (`en` / `en_US`) there, then translate pages, events, and the navigation post. Do not invent those translations in the theme.
+7. After deployment, check the front page, `/tapahtumat/`, one event, Lohkareista, Varustautuminen, the menu, and a media file.
+
+Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the server, out of Git.
 
 ## Development principles
 

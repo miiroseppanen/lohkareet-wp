@@ -202,6 +202,113 @@ function lohkareet_get_event_time_html( $post_id ) {
 }
 
 /**
+ * Whether a listing may show a public date.
+ *
+ * A listing date needs a year, a month, and a day. A year or a month alone
+ * stays in the event data and is omitted from the compact row.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_event_has_public_listing_date( $post_id ) {
+	$year  = lohkareet_get_event_int( $post_id, 'lohkareet_date_year' );
+	$month = lohkareet_get_event_int( $post_id, 'lohkareet_date_month' );
+	$day   = lohkareet_get_event_int( $post_id, 'lohkareet_date_day' );
+
+	return $year > 0 && $month > 0 && $day > 0 && '' !== lohkareet_get_event_date_display( $post_id );
+}
+
+/**
+ * Clock text for a listing. Whole hours drop the minutes, so 16:00 is 16.
+ *
+ * @param string $time Stored H:i value.
+ */
+function lohkareet_format_listing_clock( $time ) {
+	if ( ! preg_match( '/^(\d{2}):(\d{2})$/', $time, $matches ) ) {
+		return $time;
+	}
+
+	$hour = (string) (int) $matches[1];
+
+	if ( '00' === $matches[2] ) {
+		return $hour;
+	}
+
+	return $hour . ':' . $matches[2];
+}
+
+/**
+ * Compact time markup for a listing, or an empty string when the time is unknown.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_listing_time_html( $post_id ) {
+	$start = lohkareet_get_event_meta_string( $post_id, 'lohkareet_start_time' );
+	$end   = lohkareet_get_event_meta_string( $post_id, 'lohkareet_end_time' );
+
+	$part = static function ( $time ) {
+		if ( '' === $time ) {
+			return '';
+		}
+
+		return '<time datetime="' . esc_attr( $time ) . '">' . esc_html( lohkareet_format_listing_clock( $time ) ) . '</time>';
+	};
+
+	$start_html = $part( $start );
+	$end_html   = $part( $end );
+
+	if ( '' !== $start_html && '' !== $end_html ) {
+		return $start_html . '–' . $end_html;
+	}
+
+	return $start_html . $end_html;
+}
+
+/**
+ * Date and time for one listing row.
+ *
+ * Partial dates are omitted. A known time is appended on the same line.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_listing_when_html( $post_id ) {
+	if ( ! lohkareet_event_has_public_listing_date( $post_id ) ) {
+		return '';
+	}
+
+	$html = lohkareet_get_event_date_html( $post_id );
+
+	if ( '' === $html ) {
+		return '';
+	}
+
+	$time = lohkareet_get_event_listing_time_html( $post_id );
+
+	if ( '' !== $time ) {
+		$html .= ' · ' . $time;
+	}
+
+	return $html;
+}
+
+/**
+ * One location line for a listing.
+ *
+ * The venue is the public place name. A location description is used only
+ * when the venue is empty, so the two fields are not repeated.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_listing_place( $post_id ) {
+	$venue = lohkareet_get_event_meta_string( $post_id, 'lohkareet_venue' );
+
+	if ( '' !== $venue ) {
+		return $venue;
+	}
+
+	return lohkareet_get_event_meta_string( $post_id, 'lohkareet_location_description' );
+}
+
+/**
  * Whether the event has a known year and can be placed on a timeline.
  *
  * @param int $post_id Event ID.

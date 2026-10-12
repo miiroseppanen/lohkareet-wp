@@ -47,7 +47,7 @@
 }
 
 .lohkareet-hero__logo {
-	--logo-size: clamp(6.5rem, 22vw, 26.45rem);
+	--logo-size: clamp(7.3rem, 24.6vw, 29.6rem);
 	display: block;
 	width: auto;
 	height: var(--logo-size);
@@ -70,7 +70,7 @@
 
 @media (max-width: 40rem) {
 	.lohkareet-hero__logo {
-		--logo-size: 26.6vw;
+		--logo-size: 29.8vw;
 	}
 
 	.lohkareet-hero__title {

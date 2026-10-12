@@ -300,16 +300,16 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 	if ( '' === $title ) {
 		$title = '' !== $municipality ? $municipality : __( 'Event', 'lohkareet' );
 	}
-	$venue         = lohkareet_get_event_meta_string( $post_id, 'lohkareet_venue' );
-	$date_html     = lohkareet_get_event_date_html( $post_id );
-	$time_html     = lohkareet_get_event_time_html( $post_id );
-	$thumbnail_id  = get_post_thumbnail_id( $post_id );
 
-	if ( '' === $date_html ) {
-		$date_html = esc_html__( 'The date will be confirmed.', 'lohkareet' );
-	}
+	$name         = '' !== $municipality ? $municipality : $title;
+	$when_html    = lohkareet_get_event_listing_when_html( $post_id );
+	$place        = lohkareet_get_event_listing_place( $post_id );
+	$artist       = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_name' );
+	$status       = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_status' );
+	$thumbnail_id = get_post_thumbnail_id( $post_id );
 
-	$html = '<article class="lohkareet-event-summary">';
+	$html  = '<a class="lohkareet-event-summary" href="' . esc_url( $permalink ) . '">';
+	$html .= '<span class="lohkareet-event-summary__body">';
 
 	if ( $thumbnail_id ) {
 		$html .= wp_get_attachment_image(
@@ -322,23 +322,26 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 		);
 	}
 
-	$html .= '<h' . $heading_level . ' class="lohkareet-event-summary__name"><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a></h' . $heading_level . '>';
+	$html .= '<h' . $heading_level . ' class="lohkareet-event-summary__name">' . esc_html( $name ) . '</h' . $heading_level . '>';
 
-	if ( '' !== $municipality && $municipality !== $title ) {
-		$html .= '<p class="lohkareet-event-summary__municipality">' . esc_html( $municipality ) . '</p>';
+	if ( '' !== $when_html ) {
+		$html .= '<p class="lohkareet-event-summary__when">' . $when_html . '</p>';
 	}
 
-	$html .= '<p class="lohkareet-event-summary__date">' . $date_html . '</p>';
-
-	if ( '' !== $time_html ) {
-		$html .= '<p class="lohkareet-event-summary__time">' . $time_html . '</p>';
+	if ( '' !== $place ) {
+		$html .= '<p class="lohkareet-event-summary__place">' . esc_html( $place ) . '</p>';
 	}
 
-	if ( '' !== $venue ) {
-		$html .= '<p class="lohkareet-event-summary__venue">' . esc_html( $venue ) . '</p>';
+	if ( 'confirmed' === $status && '' !== $artist ) {
+		$html .= '<p class="lohkareet-event-summary__artist">' . esc_html( $artist ) . '</p>';
 	}
 
-	$html .= '</article>';
+	$html .= '</span>';
+	$html .= '<span class="lohkareet-event-summary__arrow" aria-hidden="true">';
+	$html .= '<svg width="30" height="30" viewBox="0 0 30 30" fill="none" focusable="false" xmlns="http://www.w3.org/2000/svg">';
+	$html .= '<path d="M25.5625 4.4375C22.6458 1.47917 19.125 0 15 0C10.875 0 7.34375 1.46875 4.40625 4.40625C1.46875 7.34375 0 10.875 0 15C0 19.125 1.46875 22.6562 4.40625 25.5938C7.34375 28.5312 10.875 30 15 30C19.125 30 22.6562 28.5312 25.5938 25.5938C28.5312 22.6562 30 19.125 30 15C30 10.875 28.5208 7.35417 25.5625 4.4375ZM23.9375 14.625C23.9792 14.75 24 14.875 24 15C24 15.125 23.9792 15.25 23.9375 15.375C23.8958 15.5 23.8125 15.6042 23.6875 15.6875L17.6875 21.6875C17.2292 22.1875 16.7604 22.1979 16.2812 21.7188C15.8021 21.2396 15.8125 20.7708 16.3125 20.3125L20.5625 16H5C4.70833 16 4.46875 15.9062 4.28125 15.7188C4.09375 15.5312 4 15.2917 4 15C4 14.7083 4.09375 14.4688 4.28125 14.2812C4.46875 14.0938 4.70833 14 5 14H20.5625L16.3125 9.6875C15.8125 9.22917 15.8021 8.76042 16.2812 8.28125C16.7604 7.80208 17.2292 7.8125 17.6875 8.3125L23.6875 14.3125C23.8125 14.3958 23.8958 14.5 23.9375 14.625Z" fill="currentColor"/>';
+	$html .= '</svg></span>';
+	$html .= '</a>';
 
 	return $html;
 }

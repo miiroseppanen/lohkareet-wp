@@ -1,0 +1,21 @@
+{
+  "landingPage": "/",
+  "login": true,
+  "steps": [
+    {
+      "step": "activateTheme",
+      "themeFolderName": "lohkareet"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Lohkareet",
+        "blogdescription": "",
+        "timezone_string": "Europe/Helsinki",
+        "date_format": "j.n.Y",
+        "time_format": "H:i",
+        "start_of_week": 1
+      }
+    }
+  ]
+}

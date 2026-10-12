@@ -109,7 +109,7 @@ function lohkareet_render_menu_home() {
 		$attrs['aria-current'] = 'page';
 	}
 
-	return '<a ' . get_block_wrapper_attributes( $attrs ) . '>' . esc_html__( 'Home', 'lohkareet' ) . '</a>';
+	return '<a ' . get_block_wrapper_attributes( $attrs ) . '><span class="lohkareet-header__home-label">' . esc_html__( 'Home', 'lohkareet' ) . '</span></a>';
 }
 
 /**

@@ -33,9 +33,15 @@
 		var list = [];
 
 		for ( var i = 0; i < nodes.length; i++ ) {
-			if ( nodes[ i ].getClientRects().length > 0 ) {
-				list.push( nodes[ i ] );
+			if ( ! nodes[ i ].getClientRects().length ) {
+				continue;
 			}
+
+			if ( window.getComputedStyle( nodes[ i ] ).visibility === 'hidden' ) {
+				continue;
+			}
+
+			list.push( nodes[ i ] );
 		}
 
 		return list;

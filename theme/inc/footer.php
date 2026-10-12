@@ -62,10 +62,26 @@ function lohkareet_get_footer_navigation_post() {
 			'posts_per_page'   => 1,
 			'orderby'          => 'ID',
 			'order'            => 'ASC',
+			'meta_key'         => '_lohkareet_primary_navigation',
+			'meta_value'       => '1',
 			'no_found_rows'    => true,
 			'suppress_filters' => true,
 		)
 	);
+
+	if ( ! $posts ) {
+		$posts = get_posts(
+			array(
+				'post_type'        => 'wp_navigation',
+				'post_status'      => 'publish',
+				'posts_per_page'   => 1,
+				'orderby'          => 'ID',
+				'order'            => 'ASC',
+				'no_found_rows'    => true,
+				'suppress_filters' => true,
+			)
+		);
+	}
 
 	if ( ! $posts || ! isset( $posts[0] ) || ! $posts[0] instanceof WP_Post ) {
 		return null;
@@ -128,6 +144,15 @@ function lohkareet_footer_navigation_lang( $post_id ) {
 function lohkareet_footer_navigation_url( $attrs ) {
 	$kind = isset( $attrs['kind'] ) ? (string) $attrs['kind'] : '';
 	$id   = isset( $attrs['id'] ) ? (int) $attrs['id'] : 0;
+	$type = isset( $attrs['type'] ) ? (string) $attrs['type'] : '';
+
+	if ( 'post-type-archive' === $kind && 'event' === $type ) {
+		$archive = get_post_type_archive_link( 'event' );
+
+		if ( is_string( $archive ) && '' !== $archive ) {
+			return $archive;
+		}
+	}
 
 	if ( 'post-type' === $kind && $id > 0 && 'publish' === get_post_status( $id ) ) {
 		$permalink = get_permalink( $id );
@@ -219,6 +244,55 @@ function lohkareet_get_footer_navigation_links() {
 
 	return array_merge( $home, $links );
 }
+
+/**
+ * Uses the same Navigation post in the header that the footer reads.
+ *
+ * An empty Navigation block would otherwise fall back to a page list.
+ * Page and event-archive URLs are resolved when the block renders.
+ *
+ * @param array<string, mixed> $parsed_block Parsed block.
+ * @return array<string, mixed>
+ */
+function lohkareet_bind_navigation_blocks( $parsed_block ) {
+	if ( ! is_array( $parsed_block ) ) {
+		return $parsed_block;
+	}
+
+	$name = isset( $parsed_block['blockName'] ) ? $parsed_block['blockName'] : '';
+
+	if ( 'core/navigation' === $name ) {
+		$ref = isset( $parsed_block['attrs']['ref'] ) ? (int) $parsed_block['attrs']['ref'] : 0;
+
+		if ( $ref <= 0 ) {
+			$post = lohkareet_get_footer_navigation_post();
+
+			if ( $post instanceof WP_Post ) {
+				if ( ! isset( $parsed_block['attrs'] ) || ! is_array( $parsed_block['attrs'] ) ) {
+					$parsed_block['attrs'] = array();
+				}
+
+				$parsed_block['attrs']['ref'] = $post->ID;
+			}
+		}
+	}
+
+	if ( 'core/navigation-link' === $name ) {
+		$attrs = ( isset( $parsed_block['attrs'] ) && is_array( $parsed_block['attrs'] ) ) ? $parsed_block['attrs'] : array();
+		$url   = lohkareet_footer_navigation_url( $attrs );
+
+		if ( '' !== $url ) {
+			if ( ! isset( $parsed_block['attrs'] ) || ! is_array( $parsed_block['attrs'] ) ) {
+				$parsed_block['attrs'] = array();
+			}
+
+			$parsed_block['attrs']['url'] = $url;
+		}
+	}
+
+	return $parsed_block;
+}
+add_filter( 'render_block_data', 'lohkareet_bind_navigation_blocks' );
 
 /**
  * Direct language links, or an empty string when fewer than two languages exist.
