@@ -810,7 +810,12 @@ function lohkareet_render_site_footer() {
 	$html .= '</p>';
 	$html .= '<nav class="lohkareet-footer__nav" aria-label="' . esc_attr__( 'Footer', 'lohkareet' ) . '">' . $nav . '</nav>';
 	$html .= '<div class="lohkareet-footer__credit">';
+	$html .= '<a href="' . esc_url( 'https://ambientry.fi/' ) . '">';
 	$html .= '<img src="' . esc_url( get_theme_file_uri( 'assets/images/ambientry-logo.svg' ) ) . '" alt="' . esc_attr__( 'Suomen Ambientyhdistys ry', 'lohkareet' ) . '" width="43" height="27" decoding="async" />';
+	$html .= '</a>';
+	$html .= '<a href="' . esc_url( 'https://www.operaatiopirkanmaa.fi/' ) . '">';
+	$html .= '<img src="' . esc_url( get_theme_file_uri( 'assets/images/operaatio_pirkanmaa-logo-white.png' ) ) . '" alt="' . esc_attr__( 'Operaatio Pirkanmaa', 'lohkareet' ) . '" width="1000" height="559" decoding="async" />';
+	$html .= '</a>';
 	$html .= '</div>';
 	$html .= '<div class="lohkareet-footer__colophon">';
 	$html .= lohkareet_get_footer_language_markup();
