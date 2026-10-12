@@ -137,13 +137,15 @@ function lohkareet_render_page_hero() {
 		return '';
 	}
 
-	$title = '';
-	$extra = '';
+	$title  = '';
+	$before = '';
+	$extra  = '';
 
 	if ( is_singular( 'event' ) ) {
 		$post_id = get_queried_object_id();
 		$title   = get_the_title( $post_id );
-		$extra   = lohkareet_get_event_facts_html( $post_id );
+		$before  = lohkareet_get_event_hero_when_html( $post_id );
+		$extra   = lohkareet_get_event_hero_place_html( $post_id );
 	} elseif ( is_singular() ) {
 		$title = get_the_title();
 	} elseif ( is_post_type_archive( 'event' ) ) {
@@ -169,6 +171,7 @@ function lohkareet_render_page_hero() {
 
 	$html  = '<section ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-page-hero' ) ) . '>';
 	$html .= '<div class="lohkareet-page-hero__grid">';
+	$html .= $before;
 	$html .= '<h1 class="lohkareet-page-hero__title">' . esc_html( $title ) . '</h1>';
 	$html .= $extra;
 	$html .= '</div></section>';
@@ -322,11 +325,11 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 		);
 	}
 
-	$html .= '<h' . $heading_level . ' class="lohkareet-event-summary__name">' . esc_html( $name ) . '</h' . $heading_level . '>';
-
 	if ( '' !== $when_html ) {
 		$html .= '<p class="lohkareet-event-summary__when">' . $when_html . '</p>';
 	}
+
+	$html .= '<h' . $heading_level . ' class="lohkareet-event-summary__name">' . esc_html( $name ) . '</h' . $heading_level . '>';
 
 	if ( '' !== $place ) {
 		$html .= '<p class="lohkareet-event-summary__place">' . esc_html( $place ) . '</p>';
@@ -404,21 +407,57 @@ function lohkareet_render_event_details( $attributes, $content, $block ) {
  * @param int $post_id Event ID.
  */
 function lohkareet_get_event_facts_html( $post_id ) {
+	return lohkareet_get_event_hero_when_html( $post_id ) . lohkareet_get_event_hero_place_html( $post_id );
+}
+
+/**
+ * Date and time shown above the event title.
+ *
+ * A complete date uses the same compact line as a listing. A partial date
+ * stays on its own line, with the time or its placeholder underneath.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_hero_when_html( $post_id ) {
+	$listing = lohkareet_get_event_listing_when_html( $post_id );
+
+	if ( '' !== $listing ) {
+		$html = '<p class="lohkareet-event-facts__when">' . $listing . '</p>';
+
+		if ( '' === lohkareet_get_event_time_html( $post_id ) ) {
+			$html .= '<p class="lohkareet-event-facts__time">' . esc_html__( 'The time will be confirmed.', 'lohkareet' ) . '</p>';
+		}
+
+		return $html;
+	}
+
+	$date_html = lohkareet_get_event_date_html( $post_id );
+	$time_html = lohkareet_get_event_time_html( $post_id );
+
+	$html  = '<p class="lohkareet-event-facts__date">' . ( '' !== $date_html ? $date_html : esc_html__( 'The date will be confirmed.', 'lohkareet' ) ) . '</p>';
+	$html .= '<p class="lohkareet-event-facts__time">' . ( '' !== $time_html ? $time_html : esc_html__( 'The time will be confirmed.', 'lohkareet' ) ) . '</p>';
+
+	return $html;
+}
+
+/**
+ * Place lines shown under the event title.
+ *
+ * The title already carries the municipality when they are the same name.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_hero_place_html( $post_id ) {
 	$municipality = lohkareet_get_event_meta_string( $post_id, 'lohkareet_municipality' );
 	$venue        = lohkareet_get_event_meta_string( $post_id, 'lohkareet_venue' );
 	$address      = lohkareet_get_event_meta_string( $post_id, 'lohkareet_address' );
-	$date_html    = lohkareet_get_event_date_html( $post_id );
-	$time_html    = lohkareet_get_event_time_html( $post_id );
+	$event_title  = get_the_title( $post_id );
 	$html         = '';
-
-	$event_title = get_the_title( $post_id );
 
 	if ( '' !== $municipality && $municipality !== $event_title ) {
 		$html .= '<p class="lohkareet-event-facts__municipality">' . esc_html( $municipality ) . '</p>';
 	}
 
-	$html .= '<p class="lohkareet-event-facts__date">' . ( '' !== $date_html ? $date_html : esc_html__( 'The date will be confirmed.', 'lohkareet' ) ) . '</p>';
-	$html .= '<p class="lohkareet-event-facts__time">' . ( '' !== $time_html ? $time_html : esc_html__( 'The time will be confirmed.', 'lohkareet' ) ) . '</p>';
 	$html .= '<p class="lohkareet-event-facts__venue">' . ( '' !== $venue ? esc_html( $venue ) : esc_html__( 'The venue will be confirmed.', 'lohkareet' ) ) . '</p>';
 
 	if ( '' !== $address ) {

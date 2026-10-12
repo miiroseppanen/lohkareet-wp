@@ -832,21 +832,14 @@ a.lohkareet-event-summary {
 		grid-column: 1 / 7;
 	}
 
-	.single-event .lohkareet-page-hero .lohkareet-event-facts__date {
-		grid-column: 1 / 4;
-		grid-row: 2;
-	}
-
-	.single-event .lohkareet-page-hero .lohkareet-event-facts__time {
-		grid-column: 4 / 7;
-		grid-row: 2;
-	}
-
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__when,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__date,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__time,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__venue,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__address,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__municipality {
-		grid-column: 4 / 7;
-		grid-row: 3;
+		grid-column: 1 / 6;
+		grid-row: auto;
 	}
 }
 
@@ -867,23 +860,16 @@ a.lohkareet-event-summary {
 
 	.single-event .lohkareet-page-hero__title {
 		grid-column: 1 / 8;
-		grid-row: 1;
+		grid-row: auto;
 	}
 
-	.single-event .lohkareet-page-hero .lohkareet-event-facts__date {
-		grid-column: 1 / 5;
-		grid-row: 2;
-	}
-
-	.single-event .lohkareet-page-hero .lohkareet-event-facts__time {
-		grid-column: 8 / 13;
-		grid-row: 2;
-	}
-
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__when,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__date,
+	.single-event .lohkareet-page-hero .lohkareet-event-facts__time,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__venue,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__address,
 	.single-event .lohkareet-page-hero .lohkareet-event-facts__municipality {
-		grid-column: 8 / 13;
-		grid-row: 3;
+		grid-column: 1 / 8;
+		grid-row: auto;
 	}
 }
