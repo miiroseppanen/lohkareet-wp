@@ -295,9 +295,8 @@ footer.wp-block-template-part {
 .lohkareet-footer__municipalities img {
 	display: block;
 	width: auto;
-	height: auto;
+	height: calc(var(--municipality-ink) * var(--logo-fit, 1));
 	max-width: 100%;
-	max-height: calc(var(--municipality-ink) * var(--logo-fit, 1));
 	object-fit: contain;
 	opacity: 0.5;
 }

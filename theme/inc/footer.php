@@ -849,7 +849,7 @@ function lohkareet_get_municipality_logos() {
 			'name'   => 'Nokia',
 			'width'  => 110,
 			'height' => 116,
-			'fit'    => '1.415',
+			'fit'    => '9.67', // The word NOKIAN is 12px of this 116px canvas.
 		),
 		array(
 			'file'   => 'sastamala.png',
