@@ -30,6 +30,11 @@ html {
 	overflow-x: clip;
 }
 
+html,
+body {
+	overflow-x: hidden;
+}
+
 .editorial-container {
 	box-sizing: border-box;
 	width: min(100%, var(--content-max-width));
