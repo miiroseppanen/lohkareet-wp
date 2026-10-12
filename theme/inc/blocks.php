@@ -207,11 +207,15 @@ function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = nu
 		$title = __( 'Lohkareet', 'lohkareet' );
 	}
 
-	$iframe = lohkareet_get_map_iframe( $url, $title );
-
-	if ( '' === $iframe ) {
+	if ( '' === $url ) {
 		return '';
 	}
+
+	$iframe = sprintf(
+		'<iframe class="lohkareet-map__frame" id="zoneatlas-map-iframe" title="%1$s" width="100" height="600" scrolling="no" frameborder="0" src="%2$s" allow="fullscreen; geolocation"></iframe>',
+		esc_attr( $title ),
+		esc_url( $url )
+	);
 
 	return '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
 }

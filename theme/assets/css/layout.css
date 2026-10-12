@@ -163,8 +163,8 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 	justify-self: stretch;
 	width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
 	max-width: none;
-	height: 58svh;
-	min-height: 22rem;
+	height: 600px;
+	min-height: 0;
 	margin-block: var(--section-space);
 	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
 	border: 0;
@@ -517,8 +517,8 @@ a.lohkareet-event-summary {
 
 	.lohkareet-grid .wp-block-post-content > .lohkareet-map,
 	.lohkareet-grid .lohkareet-map {
-		height: 64svh;
-		min-height: 26rem;
+		height: 600px;
+		min-height: 0;
 	}
 }
 
@@ -769,9 +769,9 @@ a.lohkareet-event-summary {
 
 	.lohkareet-grid .wp-block-post-content > .lohkareet-map,
 	.lohkareet-grid .lohkareet-map {
-		height: 72svh;
-		min-height: 32rem;
-		max-height: 80svh;
+		height: 600px;
+		min-height: 0;
+		max-height: none;
 	}
 }
 
