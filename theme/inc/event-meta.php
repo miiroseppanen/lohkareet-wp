@@ -35,6 +35,8 @@ function lohkareet_event_meta_fields() {
 		'lohkareet_artist_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_artist_status'         => 'lohkareet_sanitize_artist_status',
 		'lohkareet_artist_image'          => 'lohkareet_sanitize_image_id',
+		'lohkareet_social_image'          => 'lohkareet_sanitize_image_id',
+		'lohkareet_social_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_work_ids'              => 'lohkareet_sanitize_work_id_list',
 	);
 }
@@ -66,6 +68,7 @@ function lohkareet_shared_event_meta_keys() {
 		'lohkareet_artist_name',
 		'lohkareet_artist_status',
 		'lohkareet_artist_image',
+		'lohkareet_social_image',
 		'lohkareet_work_ids',
 	);
 }
@@ -83,6 +86,7 @@ function lohkareet_translatable_event_meta_keys() {
 		'lohkareet_location_description',
 		'lohkareet_arrival_description',
 		'lohkareet_artist_description',
+		'lohkareet_social_description',
 	);
 }
 
@@ -170,7 +174,7 @@ function lohkareet_render_event_meta_box( $post ) {
 	}
 
 	echo '<p class="description">' . esc_html__( 'Leave a field empty when that fact is still unknown. Do not type a “will be announced later” sentence into a field.', 'lohkareet' ) . '</p>';
-	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, map URL, performing artist, artist status, artist image, and assigned works are shared. Translate the location description, the arrival instructions, and the artist description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, map URL, performing artist, artist status, artist image, social image, and assigned works are shared. Translate the location description, the arrival instructions, the artist description, and the social description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
 	?>
 	<fieldset>
 		<legend><strong><?php esc_html_e( 'Date', 'lohkareet' ); ?></strong></legend>
@@ -294,6 +298,7 @@ function lohkareet_render_event_meta_box( $post ) {
 		<span class="description"><?php esc_html_e( 'Separate from the event’s featured image.', 'lohkareet' ); ?></span>
 	</p>
 	<?php
+	lohkareet_render_social_fields( $post->ID, 'event' );
 	lohkareet_render_event_works_field( $post->ID );
 	?>
 	<p class="description"><?php esc_html_e( 'Write the event description in the content editor. Set the event image as the featured image.', 'lohkareet' ); ?></p>
@@ -647,7 +652,7 @@ function lohkareet_enqueue_event_editor( $hook ) {
 
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-	if ( ! $screen || 'event' !== $screen->post_type ) {
+	if ( ! $screen || ! in_array( $screen->post_type, array( 'event', 'page' ), true ) ) {
 		return;
 	}
 

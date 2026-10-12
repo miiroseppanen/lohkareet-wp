@@ -21,6 +21,7 @@ require get_theme_file_path( 'inc/blocks.php' );
 require get_theme_file_path( 'inc/hero.php' );
 require get_theme_file_path( 'inc/navigation.php' );
 require get_theme_file_path( 'inc/footer.php' );
+require get_theme_file_path( 'inc/social.php' );
 
 /**
  * Loads theme translations for the active WordPress locale.

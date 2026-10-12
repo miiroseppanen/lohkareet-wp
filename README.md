@@ -392,6 +392,6 @@ Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.42`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.43`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.
