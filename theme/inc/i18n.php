@@ -151,7 +151,7 @@ function lohkareet_get_event_query_language() {
 }
 
 /**
- * Keeps the event post type available to Polylang.
+ * Keeps events, works, contributors, and the navigation available to Polylang.
  *
  * @param mixed $post_types  Post types Polylang can translate.
  * @param bool  $is_settings Unused. Present because Polylang passes it.
@@ -164,13 +164,57 @@ function lohkareet_register_translatable_event_type( $post_types, $is_settings =
 		$post_types = array();
 	}
 
-	$post_types['event']       = 'event';
-	$post_types['contributor'] = 'contributor';
-	$post_types['work']        = 'work';
+	$post_types['event']         = 'event';
+	$post_types['contributor']   = 'contributor';
+	$post_types['work']          = 'work';
+	$post_types['wp_navigation'] = 'wp_navigation';
 
 	return $post_types;
 }
 add_filter( 'pll_get_post_types', 'lohkareet_register_translatable_event_type', 10, 2 );
+
+/**
+ * Keeps the event whose language matches the request.
+ *
+ * WordPress does not apply a taxonomy query to a singular URL. Finnish and
+ * English events share a slug, so the query can return both. The newer post
+ * would otherwise become the page, and the canonical redirect would send the
+ * Finnish URL to the English one.
+ *
+ * @param mixed    $posts Posts found for this query.
+ * @param WP_Query $query Query being run.
+ * @return mixed
+ */
+function lohkareet_prefer_event_in_current_language( $posts, $query ) {
+	if ( ! $query instanceof WP_Query || ! $query->is_main_query() || is_admin() ) {
+		return $posts;
+	}
+
+	if ( ! is_array( $posts ) || count( $posts ) < 2 || 'event' !== $query->get( 'post_type' ) ) {
+		return $posts;
+	}
+
+	if ( ! function_exists( 'pll_get_post_language' ) || ! function_exists( 'pll_current_language' ) ) {
+		return $posts;
+	}
+
+	$language = pll_current_language( 'slug' );
+
+	if ( ! is_string( $language ) || '' === $language ) {
+		return $posts;
+	}
+
+	$matched = array();
+
+	foreach ( $posts as $post ) {
+		if ( $post instanceof WP_Post && pll_get_post_language( $post->ID, 'slug' ) === $language ) {
+			$matched[] = $post;
+		}
+	}
+
+	return $matched ? $matched : $posts;
+}
+add_filter( 'the_posts', 'lohkareet_prefer_event_in_current_language', 10, 2 );
 
 /**
  * Copies shared event meta to a new translation, and keeps translated text out of later sync.

@@ -2,7 +2,8 @@
  * Page grid and editorial measure.
  *
  * Four columns below 48rem, six from 48rem, twelve from 64rem.
- * The hero and the Zoneatlas map stay outside this grid.
+ * Editorial wrappers stop at --content-max-width. The hero, full-bleed
+ * images, and the Zoneatlas map stay the width of the viewport.
  */
 
 :root {
@@ -16,6 +17,8 @@
 	--space-16: 8rem;
 	--space-24: 12rem;
 	--page-gutter: clamp(1.25rem, 3vw, 3.5rem);
+	--content-max-width: 1600px;
+	--content-breakout: max(0px, calc((100vw - var(--content-max-width)) / 2));
 	--grid-gap: clamp(0.75rem, 1.25vw, 1.5rem);
 	--section-space: clamp(4.5rem, 10vw, 11rem);
 	--measure: 36rem;
@@ -24,6 +27,15 @@
 
 html {
 	scroll-padding-top: 5.5rem;
+	overflow-x: clip;
+}
+
+.editorial-container {
+	box-sizing: border-box;
+	width: min(100%, var(--content-max-width));
+	max-width: var(--content-max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-gutter);
 }
 
 body {
@@ -46,9 +58,10 @@ body,
 	column-gap: var(--grid-gap);
 	row-gap: var(--space-4);
 	align-items: start;
-	width: 100%;
-	max-width: none;
-	margin: 0;
+	box-sizing: border-box;
+	width: min(100%, var(--content-max-width));
+	max-width: var(--content-max-width);
+	margin-inline: auto;
 	padding: calc(var(--header-clearance) + var(--space-12)) var(--page-gutter) var(--section-space);
 }
 
@@ -148,16 +161,26 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 .lohkareet-grid .wp-block-post-content > .lohkareet-map {
 	grid-column: 1 / -1;
 	justify-self: stretch;
-	width: calc(100% + (2 * var(--page-gutter)));
+	width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
 	max-width: none;
 	height: 58svh;
 	min-height: 22rem;
 	margin-block: var(--section-space);
-	margin-inline: calc(var(--page-gutter) * -1);
+	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
 	border: 0;
 	border-radius: 0;
 	box-shadow: none;
 	background: transparent;
+}
+
+.lohkareet-grid .alignfull,
+.lohkareet-grid .wp-block-image.alignfull,
+.lohkareet-grid figure.alignfull {
+	grid-column: 1 / -1;
+	justify-self: stretch;
+	width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
+	max-width: none;
+	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
 }
 
 .lohkareet-event-list-block,
@@ -774,9 +797,10 @@ a.lohkareet-event-summary {
 	align-items: flex-end;
 	box-sizing: border-box;
 	width: 100%;
+	max-width: none;
 	min-height: 58svh;
 	margin: 0;
-	padding: var(--header-clearance) var(--page-gutter) var(--space-8);
+	padding: var(--header-clearance) 0 var(--space-8);
 	background: #000;
 	color: #fff;
 }
@@ -787,7 +811,11 @@ a.lohkareet-event-summary {
 	column-gap: var(--grid-gap);
 	row-gap: var(--space-3);
 	align-items: end;
-	width: 100%;
+	box-sizing: border-box;
+	width: min(100%, var(--content-max-width));
+	max-width: var(--content-max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-gutter);
 }
 
 .lohkareet-page-hero__title,

@@ -170,7 +170,7 @@ function lohkareet_render_page_hero() {
 	}
 
 	$html  = '<section ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-page-hero' ) ) . '>';
-	$html .= '<div class="lohkareet-page-hero__grid">';
+	$html .= '<div class="lohkareet-page-hero__grid editorial-container">';
 	$html .= $before;
 	$html .= '<h1 class="lohkareet-page-hero__title">' . esc_html( $title ) . '</h1>';
 	$html .= $extra;

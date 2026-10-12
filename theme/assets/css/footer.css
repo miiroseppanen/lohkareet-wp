@@ -5,13 +5,15 @@
  */
 
 footer.wp-block-template-part {
+	width: 100%;
+	max-width: none;
 	margin: 0;
 	background: #000;
 	color: #fff;
 }
 
 .lohkareet-footer {
-	padding: var(--space-12) var(--page-gutter) var(--space-8);
+	padding: var(--space-12) 0 var(--space-8);
 }
 
 .lohkareet-footer__grid {
@@ -20,7 +22,11 @@ footer.wp-block-template-part {
 	column-gap: var(--grid-gap);
 	row-gap: var(--space-12);
 	align-content: start;
+	box-sizing: border-box;
 	width: 100%;
+	max-width: none;
+	margin-inline: 0;
+	padding-inline: var(--page-gutter);
 }
 
 .lohkareet-footer__grid > * {
@@ -78,10 +84,15 @@ footer.wp-block-template-part {
 	overflow-wrap: break-word;
 }
 
+.lohkareet-footer__credit {
+	justify-self: start;
+}
+
 .lohkareet-footer__credit img {
 	display: block;
 	width: clamp(6.75rem, 22vw, 9.5rem);
 	height: auto;
+	opacity: 0.1;
 }
 
 .lohkareet-footer__colophon {
@@ -235,7 +246,8 @@ footer.wp-block-template-part {
 	}
 
 	.lohkareet-footer__credit {
-		grid-column: 5 / 9;
+		grid-column: 1 / 5;
+		justify-self: start;
 	}
 
 	.lohkareet-footer__colophon {
@@ -256,9 +268,13 @@ footer.wp-block-template-part {
 	row-gap: clamp(0.85rem, 2.6vw, 1.25rem);
 	align-items: center;
 	justify-items: center;
+	box-sizing: border-box;
 	width: 100%;
-	margin: clamp(2.75rem, 8vw, 4.5rem) 0 0;
-	padding: 0;
+	max-width: none;
+	margin-block: clamp(2.75rem, 8vw, 4.5rem) 0;
+	margin-inline: 0;
+	padding-block: 0;
+	padding-inline: var(--page-gutter);
 	list-style: none;
 }
 

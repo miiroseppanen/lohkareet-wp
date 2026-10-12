@@ -6,6 +6,8 @@ header.wp-block-template-part {
 	top: 0;
 	left: 0;
 	right: 0;
+	width: 100%;
+	max-width: none;
 	margin: 0;
 	padding: 0;
 	background: none;
@@ -41,6 +43,7 @@ body.admin-bar header.wp-block-template-part {
 
 header.wp-block-template-part .lohkareet-header__bar,
 header.wp-block-template-part .lohkareet-header__links {
+	width: 100%;
 	max-width: none;
 	margin: 0;
 	background: none;

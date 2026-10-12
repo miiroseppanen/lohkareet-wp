@@ -3,8 +3,8 @@
 	box-sizing: border-box;
 	height: 90vh;
 	height: 90svh;
+	width: 100%;
 	max-width: none;
-	width: auto;
 	overflow: hidden;
 	background: #141414;
 	color: #fff;
