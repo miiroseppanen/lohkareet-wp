@@ -25,6 +25,11 @@ function lohkareet_event_meta_fields() {
 		'lohkareet_venue'                 => 'lohkareet_sanitize_plain_text',
 		'lohkareet_address'               => 'lohkareet_sanitize_plain_text',
 		'lohkareet_location_description'  => 'lohkareet_sanitize_plain_textarea',
+		'lohkareet_arrival_point'         => 'lohkareet_sanitize_plain_text',
+		'lohkareet_arrival_description'   => 'lohkareet_sanitize_plain_textarea',
+		'lohkareet_map_latitude'          => 'lohkareet_sanitize_latitude',
+		'lohkareet_map_longitude'         => 'lohkareet_sanitize_longitude',
+		'lohkareet_map_point'             => 'lohkareet_sanitize_map_point',
 		'lohkareet_map_url'               => 'lohkareet_sanitize_https_url',
 		'lohkareet_artist_name'           => 'lohkareet_sanitize_plain_text',
 		'lohkareet_artist_description'    => 'lohkareet_sanitize_plain_textarea',
@@ -53,6 +58,10 @@ function lohkareet_shared_event_meta_keys() {
 		'lohkareet_municipality',
 		'lohkareet_venue',
 		'lohkareet_address',
+		'lohkareet_arrival_point',
+		'lohkareet_map_latitude',
+		'lohkareet_map_longitude',
+		'lohkareet_map_point',
 		'lohkareet_map_url',
 		'lohkareet_artist_name',
 		'lohkareet_artist_status',
@@ -72,6 +81,7 @@ function lohkareet_shared_event_meta_keys() {
 function lohkareet_translatable_event_meta_keys() {
 	return array(
 		'lohkareet_location_description',
+		'lohkareet_arrival_description',
 		'lohkareet_artist_description',
 	);
 }
@@ -144,6 +154,11 @@ function lohkareet_render_event_meta_box( $post ) {
 	$venue       = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_venue' );
 	$address     = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_address' );
 	$location    = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_location_description' );
+	$arrival_point = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_arrival_point' );
+	$arrival     = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_arrival_description' );
+	$latitude    = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_latitude' );
+	$longitude   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_longitude' );
+	$map_point   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_point' );
 	$map_url     = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_map_url' );
 	$artist      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_name' );
 	$artist_text = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_description' );
@@ -155,7 +170,7 @@ function lohkareet_render_event_meta_box( $post ) {
 	}
 
 	echo '<p class="description">' . esc_html__( 'Leave a field empty when that fact is still unknown. Do not type a “will be announced later” sentence into a field.', 'lohkareet' ) . '</p>';
-	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, map URL, performing artist, artist status, artist image, and assigned works are shared. Translate the location description and the artist description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, map URL, performing artist, artist status, artist image, and assigned works are shared. Translate the location description, the arrival instructions, and the artist description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
 	?>
 	<fieldset>
 		<legend><strong><?php esc_html_e( 'Date', 'lohkareet' ); ?></strong></legend>
@@ -212,12 +227,39 @@ function lohkareet_render_event_meta_box( $post ) {
 	</p>
 	<p>
 		<label for="lohkareet_location_description"><strong><?php esc_html_e( 'Location description', 'lohkareet' ); ?></strong></label><br>
-		<textarea class="widefat" rows="4" id="lohkareet_location_description" name="lohkareet_location_description"><?php echo esc_textarea( $location ); ?></textarea>
+		<textarea class="widefat" rows="6" id="lohkareet_location_description" name="lohkareet_location_description"><?php echo esc_textarea( $location ); ?></textarea>
+		<span class="description"><?php esc_html_e( 'Editorial text for the place. This is not the arrival instructions.', 'lohkareet' ); ?></span>
 	</p>
 	<p>
-		<label for="lohkareet_map_url"><strong><?php esc_html_e( 'Map URL', 'lohkareet' ); ?></strong></label><br>
+		<label for="lohkareet_arrival_point"><strong><?php esc_html_e( 'Arrival point', 'lohkareet' ); ?></strong></label><br>
+		<input type="text" class="widefat" id="lohkareet_arrival_point" name="lohkareet_arrival_point" value="<?php echo esc_attr( $arrival_point ); ?>">
+		<span class="description"><?php esc_html_e( 'The named point a visitor navigates to, when that is not the event location itself.', 'lohkareet' ); ?></span>
+	</p>
+	<p>
+		<label for="lohkareet_arrival_description"><strong><?php esc_html_e( 'Arrival instructions', 'lohkareet' ); ?></strong></label><br>
+		<textarea class="widefat" rows="4" id="lohkareet_arrival_description" name="lohkareet_arrival_description"><?php echo esc_textarea( $arrival ); ?></textarea>
+	</p>
+	<p>
+		<label for="lohkareet_map_latitude"><strong><?php esc_html_e( 'Latitude', 'lohkareet' ); ?></strong></label><br>
+		<input type="text" class="widefat" id="lohkareet_map_latitude" name="lohkareet_map_latitude" inputmode="decimal" value="<?php echo esc_attr( $latitude ); ?>" placeholder="61.140131">
+	</p>
+	<p>
+		<label for="lohkareet_map_longitude"><strong><?php esc_html_e( 'Longitude', 'lohkareet' ); ?></strong></label><br>
+		<input type="text" class="widefat" id="lohkareet_map_longitude" name="lohkareet_map_longitude" inputmode="decimal" value="<?php echo esc_attr( $longitude ); ?>" placeholder="23.132504">
+	</p>
+	<p>
+		<label for="lohkareet_map_point"><strong><?php esc_html_e( 'Mapped point', 'lohkareet' ); ?></strong></label><br>
+		<select id="lohkareet_map_point" name="lohkareet_map_point">
+			<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
+			<option value="event" <?php selected( $map_point, 'event' ); ?>><?php esc_html_e( 'Event location', 'lohkareet' ); ?></option>
+			<option value="arrival" <?php selected( $map_point, 'arrival' ); ?>><?php esc_html_e( 'Arrival point', 'lohkareet' ); ?></option>
+		</select>
+		<span class="description"><?php esc_html_e( 'Decimal degrees for one verified point. Say whether that point is the event location or only the arrival point. Leave the coordinates empty when the point is not confirmed.', 'lohkareet' ); ?></span>
+	</p>
+	<p>
+		<label for="lohkareet_map_url"><strong><?php esc_html_e( 'Google Maps URL', 'lohkareet' ); ?></strong></label><br>
 		<input type="url" class="widefat" id="lohkareet_map_url" name="lohkareet_map_url" value="<?php echo esc_attr( $map_url ); ?>" placeholder="https://">
-		<span class="description"><?php esc_html_e( 'https only. Leave this empty to hide the map on this event.', 'lohkareet' ); ?></span>
+		<span class="description"><?php esc_html_e( 'Optional https link for the Google Maps button. Leave this empty to build the link from the coordinates. This is not the embedded map.', 'lohkareet' ); ?></span>
 	</p>
 	<p>
 		<label for="lohkareet_artist_name"><strong><?php esc_html_e( 'Performing artist', 'lohkareet' ); ?></strong></label><br>
@@ -474,6 +516,68 @@ function lohkareet_sanitize_plain_text( $value, ...$unused ) {
 function lohkareet_sanitize_plain_textarea( $value, ...$unused ) {
 	unset( $unused );
 	return sanitize_textarea_field( lohkareet_sanitize_scalar( $value ) );
+}
+
+/**
+ * Sanitizes a decimal coordinate inside an inclusive range.
+ *
+ * @param mixed $value Raw value.
+ * @param float $min   Lowest accepted number.
+ * @param float $max   Highest accepted number.
+ */
+function lohkareet_sanitize_decimal_coordinate( $value, $min, $max ) {
+	$value = str_replace( ',', '.', lohkareet_sanitize_scalar( $value ) );
+	$value = trim( $value );
+
+	if ( ! is_numeric( $value ) ) {
+		return '';
+	}
+
+	$number = (float) $value;
+
+	if ( $number < $min || $number > $max ) {
+		return '';
+	}
+
+	$formatted = rtrim( rtrim( sprintf( '%.7F', $number ), '0' ), '.' );
+
+	return '-0' === $formatted ? '0' : $formatted;
+}
+
+/**
+ * Sanitizes a latitude.
+ *
+ * @param mixed $value Raw value.
+ */
+function lohkareet_sanitize_latitude( $value, ...$unused ) {
+	unset( $unused );
+	return lohkareet_sanitize_decimal_coordinate( $value, -90, 90 );
+}
+
+/**
+ * Sanitizes a longitude.
+ *
+ * @param mixed $value Raw value.
+ */
+function lohkareet_sanitize_longitude( $value, ...$unused ) {
+	unset( $unused );
+	return lohkareet_sanitize_decimal_coordinate( $value, -180, 180 );
+}
+
+/**
+ * Sanitizes whether the mapped coordinates are the event or the arrival point.
+ *
+ * @param mixed $value Raw value.
+ */
+function lohkareet_sanitize_map_point( $value, ...$unused ) {
+	unset( $unused );
+	$value = sanitize_key( lohkareet_sanitize_scalar( $value ) );
+
+	if ( in_array( $value, array( 'event', 'arrival' ), true ) ) {
+		return $value;
+	}
+
+	return '';
 }
 
 /**

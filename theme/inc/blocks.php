@@ -554,33 +554,162 @@ function lohkareet_get_work_html( $work_id ) {
 }
 
 /**
- * Location text, artist text, and a per-event map. Empty pieces are omitted.
+ * Place and arrival sections. Empty pieces are omitted.
  *
  * @param int $post_id Event ID.
  */
 function lohkareet_get_event_context_html( $post_id ) {
+	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id );
+}
+
+/**
+ * Editorial place text and the series map as a compact placeholder.
+ *
+ * A per-event Zoneatlas map can replace the placeholder later. Until then
+ * the embed is the same map as the front page.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_place_html( $post_id ) {
 	$location = lohkareet_get_event_meta_string( $post_id, 'lohkareet_location_description' );
-	$map_url  = lohkareet_sanitize_https_url( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_url' ) );
-	$html     = '';
 
-	if ( '' !== $location ) {
-		$html .= '<p>' . nl2br( esc_html( $location ), false ) . '</p>';
+	if ( '' === trim( $location ) ) {
+		return '';
 	}
 
-	if ( '' === $map_url ) {
-		return $html;
+	$html  = '<section class="lohkareet-place">';
+	$html .= '<h2>' . esc_html__( 'Place', 'lohkareet' ) . '</h2>';
+	$html .= '<div class="lohkareet-place__text">' . lohkareet_plain_paragraphs_html( $location ) . '</div>';
+	$html .= lohkareet_get_event_place_map_html();
+	$html .= '</section>';
+
+	return $html;
+}
+
+/**
+ * Practical arrival text and the external Google Maps link.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_arrival_html( $post_id ) {
+	$instructions = lohkareet_get_event_meta_string( $post_id, 'lohkareet_arrival_description' );
+	$link         = lohkareet_get_event_maps_link_html( $post_id );
+
+	if ( '' === trim( $instructions ) && '' === $link ) {
+		return '';
 	}
 
-	$map_title = sprintf(
-		/* translators: %s: event title. */
-		__( 'Map: %s', 'lohkareet' ),
-		get_the_title( $post_id )
-	);
-	$iframe = lohkareet_get_map_iframe( $map_url, $map_title );
+	$html  = '<section class="lohkareet-arrival">';
+	$html .= '<h2>' . esc_html__( 'Arrival', 'lohkareet' ) . '</h2>';
 
-	if ( '' !== $iframe ) {
-		$html .= '<div class="lohkareet-map">' . $iframe . '</div>';
+	if ( '' !== trim( $instructions ) ) {
+		$html .= '<div class="lohkareet-arrival__text">' . lohkareet_plain_paragraphs_html( $instructions ) . '</div>';
+	}
+
+	$html .= $link;
+	$html .= '</section>';
+
+	return $html;
+}
+
+/**
+ * Turns stored plain text into paragraphs.
+ *
+ * @param string $text Location or arrival text.
+ */
+function lohkareet_plain_paragraphs_html( $text ) {
+	$parts = preg_split( "/\n\s*\n/", trim( $text ) );
+	$html  = '';
+
+	if ( ! is_array( $parts ) ) {
+		return '';
+	}
+
+	foreach ( $parts as $part ) {
+		$part = trim( $part );
+
+		if ( '' === $part ) {
+			continue;
+		}
+
+		$html .= '<p>' . nl2br( esc_html( $part ), false ) . '</p>';
 	}
 
 	return $html;
+}
+
+/**
+ * Verified coordinates and whether they mark the event or the arrival point.
+ *
+ * @param int $post_id Event ID.
+ * @return array{lat: string, lng: string, point: string}|null
+ */
+function lohkareet_get_event_map_coordinates( $post_id ) {
+	$latitude  = lohkareet_sanitize_latitude( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_latitude' ) );
+	$longitude = lohkareet_sanitize_longitude( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_longitude' ) );
+	$point     = lohkareet_sanitize_map_point( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_point' ) );
+
+	if ( '' === $latitude || '' === $longitude || '' === $point ) {
+		return null;
+	}
+
+	return array(
+		'lat'   => $latitude,
+		'lng'   => $longitude,
+		'point' => $point,
+	);
+}
+
+/**
+ * Compact Zoneatlas placeholder beside the place text.
+ *
+ * This is the front-page map until the event has its own Zoneatlas map.
+ */
+function lohkareet_get_event_place_map_html() {
+	$url = lohkareet_get_zoneatlas_map_url();
+
+	if ( '' === $url ) {
+		return '';
+	}
+
+	$iframe = lohkareet_get_map_iframe( $url, __( 'Lohkareet', 'lohkareet' ) );
+
+	if ( '' === $iframe ) {
+		return '';
+	}
+
+	return '<div class="lohkareet-place__map">' . $iframe . '</div>';
+}
+
+/**
+ * External Google Maps link. The embedded map does not have to load for this to work.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_maps_link_html( $post_id ) {
+	$point = lohkareet_sanitize_map_point( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_point' ) );
+
+	if ( '' === $point ) {
+		return '';
+	}
+
+	$url = lohkareet_sanitize_https_url( lohkareet_get_event_meta_string( $post_id, 'lohkareet_map_url' ) );
+
+	if ( '' === $url ) {
+		$coordinates = lohkareet_get_event_map_coordinates( $post_id );
+
+		if ( null === $coordinates ) {
+			return '';
+		}
+
+		$url = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $coordinates['lat'] . ',' . $coordinates['lng'] );
+	}
+
+	if ( 'arrival' === $point ) {
+		$label = __( 'Show the arrival point in Google Maps', 'lohkareet' );
+	} else {
+		$label = __( 'Show in Google Maps', 'lohkareet' );
+	}
+
+	return '<p class="lohkareet-arrival__link"><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $label ) . '<span class="lohkareet-visually-hidden"> ' . esc_html__( 'Opens in a new tab.', 'lohkareet' ) . '</span></a></p>';
 }

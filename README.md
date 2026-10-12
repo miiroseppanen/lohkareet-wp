@@ -99,7 +99,7 @@ The home-page map URL depends on the current Polylang slug. The only place to se
 
 The `/en/` segment is not assumed to mean English. Replace the `fi` and `en` entries when the final Zoneatlas URLs are known. The helper adds `cooperativeGesturesEnabled=true` if a replacement URL omits it. The map block’s URL field is an optional override for one instance; leave it empty on the home page so the language URLs are used. The iframe stays responsive, has an accessible name, and keeps `allow="fullscreen; geolocation"`.
 
-A per-event map is the event’s own `lohkareet_map_url`. It is shared data, not switched by language, and it does not fall back to the series map.
+Until an event has its own Zoneatlas map, the compact map beside the place text is the front-page Zoneatlas embed. `lohkareet_map_point` says whether the stored coordinates are the event location or only the arrival point. `lohkareet_map_url` is the optional external Google Maps link. It is shared data, not switched by language, and it does not fall back to the series map. The embedded map does not load Google.
 
 ### Language switcher
 
@@ -223,8 +223,13 @@ Empty means unknown. Do not type “julkaistaan myöhemmin” into a field. Thos
 | Municipality | `lohkareet_municipality` | Shared | One of the nine names, or unknown |
 | Venue | `lohkareet_venue` | Shared | Venue unknown |
 | Street address | `lohkareet_address` | Shared | Address unknown |
-| Location description | `lohkareet_location_description` | Translated | No description |
-| Event map URL | `lohkareet_map_url` | Shared | https URL, or no per-event map |
+| Location description | `lohkareet_location_description` | Translated | No place text, so no Paikka section unless a verified map remains |
+| Arrival point | `lohkareet_arrival_point` | Shared | No named arrival point |
+| Arrival instructions | `lohkareet_arrival_description` | Translated | No arrival text |
+| Map latitude | `lohkareet_map_latitude` | Shared | No verified latitude |
+| Map longitude | `lohkareet_map_longitude` | Shared | No verified longitude |
+| Mapped point | `lohkareet_map_point` | Shared | `event` or `arrival`; empty hides the map and the Maps button |
+| Google Maps URL | `lohkareet_map_url` | Shared | Optional https link; empty builds the button from the coordinates |
 | Artist name | `lohkareet_artist_name` | Shared | No public name |
 | Artist description | `lohkareet_artist_description` | Translated | No description |
 | Artist status | `lohkareet_artist_status` | Shared | `confirmed`, `tentative`, or `unannounced` |
@@ -272,7 +277,7 @@ The next event is the earliest event that has a year and is not certainly past. 
 
 ### What the templates hide
 
-Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” Time, street address, location description, and a per-event map render only when they contain something. Listings do not show works.
+Single event pages show the date and the venue, and the time when it is known. The programme below that shows the performing artist, then any assigned works. A missing performing artist uses “The artist will be announced later.” After that, Paikka renders only when a location description or a verified map point exists, and Saapuminen renders only when arrival instructions or a verified Google Maps destination exists. The compact map is the front-page Zoneatlas map, used as a placeholder until the event has its own Zoneatlas map. It does not load Google. The Maps link is a separate https URL. A point marked `arrival` is labeled as an arrival point, not as the event location. Listings do not show works.
 
 Event listings show a complete date and its time on one line, the venue when it is known, and a confirmed artist. A year or a month without a day stays stored and is left off the listing. Tentative and unannounced artists are left off the listing. The single event page still shows the fuller facts, including a partial date and a tentative artist.
 
@@ -294,7 +299,7 @@ These notes are for the person entering events. They are not stored in the theme
 | Municipality | Date to enter | Time | Venue | Artist |
 | --- | --- | --- | --- | --- |
 | Punkalaidun | 1.11.2026 | 16:00–18:00 | Konatun kellari | Empath, vahvistettu |
-| Nokia | 15.11.2026 | 15:00–18:00 | Koukkujärvi / Koukun maja | Jimi Tenor, vahvistettu |
+| Nokia | 15.11.2026 | 15:00–18:00 | Koukkujärvi; the event is a boulder north of Koukun maja, not the hut | Jimi Tenor, vahvistettu |
 | Sastamala | 22.11.2026 | 15:00–18:00 | Ritajärvi | Jori Hulkkonen, vahvistettu |
 | Hämeenkyrö | 28.11.2026 | empty | empty | Aleksi Myllykoski, vahvistettu |
 | Ylöjärvi | 6.12.2026 | empty | empty | Heli Hartikainen, vahvistettu |
@@ -387,6 +392,6 @@ Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.25`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.41`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.

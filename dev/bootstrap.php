@@ -226,8 +226,13 @@ foreach ( $content['events'] as $event ) {
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_artist_status', $event['status'] );
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_artist_description', $event['description'] );
 	lohkareet_dev_set_meta( $event_id, 'lohkareet_address', '' );
-	lohkareet_dev_set_meta( $event_id, 'lohkareet_location_description', '' );
-	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_url', '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_location_description', isset( $event['location'] ) ? $event['location'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_arrival_point', isset( $event['arrival_point'] ) ? $event['arrival_point'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_arrival_description', isset( $event['arrival'] ) ? $event['arrival'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_latitude', isset( $event['latitude'] ) ? $event['latitude'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_longitude', isset( $event['longitude'] ) ? $event['longitude'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_point', isset( $event['map_point'] ) ? $event['map_point'] : '' );
+	lohkareet_dev_set_meta( $event_id, 'lohkareet_map_url', isset( $event['map_url'] ) ? $event['map_url'] : '' );
 
 	$image_id = 0;
 

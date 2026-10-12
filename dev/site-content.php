@@ -25,7 +25,7 @@ function lohkareet_dev_site_content() {
 			'title'   => 'Etusivu',
 			'content' => <<<'HTML'
 <!-- wp:heading {"className":"lohkareet-intro-heading"} -->
-<h2 class="wp-block-heading lohkareet-intro-heading">Yhdeksän tapahtumaa siirtolohkareille</h2>
+<h2 class="wp-block-heading lohkareet-intro-heading">Yhdeksän tapahtumaa <span class="lohkareet-intro-heading__word">siirto</span><span class="lohkareet-intro-heading__word">lohkareille</span></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -58,19 +58,19 @@ HTML
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Tapahtumat sijoittuvat paikallisesti merkittävien siirtolohkareiden ja niitä ympäröivien maisemien yhteyteen. Ambient-musiikki, ääni-, valo- ja mediataide sekä paikkasidonnainen nykytaide muuttavat paikkoja väliaikaisesti.</p>
+<p>Tapahtumat sijoittuvat paikallisesti merkittävien siirtolohkareiden, kivimuodostelmien ja niitä ympäröivien maisemien yhteyteen. Mukana on yksittäisiä suuria lohkareita sekä kivien muodostamia kokonaisuuksia, kuten Punkalaitumen Konatun kellari, jossa suuret lohkareet muodostavat metsän keskelle luolamaisen tilan.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Lohkareen mittakaava, muoto, historia, ympäröivä maisema, pimeys ja vuodenaika vaikuttavat siihen, millaiseksi kukin teos ja tapahtuma muodostuu. Siirtolohkare ei ole tapahtuman tausta tai lava, vaan aktiivinen osa kokonaisuutta.</p>
+<p>Ambient-musiikki, ääni-, valo- ja mediataide sekä paikkasidonnainen nykytaide muuttavat näitä ympäristöjä väliaikaisesti. Kivien mittakaava, muoto, historia ja ympäröivä maisema vaikuttavat siihen, millaiseksi kukin teos ja tapahtuma muodostuu. Lohkareet eivät ole vain tapahtumien taustoja, vaan aktiivinen osa kokonaisuutta.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Tapahtumat järjestetään syksyn ja talven pimeänä aikana. Rakenteet ja tekniset ratkaisut ovat väliaikaisia ja poistetaan tapahtuman jälkeen.</p>
+<p>Tapahtumat sijoittuvat hämärän ja pimeän aikaan. Aluevalaistus ja taideteosten valo luovat ympäristöön erilaisia näkymiä ja tunnelmia. Myös yleisö voi osallistua valojen muodostamaan kokonaisuuteen tuomalla mukanaan oman tasku- tai otsalampun.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Digitaalinen kartta ja dokumentaatio muodostavat tapahtumasarjalle pidempikestoisen kerroksen: niiden kautta paikkoihin, teoksiin ja tapahtumiin voi palata myös tapahtumahetken jälkeen.</p>
+<p>Tapahtumien rakenteet ja tekniset toteutukset ovat väliaikaisia. Digitaalinen kartta ja dokumentaatio muodostavat tapahtumasarjalle pidempikestoisen kerroksen, jonka kautta paikkoihin, teoksiin ja tapahtumiin voi palata myös tapahtumahetken jälkeen.</p>
 <!-- /wp:paragraph -->
 HTML
 				,
@@ -142,6 +142,16 @@ HTML
 				'content'     => 'Site-specific sound work using distributed / partly hidden sound sources around the area. The work is heard differently depending on the listener\'s position.',
 			),
 		),
+		/*
+		 * Location sources, not copied onto the public page:
+		 * Punkalaidun — https://www.punkalaidun.fi/sivu.tmpl?sivu_id=11862
+		 *   Arrival coordinate is the municipality My Map driving-route end about 1.3 km
+		 *   along the forest road (61.1401307, 23.1325037), not a pin on the cave.
+		 * Nokia lake — https://fi.wikipedia.org/wiki/Koukkujärvi_(Nokia)
+		 * Nokia hut — https://kankaantaankisa.fi/koukkujarven-maja/
+		 *   and OpenStreetMap way 96659364 (61.5202403, 23.5161125).
+		 * Sastamala — https://sastamala.fi/arki-ja-vapaa-aika/liikunta/liikuntapaikat-ja-retkeily/retkeilyreitit-ja-laavut/
+		 */
 		'events'       => array(
 			array(
 				'key'          => 'punkalaidun',
@@ -153,6 +163,12 @@ HTML
 				'start'        => '16:00',
 				'end'          => '18:00',
 				'venue'        => 'Konatun kellari',
+				'location'     => "Konatun kellari on Punkalaitumen Sarkkilan ja Oriniemen kylien rajamailla sijaitseva lohkareluola. Suuret kivet muodostavat metsään onkalon. Suuaukko on noin kahden metrin syvyinen, ja luola jatkuu muutaman metrin ennen kuin lohkareet sulkevat sen.\n\nPaikkaan liittyy kertomus hiisistä, jotka olisivat rakentaneet luolan, sekä ajatus maanalaisista yhteyksistä muun muassa Sastamalan Pirunvuoreen. Luolaa on käytetty myös piilopaikkana. Tapahtuma rakentuu tähän kivien rajaamaan tilaan.",
+				'arrival_point' => 'Rajasuon Metsätien levennys',
+				'arrival'      => 'Punkalaitumen kunta ohjaa saapumisen Rajasuon Metsätien levennykselle. Konatun kellari on siitä eteenpäin jalan, vanhaa metsätietä pitkin. Kunnan sivuilla reitti auton jättöpaikalta luolalle on merkitty punakeltaisin nauhoin.',
+				'latitude'     => '61.1401307',
+				'longitude'    => '23.1325037',
+				'map_point'    => 'arrival',
 				'artist'       => 'Empath',
 				'status'       => 'confirmed',
 				'description'  => "Empathin musiikki liikkuu ambientin, dronen ja unenomaisten äänimaisemien alueella. Hänen tuotannossaan toistuvat muuttuneet tajunnantilat, unet ja alitajunta sekä musiikin ja aivoaaltojen välinen yhteys.\n\nArtistin albumitrilogian kolmas osa suuntaa Jungin arkkityyppien ja varjotyöskentelyn maailmaan. Transsendentaalisen meditaation, unikuvien ja esoteeristen aiheiden kautta rakentuva musiikki yhdistää tummia syntetisaattorikerroksia, ambientia, dronea ja arpeggioita kokonaisuudeksi, jossa valveen ja unen sekä tietoisen ja alitajuisen väliset rajat alkavat hämärtyä.\n\nPunkalaitumella Empath esiintyy Konatun kellarissa 1.11.2026.",
@@ -168,7 +184,13 @@ HTML
 				'day'          => '15',
 				'start'        => '15:00',
 				'end'          => '18:00',
-				'venue'        => 'Koukkujärvi / Koukun maja',
+				'venue'        => 'Koukkujärvi',
+				'location'     => "Koukkujärvi on pieni, mutkitteleva metsäjärvi Nokialla. Rannat vaihtelevat suon ja kovemman maan välillä. Koukun maja on järven lähimaaston rakennus.\n\nTapahtuman lohkare on majasta pohjoiseen. Maja ja lohkare eivät ole sama paikka.",
+				'arrival_point' => 'Koukun maja',
+				'arrival'      => 'Koukun maja toimii tapahtumaan saapumisen maamerkkinä. Varsinainen tapahtumapaikka sijaitsee Koukkujärven maastossa hieman majalta pohjoiseen.',
+				'latitude'     => '61.5202403',
+				'longitude'    => '23.5161125',
+				'map_point'    => 'arrival',
 				'artist'       => 'Jimi Tenor',
 				'status'       => 'confirmed',
 				'description'  => 'Kansainvälisesti arvostetun Jimi Tenorin musiikki on aina suuri seikkailu. Se puikkelehtii sujuvasti kokeellisesta rockista funkiin, sekä psykedeelisestä soulista aina jazziin asti. Siirtolohkareen keikalle on luvassa ihan varmasti jotain uutta ja jännittävää jälleen.',
@@ -185,6 +207,7 @@ HTML
 				'start'        => '15:00',
 				'end'          => '18:00',
 				'venue'        => 'Ritajärvi',
+				'location'     => "Ritajärven luonnonsuojelualue on metsäjärvien, kallioiden ja kivikkoisten rinteiden maisema Sastamalan keskellä. Pirkanmaan ELY-keskus perusti 127 hehtaarin suojelualueen keväällä 2015. Valkeajärvi, Ylinen Ritajärvi, Alinen Ritajärvi ja Heinijärven länsiosa muodostavat alueen ytimen. Eteläosassa on Ritarijärvi.\n\nAlue on tunnettu kivikoista ja suurista siirtolohkareista. Kivien mittakaava ja ympäröivä metsä ovat osa tapahtuman kokemusta: näkymä ja kuuntelupaikka muuttuvat maastossa liikkuessa.",
 				'artist'       => 'Jori Hulkkonen',
 				'status'       => 'confirmed',
 				'description'  => '',
