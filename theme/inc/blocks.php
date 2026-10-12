@@ -141,11 +141,14 @@ function lohkareet_render_page_hero() {
 	$before = '';
 	$extra  = '';
 
+	$mark = '';
+
 	if ( is_singular( 'event' ) ) {
 		$post_id = get_queried_object_id();
 		$title   = get_the_title( $post_id );
 		$before  = lohkareet_get_event_hero_when_html( $post_id );
 		$extra   = lohkareet_get_event_hero_place_html( $post_id );
+		$mark    = lohkareet_get_event_hero_logo_html( $post_id );
 	} elseif ( is_singular() ) {
 		$title = get_the_title();
 	} elseif ( is_post_type_archive( 'event' ) ) {
@@ -170,6 +173,7 @@ function lohkareet_render_page_hero() {
 	}
 
 	$html  = '<section ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-page-hero' ) ) . '>';
+	$html .= $mark;
 	$html .= '<div class="lohkareet-page-hero__grid editorial-container">';
 	$html .= $before;
 	$html .= '<h1 class="lohkareet-page-hero__title">' . esc_html( $title ) . '</h1>';
@@ -412,6 +416,27 @@ function lohkareet_render_event_details( $attributes, $content, $block ) {
  */
 function lohkareet_get_event_facts_html( $post_id ) {
 	return lohkareet_get_event_hero_when_html( $post_id ) . lohkareet_get_event_hero_place_html( $post_id );
+}
+
+/**
+ * Municipality mark in the event hero. Empty when the place has no logo.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_hero_logo_html( $post_id ) {
+	$logo = lohkareet_get_municipality_logo( lohkareet_get_event_meta_string( $post_id, 'lohkareet_municipality' ) );
+
+	if ( ! is_array( $logo ) ) {
+		return '';
+	}
+
+	$class = 'lohkareet-page-hero__mark';
+
+	if ( (int) $logo['height'] > (int) $logo['width'] ) {
+		$class .= ' is-stacked';
+	}
+
+	return '<div class="' . esc_attr( $class ) . '">' . lohkareet_get_municipality_logo_image( $logo ) . '</div>';
 }
 
 /**

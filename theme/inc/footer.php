@@ -849,7 +849,7 @@ function lohkareet_get_municipality_logos() {
 			'name'   => 'Nokia',
 			'width'  => 110,
 			'height' => 116,
-			'fit'    => '9.67', // The word NOKIAN is 12px of this 116px canvas.
+			'fit'    => '3.6',
 		),
 		array(
 			'file'   => 'sastamala.png',
@@ -910,14 +910,46 @@ function lohkareet_get_municipality_logo_markup() {
 	$html = '<ul class="lohkareet-footer__municipalities">';
 
 	foreach ( lohkareet_get_municipality_logos() as $logo ) {
-		$src = get_theme_file_uri( 'assets/images/' . $logo['file'] );
-
-		$html .= '<li>';
-		$html .= '<img src="' . esc_url( $src ) . '" alt="' . esc_attr( $logo['name'] ) . '" width="' . (int) $logo['width'] . '" height="' . (int) $logo['height'] . '" style="--logo-fit:' . esc_attr( $logo['fit'] ) . '" decoding="async" />';
-		$html .= '</li>';
+		$html .= '<li>' . lohkareet_get_municipality_logo_image( $logo ) . '</li>';
 	}
 
 	$html .= '</ul>';
 
 	return $html;
+}
+
+/**
+ * One municipality mark, matched by the shared municipality name.
+ *
+ * @param string $name Municipality name.
+ * @return array{file: string, name: string, width: int, height: int, fit: string}|null
+ */
+function lohkareet_get_municipality_logo( $name ) {
+	$name = is_string( $name ) ? $name : '';
+
+	foreach ( lohkareet_get_municipality_logos() as $logo ) {
+		if ( $logo['name'] === $name ) {
+			return $logo;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Image element for one municipality mark.
+ *
+ * @param array{file: string, name: string, width: int, height: int, fit: string} $logo Logo data.
+ */
+function lohkareet_get_municipality_logo_image( $logo ) {
+	$src = get_theme_file_uri( 'assets/images/' . $logo['file'] );
+
+	return sprintf(
+		'<img src="%1$s" alt="%2$s" width="%3$d" height="%4$d" style="--logo-fit:%5$s" decoding="async" />',
+		esc_url( $src ),
+		esc_attr( $logo['name'] ),
+		(int) $logo['width'],
+		(int) $logo['height'],
+		esc_attr( $logo['fit'] )
+	);
 }

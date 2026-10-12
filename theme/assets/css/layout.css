@@ -811,6 +811,7 @@ a.lohkareet-event-summary {
  * The black field is full bleed. The type sits on the same column grid as the page.
  */
 .lohkareet-page-hero {
+	position: relative;
 	display: flex;
 	align-items: flex-end;
 	box-sizing: border-box;
@@ -821,6 +822,39 @@ a.lohkareet-event-summary {
 	padding: var(--header-clearance) 0 var(--space-8);
 	background: #000;
 	color: #fff;
+}
+
+.lohkareet-page-hero__mark {
+	position: absolute;
+	z-index: 1;
+	top: 3.15rem;
+	right: var(--page-gutter);
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	width: min(9rem, 46vw);
+	height: 2.75rem;
+	margin: 0;
+	pointer-events: none;
+}
+
+.lohkareet-page-hero__mark img {
+	display: block;
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	object-position: right top;
+}
+
+.lohkareet-page-hero__mark.is-stacked {
+	width: 4.75rem;
+	height: 5rem;
+}
+
+body.admin-bar .lohkareet-page-hero__mark {
+	top: calc(3.15rem + var(--wp-admin--admin-bar--height, 32px));
 }
 
 .lohkareet-page-hero__grid {
