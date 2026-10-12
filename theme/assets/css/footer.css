@@ -407,3 +407,128 @@ footer.wp-block-template-part {
 		flex: 0 1 auto;
 	}
 }
+
+/*
+ * The marks stay on one line. Below 64rem that line does not fit, so it
+ * moves. From 64rem up the wrappers disappear and the original row is static.
+ */
+.lohkareet-footer__logo-rail,
+.lohkareet-footer__logo-track {
+	display: contents;
+}
+
+.lohkareet-footer__logo-track > .lohkareet-footer__municipalities[aria-hidden='true'] {
+	display: none;
+}
+
+@media (max-width: 63.99rem) {
+	.lohkareet-footer__logo-rail {
+		display: block;
+		overflow: hidden;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+		margin-block: clamp(2.75rem, 8vw, 4.5rem) 0;
+		padding-block: 0.55rem;
+	}
+
+	.lohkareet-footer__logo-track {
+		display: flex;
+		width: max-content;
+		animation-name: lohkareet-municipality-marquee;
+		animation-duration: 48s;
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+	}
+
+	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities,
+	.lohkareet-footer__logo-track > .lohkareet-footer__municipalities[aria-hidden='true'] {
+		--municipality-ink: clamp(1.05rem, 4.2vw, 1.25rem);
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: flex-start;
+		width: max-content;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+		column-gap: 0;
+		row-gap: 0;
+	}
+
+	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities li,
+	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities li:last-child {
+		flex: 0 0 auto;
+		min-width: max-content;
+		margin: 0 2.75rem 0 0;
+	}
+
+	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities img {
+		max-width: none;
+	}
+
+	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities a {
+		padding-block: 0.45rem;
+		scroll-margin-inline: 1rem;
+	}
+
+	.lohkareet-footer__logo-rail:focus-within .lohkareet-footer__logo-track {
+		animation-play-state: paused;
+	}
+
+	.lohkareet-footer__logo-rail.is-paused {
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scrollbar-width: none;
+	}
+
+	.lohkareet-footer__logo-rail.is-paused::-webkit-scrollbar {
+		display: none;
+	}
+
+	.lohkareet-footer__logo-rail.is-paused .lohkareet-footer__logo-track {
+		animation: none;
+		transform: none;
+	}
+
+	.lohkareet-footer__logo-rail.is-paused .lohkareet-footer__municipalities[aria-hidden='true'] {
+		display: none;
+	}
+}
+
+@media (max-width: 63.99rem) and (hover: hover) and (pointer: fine) {
+	.lohkareet-footer__logo-rail:hover .lohkareet-footer__logo-track {
+		animation-play-state: paused;
+	}
+}
+
+@media (max-width: 63.99rem) and (prefers-reduced-motion: reduce) {
+	.lohkareet-footer__logo-rail {
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scrollbar-width: none;
+	}
+
+	.lohkareet-footer__logo-rail::-webkit-scrollbar {
+		display: none;
+	}
+
+	.lohkareet-footer__logo-track {
+		animation: none;
+		transform: none;
+	}
+
+	.lohkareet-footer__logo-track > .lohkareet-footer__municipalities[aria-hidden='true'] {
+		display: none;
+	}
+}
+
+@keyframes lohkareet-municipality-marquee {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(-50%);
+	}
+}

@@ -219,6 +219,9 @@ add_filter( 'the_posts', 'lohkareet_prefer_event_in_current_language', 10, 2 );
 /**
  * Copies shared event meta to a new translation, and keeps translated text out of later sync.
  *
+ * Polylang uses this list for every meta write, including the editor, the
+ * REST API, and restoring a revision. Language-only fields stay out of that sync.
+ *
  * @param mixed $metas Meta keys Polylang is about to copy.
  * @param bool  $sync  True when Polylang is synchronizing an existing translation.
  * @param int   $from  Source post ID. Unused.
@@ -255,10 +258,12 @@ add_filter( 'pll_copy_post_metas', 'lohkareet_filter_copied_event_meta', 10, 4 )
 /**
  * Copies language-independent event meta onto linked translations.
  *
- * Runs only after the event form has been saved, so creating an empty
- * translation does not wipe the source. No-op when Polylang is absent.
+ * Runs after the event form has been saved, so creating an empty
+ * translation does not wipe the source. Individual writes are synchronized
+ * by Polylang through the shared-key list. No-op when Polylang is absent.
  *
- * @param int $post_id Event that was just saved.
+ * @param int           $post_id Event that was just saved.
+ * @param string[]|null $keys    Shared keys to copy. Null copies the full shared set.
  */
 function lohkareet_sync_shared_event_meta( $post_id, $keys = null ) {
 	if ( ! function_exists( 'pll_get_post_translations' ) ) {

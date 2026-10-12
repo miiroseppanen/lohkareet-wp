@@ -832,8 +832,8 @@ a.lohkareet-event-summary {
 	display: flex;
 	align-items: flex-start;
 	justify-content: flex-end;
-	width: min(9rem, 46vw);
-	height: 2.75rem;
+	width: min(10.8rem, 55.2vw);
+	height: 3.3rem;
 	margin: 0;
 	pointer-events: none;
 }
@@ -849,8 +849,8 @@ a.lohkareet-event-summary {
 }
 
 .lohkareet-page-hero__mark.is-stacked {
-	width: 4.75rem;
-	height: 5rem;
+	width: 5.7rem;
+	height: 6rem;
 }
 
 body.admin-bar .lohkareet-page-hero__mark {

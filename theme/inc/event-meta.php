@@ -106,11 +106,102 @@ function lohkareet_register_event_meta() {
 				'show_in_rest'      => true,
 				'auth_callback'     => 'lohkareet_event_meta_auth',
 				'sanitize_callback' => $sanitize_callback,
+				// WordPress 6.4 copies these values onto revisions and restores them.
+				// The theme requires WordPress 6.6.
+				'revisions_enabled' => true,
 			)
 		);
 	}
 }
 add_action( 'init', 'lohkareet_register_event_meta' );
+
+/**
+ * Marker stored on event revisions saved after meta revisions were enabled.
+ *
+ * WordPress deletes every revisioned field on restore, then copies back only
+ * the keys present on the revision. A revision saved before this support has
+ * none of those keys, so restore would erase the current event. The marker
+ * is written for every new snapshot, including one where a field was cleared.
+ *
+ * @return string
+ */
+function lohkareet_event_meta_revision_marker() {
+	return '_lohkareet_event_meta_revision';
+}
+
+/**
+ * Records that an event revision contains a meta snapshot.
+ *
+ * Runs after WordPress has copied the current meta onto the revision.
+ *
+ * @param int $revision_id Revision ID.
+ * @param int $post_id     Parent event ID.
+ */
+function lohkareet_mark_event_meta_revision( $revision_id, $post_id ) {
+	if ( 'event' !== get_post_type( $post_id ) ) {
+		return;
+	}
+
+	update_metadata( 'post', (int) $revision_id, lohkareet_event_meta_revision_marker(), '1' );
+}
+add_action( '_wp_put_post_revision', 'lohkareet_mark_event_meta_revision', 11, 2 );
+
+/**
+ * Remembers whether the revision being restored predates meta snapshots.
+ *
+ * @param bool|null $skip Null reads the flag. True or false sets it.
+ * @return bool
+ */
+function lohkareet_skip_unsnapshotted_event_meta_restore( $skip = null ) {
+	static $active = false;
+
+	if ( is_bool( $skip ) ) {
+		$active = $skip;
+	}
+
+	return $active;
+}
+
+/**
+ * Keeps current event meta when the revision has no snapshot marker.
+ *
+ * Post content still restores. A snapshot with an intentionally empty field
+ * keeps the marker, so that field is cleared.
+ *
+ * @param int $post_id     Event being restored.
+ * @param int $revision_id Revision being restored.
+ */
+function lohkareet_guard_event_meta_revision_restore( $post_id, $revision_id ) {
+	$skip = 'event' === get_post_type( $post_id )
+		&& ! metadata_exists( 'post', (int) $revision_id, lohkareet_event_meta_revision_marker() );
+
+	lohkareet_skip_unsnapshotted_event_meta_restore( $skip );
+}
+add_action( 'wp_restore_post_revision', 'lohkareet_guard_event_meta_revision_restore', 9, 2 );
+
+/**
+ * Clears the restore guard after WordPress has restored revision meta.
+ */
+function lohkareet_finish_event_meta_revision_restore() {
+	lohkareet_skip_unsnapshotted_event_meta_restore( false );
+}
+add_action( 'wp_restore_post_revision', 'lohkareet_finish_event_meta_revision_restore', 11 );
+
+/**
+ * Drops event meta from an old revision restore.
+ *
+ * @param string[] $keys      Revisioned meta keys.
+ * @param string   $post_type Post type being restored.
+ * @return string[]
+ */
+function lohkareet_filter_event_revision_meta_keys( $keys, $post_type ) {
+	if ( 'event' !== $post_type || ! lohkareet_skip_unsnapshotted_event_meta_restore() ) {
+		return $keys;
+	}
+
+	return array_values( array_diff( $keys, array_keys( lohkareet_event_meta_fields() ) ) );
+}
+add_filter( 'wp_post_revision_meta_keys', 'lohkareet_filter_event_revision_meta_keys', 10, 2 );
 
 /**
  * Limits event-meta changes to people who can edit the event.

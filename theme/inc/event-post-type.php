@@ -52,7 +52,8 @@ function lohkareet_register_event_post_type() {
 				'slug'       => 'tapahtumat',
 				'with_front' => false,
 			),
-			'supports'           => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+			// custom-fields lets the REST API read and write the registered event meta.
+			'supports'           => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'capability_type'     => 'post',
 			'exclude_from_search' => false,
 		)

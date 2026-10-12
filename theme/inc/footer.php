@@ -38,6 +38,14 @@ function lohkareet_enqueue_footer() {
 		array( 'lohkareet-layout' ),
 		wp_get_theme()->get( 'Version' )
 	);
+
+	wp_enqueue_script(
+		'lohkareet-municipality-marquee',
+		get_theme_file_uri( 'assets/js/municipality-marquee.js' ),
+		array(),
+		wp_get_theme()->get( 'Version' ),
+		true
+	);
 }
 add_action( 'wp_enqueue_scripts', 'lohkareet_enqueue_footer', 20 );
 
@@ -918,7 +926,29 @@ function lohkareet_get_municipality_logos() {
  * @return string
  */
 function lohkareet_get_municipality_logo_markup() {
-	$html = '<ul class="lohkareet-footer__municipalities">';
+	$logos = lohkareet_get_municipality_logo_items( false );
+	$copy  = lohkareet_get_municipality_logo_items( true );
+
+	$html  = '<div class="lohkareet-footer__logo-rail">';
+	$html .= '<div class="lohkareet-footer__logo-track">';
+	$html .= '<ul class="lohkareet-footer__municipalities">' . $logos . '</ul>';
+	$html .= '<ul class="lohkareet-footer__municipalities" aria-hidden="true">' . $copy . '</ul>';
+	$html .= '</div></div>';
+
+	return $html;
+}
+
+/**
+ * Municipality marks for one pass of the footer row.
+ *
+ * The mobile marquee repeats this list. The repeat is hidden from assistive
+ * technology and removed from tab order. Its links stay clickable.
+ *
+ * @param bool $decorative True for the visual repeat.
+ * @return string
+ */
+function lohkareet_get_municipality_logo_items( $decorative ) {
+	$html = '';
 
 	foreach ( lohkareet_get_municipality_logos() as $logo ) {
 		$image = lohkareet_get_municipality_logo_image( $logo );
@@ -927,15 +957,14 @@ function lohkareet_get_municipality_logo_markup() {
 		$html .= '<li>';
 
 		if ( '' !== $url ) {
-			$html .= '<a href="' . esc_url( $url ) . '">' . $image . '</a>';
+			$tabindex = $decorative ? ' tabindex="-1"' : '';
+			$html    .= '<a href="' . esc_url( $url ) . '"' . $tabindex . '>' . $image . '</a>';
 		} else {
 			$html .= $image;
 		}
 
 		$html .= '</li>';
 	}
-
-	$html .= '</ul>';
 
 	return $html;
 }
