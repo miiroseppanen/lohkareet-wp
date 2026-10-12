@@ -152,7 +152,7 @@ function lohkareet_render_page_hero() {
 		$title = sprintf(
 			/* translators: %s: search query. */
 			__( 'Search results for “%s”', 'lohkareet' ),
-			get_search_query()
+			get_search_query( false )
 		);
 	} elseif ( is_archive() ) {
 		$title = wp_strip_all_tags( get_the_archive_title() );

@@ -69,15 +69,15 @@ function lohkareet_get_event_int( $post_id, $key ) {
 /**
  * Date format for one precision.
  *
- * A complete date is numeric day.month.year, so 1 November 2026 renders as
- * 1.11.2026. Partial dates still use the month name, because a missing part
- * must not be filled in with a zero.
+ * Finnish keeps a complete date numeric, so 1 November 2026 is 1.11.2026.
+ * English uses the month name: 1 November 2026. Partial dates use the month
+ * name in both languages, because a missing part must not be filled with a zero.
  *
  * @param string $precision day-month-year, month-year, or day-month.
  */
 function lohkareet_event_date_format( $precision ) {
 	if ( 'day-month-year' === $precision ) {
-		return _x( 'j.n.Y', 'event date format: day, month, and year', 'lohkareet' );
+		return _x( 'j F Y', 'event date format: day, month, and year', 'lohkareet' );
 	}
 
 	if ( 'day-month' === $precision ) {

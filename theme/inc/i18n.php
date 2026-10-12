@@ -529,6 +529,7 @@ function lohkareet_inject_editor_translations() {
 		'Page hero',
 		'Site mark',
 		'Footer',
+		'Search results for “%s”',
 	);
 	$data   = array(
 		'' => array(

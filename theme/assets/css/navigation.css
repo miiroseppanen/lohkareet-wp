@@ -384,6 +384,13 @@ header.wp-block-template-part button:focus-visible {
 		gap: clamp(0.85rem, 2.4vh, 1.6rem);
 	}
 
+	header.wp-block-template-part.is-menu-open .lohkareet-header__home,
+	header.wp-block-template-part.is-menu-open .wp-block-navigation-item__content {
+		max-width: 100%;
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
+
 	html.lohkareet-js header.wp-block-template-part.is-menu-open {
 		animation: lohkareet-menu-overlay 0.22s ease both;
 	}

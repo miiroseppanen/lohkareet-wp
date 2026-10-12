@@ -105,7 +105,7 @@ A per-event map is the event’s own `lohkareet_map_url`. It is shared data, not
 
 `parts/header.html` places one Navigation block and `lohkareet/language-switcher` together. Page URLs stay in that menu. Polylang translates the menu; the theme does not store a second one. The switcher reads Polylang’s language list. The visible letters come from the slug. The link’s `hreflang` comes from the WordPress locale (`fi`, `en-US`). On desktop the current language is a small trigger; the other languages appear underneath it, without a panel. In the mobile menu the languages stay in a row, smaller than the page links. With Polylang inactive, or only one language configured, the switcher prints nothing and does not raise a PHP error. The Site Editor shows a non-linked FI / EN placeholder so the slot stays visible. Without JavaScript the desktop trigger is hidden and the language links stay in the row.
 
-The header is fixed over the page, with no bar, background, or blur. White type uses `mix-blend-mode: difference`, so it inverts against the hero video and reads as black on a light page. Below `60rem`, where the Finnish labels no longer fit one quiet line, the same links move into a black fullscreen menu opened by a Menu / Sulje button. The Siirtymä logo stays in the hero, not in the navigation.
+The header is fixed, with no bar, background, or blur. Over the front-page video the type is white and uses `mix-blend-mode: difference`. Over a black subpage hero it is white with normal blending. After a hero it is `#141414`. When the black footer reaches the header, the type returns to white without using the hero state. From `60.01rem` the links sit on the right of the 12-column header grid and the LOHKAREET mark sits on the left. The mark is hidden over the front-page video and while the mobile menu is open. It stays visible on subpages. There is no desktop Home link. Below `60rem` the same menu opens fullscreen in black. The footer is one shared template part, not a second navigation system.
 
 ### Pages
 
@@ -130,13 +130,15 @@ theme/
 ├── theme.json
 ├── functions.php
 ├── inc/
-│   ├── i18n.php              # Current language, Zoneatlas URLs, language switcher
+│   ├── i18n.php              # Current language, Zoneatlas URLs, language switcher, meta sync
 │   ├── event-post-type.php   # CPT registration, permalinks, admin columns
 │   ├── event-helpers.php     # Reading, sorting, and formatting event data
 │   ├── event-meta.php        # Meta registration, sanitizing, editor form
-│   ├── blocks.php            # Map, next event, event list, event details
+│   ├── works.php             # Contributors, works, and assignment
+│   ├── blocks.php            # Map, next event, event list, event details, page hero
 │   ├── hero.php              # Front-page hero block
-│   └── navigation.php        # Mobile menu button only
+│   ├── navigation.php        # Header mark, mobile Home link, menu button
+│   └── footer.php            # Global footer composition
 ├── languages/
 │   └── fi.l10n.php           # Finnish translations of theme UI strings
 ├── templates/
@@ -152,8 +154,10 @@ theme/
 └── assets/
     ├── css/
     │   ├── theme.css         # Map, event list, and language switcher
+    │   ├── layout.css        # 4 / 6 / 12 page grid and editorial placement
     │   ├── hero.css          # Hero frame, type, and overlay
-    │   └── navigation.css    # Header over the hero, and the mobile menu
+    │   ├── navigation.css    # Fixed header and the mobile menu
+    │   └── footer.css        # Black footer poster
     ├── images/
     │   └── siirtyma-Eventimage-profilelogo-white.svg
     ├── js/
@@ -254,13 +258,13 @@ Precision is derived from which parts are filled in:
 
 | Year | Month | Day | Public text | Machine `datetime` |
 | --- | --- | --- | --- | --- |
-| yes | yes | yes | Finnish `15. marraskuuta 2026`, English `15 November 2026` | `2026-11-15` |
+| yes | yes | yes | Finnish `1.11.2026`, English `1 November 2026` | `2026-11-15` |
 | yes | yes | no | localized month and year, for example `helmikuu 2027` or `February 2027` | `2027-02` |
 | yes | no | no | `2027` | `2027` |
 | no | yes | yes | Finnish `1. marraskuuta`, English `1 November` | none |
 | no | no | no | The date will be announced later. | none |
 
-`wp_date()` supplies the month name from the active locale. The theme does not list month names. Finnish punctuation lives in the translated format `j. F Y` in `languages/fi.l10n.php`. WordPress then declines the month when the Finnish language pack asks it to, which is what produces “marraskuuta” after the day. A month and year without a day stay in the locale’s standalone month form. The stored year, month, and day do not change with the language.
+`wp_date()` supplies the month name from the active locale. The theme does not list month names. A complete date uses `j F Y` in the English source and `j.n.Y` in `languages/fi.l10n.php`, so Finnish stays numeric. A month and year without a day stay in the locale’s month form, for example `February 2027`. The stored year, month, and day do not change with the language.
 
 Nothing stores a placeholder day to make sorting easier. Sorting uses the real parts. Inside the comparator only, a missing day sorts after the exact dates of that month, and a year without a month sorts after the dated events of that year. Events with no year sort after every dated event. Fully unknown dates sort last.
 
@@ -287,9 +291,9 @@ These notes are for the person entering events. They are not stored in the theme
 
 | Municipality | Date to enter | Time | Venue | Artist |
 | --- | --- | --- | --- | --- |
-| Punkalaidun | Day 1, month 11. Year was not provided. Leave the year empty until it is confirmed. | 16:00–18:00 | Konatun kellari | Empath, vahvistettu |
+| Punkalaidun | 1.11.2026 | 16:00–18:00 | Konatun kellari | Empath, vahvistettu |
 | Nokia | 15.11.2026 | 15:00–18:00 | Koukkujärvi / Koukun maja | Jimi Tenor, vahvistettu |
-| Sastamala | 22.11.2026 | 15:00–18:00 | Ritajärvi | Jori Hulkkonen, alustava |
+| Sastamala | 22.11.2026 | 15:00–18:00 | Ritajärvi | Jori Hulkkonen, vahvistettu |
 | Hämeenkyrö | 28.11.2026 | empty | empty | Aleksi Myllykoski, vahvistettu |
 | Ylöjärvi | 6.12.2026 | empty | empty | Heli Hartikainen, vahvistettu |
 | Valkeakoski | 16.1.2027 | 16:00–19:00 | Korkkiksen boulder | MESAK, vahvistettu |
@@ -297,7 +301,7 @@ These notes are for the person entering events. They are not stored in the theme
 | Lempäälä | year 2027 only | empty | empty | Aho, alustava |
 | Pälkäne | February 2027, day empty | empty | empty | status Ei julkaistu, name empty |
 
-Because Punkalaidun has no year in the source notes, it is not selected as the next event until a year is saved. With the years above, the next event on 11 October 2026 is Nokia.
+With these dates, the next complete event on 12 October 2026 is Punkalaidun. The theme does not hardcode that result. It chooses the earliest event that has a year and is not past.
 
 ## Where to change something
 
@@ -306,7 +310,7 @@ Because Punkalaidun has no year in the source notes, it is not selected as the n
 | Colors, fonts, spacing, content width | `theme/theme.json`. Presicav itself is Adobe Fonts kit `lgz0wqd`, enqueued in `functions.php` |
 | Hero video or Siirtymä logo | `theme/assets/video/hero-anim.mp4` and `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg` |
 | Hero scroll and overlay | `theme/assets/css/hero.css` and `theme/assets/js/hero-video.js` |
-| Header or footer | `theme/parts/` |
+| Header or footer | `theme/parts/`, `theme/inc/navigation.php`, `theme/inc/footer.php` |
 | Home page structure | `theme/templates/front-page.html` |
 | Event page structure | `theme/templates/single-event.html` |
 | How a missing fact is phrased | `theme/inc/blocks.php`, then `theme/languages/fi.l10n.php` |
@@ -353,6 +357,6 @@ No deploy script is set up yet. Add one when the Hostaan workflow is decided, an
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.17`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.25`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.
