@@ -385,7 +385,104 @@ function lohkareet_render_site_footer() {
 	}
 
 	$html .= '<p class="lohkareet-footer__copyright">© ' . esc_html( $year ) . ' ' . esc_html__( 'Suomen Ambientyhdistys ry', 'lohkareet' ) . '</p>';
-	$html .= '</div></div></div>';
+	$html .= '</div></div>';
+	$html .= lohkareet_get_municipality_logo_markup();
+	$html .= '</div>';
+
+	return $html;
+}
+
+/**
+ * White municipality marks, in program order.
+ *
+ * --logo-fit enlarges a file whose artwork does not fill the canvas, so the
+ * visible mark shares one height. The files stay in the theme.
+ *
+ * @return array<int, array{file: string, name: string, width: int, height: int, fit: string}>
+ */
+function lohkareet_get_municipality_logos() {
+	return array(
+		array(
+			'file'   => 'punkalaidun.png',
+			'name'   => 'Punkalaidun',
+			'width'  => 165,
+			'height' => 25,
+			'fit'    => '1.19',
+		),
+		array(
+			'file'   => 'nokia.png',
+			'name'   => 'Nokia',
+			'width'  => 110,
+			'height' => 116,
+			'fit'    => '1.415',
+		),
+		array(
+			'file'   => 'sastamala.png',
+			'name'   => 'Sastamala',
+			'width'  => 135,
+			'height' => 35,
+			'fit'    => '1',
+		),
+		array(
+			'file'   => 'hameenkyro.png',
+			'name'   => 'Hämeenkyrö',
+			'width'  => 125,
+			'height' => 34,
+			'fit'    => '1',
+		),
+		array(
+			'file'   => 'ylojarvi.png',
+			'name'   => 'Ylöjärvi',
+			'width'  => 135,
+			'height' => 28,
+			'fit'    => '1.333',
+		),
+		array(
+			'file'   => 'valkeakoski.png',
+			'name'   => 'Valkeakoski',
+			'width'  => 192,
+			'height' => 34,
+			'fit'    => '1',
+		),
+		array(
+			'file'   => 'pirkkala.png',
+			'name'   => 'Pirkkala',
+			'width'  => 137,
+			'height' => 37,
+			'fit'    => '1',
+		),
+		array(
+			'file'   => 'lempaala.png',
+			'name'   => 'Lempäälä',
+			'width'  => 103,
+			'height' => 39,
+			'fit'    => '1',
+		),
+		array(
+			'file'   => 'palkane.png',
+			'name'   => 'Pälkäne',
+			'width'  => 135,
+			'height' => 36,
+			'fit'    => '1.286',
+		),
+	);
+}
+
+/**
+ * Closing row of municipality marks. They are not links.
+ */
+function lohkareet_get_municipality_logo_markup() {
+	$html = '<ul class="lohkareet-footer__municipalities">';
+
+	foreach ( lohkareet_get_municipality_logos() as $logo ) {
+		$src = get_theme_file_uri( 'assets/images/' . $logo['file'] );
+
+		$html .= '<li>';
+		$html .= '<img src="' . esc_url( $src ) . '" alt="' . esc_attr( $logo['name'] ) . '" width="' . (int) $logo['width'] . '" height="' . (int) $logo['height'] . '" style="--logo-fit:' . esc_attr( $logo['fit'] ) . '" decoding="async" />';
+		$html .= '</li>';
+	}
+
+	$html .= '</ul>';
 
 	return $html;
 }
