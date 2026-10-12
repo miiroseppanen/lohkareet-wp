@@ -79,3 +79,87 @@
 		preview: 'lohkareet-social-image-preview',
 	} );
 }() );
+
+( function ( wp ) {
+	var settings = window.lohkareetEventEditor || {};
+
+	if ( settings.postType !== 'event' || ! wp || ! wp.plugins || ! wp.editor || ! wp.element || ! wp.components || ! wp.data || ! wp.i18n ) {
+		return;
+	}
+
+	var Slot = wp.editor.PluginPostStatusInfo;
+
+	if ( ! Slot ) {
+		return;
+	}
+
+	var el = wp.element.createElement;
+	var __ = wp.i18n.__;
+	var metaBoxId = settings.metaBoxId || 'lohkareet_event_details';
+
+	function openEventDetails() {
+		var panelName = 'meta-box-' + metaBoxId;
+		var editorSelect = wp.data.select( 'core/editor' );
+		var editorDispatch = wp.data.dispatch( 'core/editor' );
+		var preferences = wp.data.dispatch( 'core/preferences' );
+
+		if ( preferences && preferences.set ) {
+			preferences.set( 'core/edit-post', 'metaBoxesMainIsOpen', true );
+		}
+
+		if ( editorSelect && editorDispatch && editorSelect.isEditorPanelEnabled && ! editorSelect.isEditorPanelEnabled( panelName ) && editorDispatch.toggleEditorPanelEnabled ) {
+			editorDispatch.toggleEditorPanelEnabled( panelName );
+		}
+
+		var frames = 0;
+
+		function reveal() {
+			var box = document.getElementById( metaBoxId );
+			var visible = box && ! box.classList.contains( 'is-hidden' ) && box.getClientRects().length > 0;
+
+			if ( visible ) {
+				box.scrollIntoView( { block: 'start' } );
+
+				if ( ! box.hasAttribute( 'tabindex' ) ) {
+					box.setAttribute( 'tabindex', '-1' );
+				}
+
+				box.focus( { preventScroll: true } );
+				return;
+			}
+
+			frames += 1;
+
+			if ( frames < 30 ) {
+				window.requestAnimationFrame( reveal );
+			}
+		}
+
+		window.requestAnimationFrame( reveal );
+	}
+
+	wp.plugins.registerPlugin( 'lohkareet-event-details-jump', {
+		render: function EventDetailsShortcut() {
+			return el(
+				Slot,
+				{ className: 'lohkareet-event-details-jump' },
+				el(
+					wp.components.Button,
+					{
+						variant: 'secondary',
+						onClick: openEventDetails,
+					},
+					__( 'Go to event details', 'lohkareet' )
+				)
+			);
+		},
+	} );
+
+	if ( wp.data.select( 'core/commands' ) ) {
+		wp.data.dispatch( 'core/commands' ).registerCommand( {
+			name: 'lohkareet/go-to-event-details',
+			label: __( 'Go to event details', 'lohkareet' ),
+			callback: openEventDetails,
+		} );
+	}
+}( window.wp ) );

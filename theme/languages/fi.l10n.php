@@ -150,5 +150,13 @@ return array(
 		'Page hero'                                    => 'Sivun aloitus',
 		'event date format: month and year' . "\4" . 'F Y' => 'F Y',
 		'event date format: day and month' . "\4" . 'j F' => 'j. F',
+		'Date and time'                                => 'Ajankohta',
+		'Event place'                                  => 'Tapahtumapaikka',
+		'Maps'                                         => 'Kartat',
+		'FI + EN'                                      => 'FI + EN',
+		'This language only'                           => 'Vain tämä kieli',
+		'Lohkareet – event details'                    => 'Lohkareet – tapahtumatiedot',
+		'Go to event details'                          => 'Siirry tapahtumatietoihin',
+		'Fields marked FI + EN are copied to the translation. Fields marked for this language stay on this version.' => 'FI + EN -merkityt kentät kopioidaan käännökseen. Vain tälle kielelle merkityt kentät jäävät tähän versioon.',
 	),
 );

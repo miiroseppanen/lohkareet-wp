@@ -106,11 +106,12 @@ function lohkareet_render_social_fields( $post_id, $context ) {
 	if ( 'page' === $context ) {
 		wp_nonce_field( 'lohkareet_save_page_social_meta', 'lohkareet_page_social_nonce' );
 	}
+	$is_event = 'event' === $context;
 	?>
-	<fieldset>
+	<fieldset<?php echo $is_event ? ' class="lohkareet-event-section"' : ''; ?>>
 		<legend><strong><?php esc_html_e( 'Social sharing', 'lohkareet' ); ?></strong></legend>
 		<p>
-			<label for="lohkareet_social_description"><strong><?php esc_html_e( 'Social description', 'lohkareet' ); ?></strong></label><br>
+			<label for="lohkareet_social_description"><strong><?php esc_html_e( 'Social description', 'lohkareet' ); ?></strong><?php echo $is_event ? ' ' . lohkareet_event_scope_mark( 'lohkareet_social_description' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label><br>
 			<textarea class="widefat" rows="3" id="lohkareet_social_description" name="lohkareet_social_description"><?php echo esc_textarea( $description ); ?></textarea>
 			<?php if ( 'event' === $context ) : ?>
 				<span class="description"><?php esc_html_e( 'Used for link previews. Leave this empty to build the text from the event’s known facts.', 'lohkareet' ); ?></span>
@@ -131,7 +132,7 @@ function lohkareet_render_social_fields( $post_id, $context ) {
 			<?php endif; ?>
 		</p>
 		<p>
-			<label for="lohkareet_social_image"><strong><?php esc_html_e( 'Social image', 'lohkareet' ); ?></strong></label><br>
+			<label for="lohkareet_social_image"><strong><?php esc_html_e( 'Social image', 'lohkareet' ); ?></strong><?php echo $is_event ? ' ' . lohkareet_event_scope_mark( 'lohkareet_social_image' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label><br>
 			<input type="hidden" id="lohkareet_social_image" name="lohkareet_social_image" value="<?php echo esc_attr( $image ); ?>">
 			<span id="lohkareet-social-image-preview">
 				<?php

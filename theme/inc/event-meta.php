@@ -129,12 +129,47 @@ function lohkareet_event_meta_auth( $allowed, $meta_key, $object_id, ...$unused 
 }
 
 /**
+ * Prints the language-scope mark for one event field.
+ *
+ * @param string $key Meta key.
+ * @return string
+ */
+function lohkareet_event_scope_mark( $key ) {
+	$shared = in_array( $key, lohkareet_shared_event_meta_keys(), true );
+	$label  = $shared ? __( 'FI + EN', 'lohkareet' ) : __( 'This language only', 'lohkareet' );
+	$scope  = $shared ? 'shared' : 'language';
+
+	return '<span class="lohkareet-event-scope is-' . esc_attr( $scope ) . '">' . esc_html( $label ) . '</span>';
+}
+
+/**
+ * Prints a field label with its language-scope mark.
+ *
+ * @param string $id     Input id.
+ * @param string $label  Visible label.
+ * @param string $key    Meta key.
+ * @param bool   $strong Whether the label text is strong.
+ */
+function lohkareet_event_field_label( $id, $label, $key, $strong = true ) {
+	echo '<label for="' . esc_attr( $id ) . '">';
+
+	if ( $strong ) {
+		echo '<strong>' . esc_html( $label ) . '</strong>';
+	} else {
+		echo esc_html( $label );
+	}
+
+	echo ' ' . lohkareet_event_scope_mark( $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '</label>';
+}
+
+/**
  * Adds the event details form below the content editor.
  */
 function lohkareet_add_event_meta_box() {
 	add_meta_box(
 		'lohkareet_event_details',
-		__( 'Event details', 'lohkareet' ),
+		__( 'Lohkareet – event details', 'lohkareet' ),
 		'lohkareet_render_event_meta_box',
 		'event',
 		'normal',
@@ -177,16 +212,16 @@ function lohkareet_render_event_meta_box( $post ) {
 	}
 
 	echo '<p class="description">' . esc_html__( 'Leave a field empty when that fact is still unknown. Do not type a “will be announced later” sentence into a field.', 'lohkareet' ) . '</p>';
-	echo '<p class="description">' . esc_html__( 'Date, time, municipality, venue, address, arrival point, coordinates, map point, Google Maps URL, Zoneatlas URL, performing artist, artist status, artist image, social image, and assigned works are shared. Translate the location description, the arrival instructions, the artist description, and the social description on each version. Work descriptions are translated on the work.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Fields marked FI + EN are copied to the translation. Fields marked for this language stay on this version.', 'lohkareet' ) . '</p>';
 	?>
-	<fieldset>
-		<legend><strong><?php esc_html_e( 'Date', 'lohkareet' ); ?></strong></legend>
+	<fieldset class="lohkareet-event-section">
+		<legend><strong><?php esc_html_e( 'Date and time', 'lohkareet' ); ?></strong></legend>
 		<p>
-			<label for="lohkareet_date_day"><?php esc_html_e( 'Day', 'lohkareet' ); ?></label><br>
+			<?php lohkareet_event_field_label( 'lohkareet_date_day', __( 'Day', 'lohkareet' ), 'lohkareet_date_day', false ); ?><br>
 			<input type="number" id="lohkareet_date_day" name="lohkareet_date_day" min="1" max="31" value="<?php echo esc_attr( $day ); ?>">
 		</p>
 		<p>
-			<label for="lohkareet_date_month"><?php esc_html_e( 'Month', 'lohkareet' ); ?></label><br>
+			<?php lohkareet_event_field_label( 'lohkareet_date_month', __( 'Month', 'lohkareet' ), 'lohkareet_date_month', false ); ?><br>
 			<select id="lohkareet_date_month" name="lohkareet_date_month">
 				<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
 				<?php for ( $month_number = 1; $month_number <= 12; $month_number++ ) : ?>
@@ -197,117 +232,128 @@ function lohkareet_render_event_meta_box( $post ) {
 			</select>
 		</p>
 		<p>
-			<label for="lohkareet_date_year"><?php esc_html_e( 'Year', 'lohkareet' ); ?></label><br>
+			<?php lohkareet_event_field_label( 'lohkareet_date_year', __( 'Year', 'lohkareet' ), 'lohkareet_date_year', false ); ?><br>
 			<input type="number" id="lohkareet_date_year" name="lohkareet_date_year" min="1970" max="2100" value="<?php echo esc_attr( $year ); ?>">
 		</p>
 		<p class="description"><?php esc_html_e( 'A day can be saved without a year. A month is required when the day is known.', 'lohkareet' ); ?></p>
-	</fieldset>
-
-	<fieldset>
-		<legend><strong><?php esc_html_e( 'Time', 'lohkareet' ); ?></strong></legend>
 		<p>
-			<label for="lohkareet_start_time"><?php esc_html_e( 'Start time', 'lohkareet' ); ?></label><br>
+			<?php lohkareet_event_field_label( 'lohkareet_start_time', __( 'Start time', 'lohkareet' ), 'lohkareet_start_time', false ); ?><br>
 			<input type="time" id="lohkareet_start_time" name="lohkareet_start_time" value="<?php echo esc_attr( $start ); ?>">
 		</p>
 		<p>
-			<label for="lohkareet_end_time"><?php esc_html_e( 'End time', 'lohkareet' ); ?></label><br>
+			<?php lohkareet_event_field_label( 'lohkareet_end_time', __( 'End time', 'lohkareet' ), 'lohkareet_end_time', false ); ?><br>
 			<input type="time" id="lohkareet_end_time" name="lohkareet_end_time" value="<?php echo esc_attr( $end ); ?>">
 		</p>
 	</fieldset>
 
-	<p>
-		<label for="lohkareet_municipality"><strong><?php esc_html_e( 'Municipality', 'lohkareet' ); ?></strong></label><br>
-		<select id="lohkareet_municipality" name="lohkareet_municipality">
-			<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
-			<?php foreach ( lohkareet_get_municipalities() as $name ) : ?>
-				<option value="<?php echo esc_attr( $name ); ?>" <?php selected( $municipality, $name ); ?>><?php echo esc_html( $name ); ?></option>
-			<?php endforeach; ?>
-		</select>
-	</p>
-	<p>
-		<label for="lohkareet_venue"><strong><?php esc_html_e( 'Venue', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_venue" name="lohkareet_venue" value="<?php echo esc_attr( $venue ); ?>">
-	</p>
-	<p>
-		<label for="lohkareet_address"><strong><?php esc_html_e( 'Street address', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_address" name="lohkareet_address" value="<?php echo esc_attr( $address ); ?>">
-	</p>
-	<p>
-		<label for="lohkareet_location_description"><strong><?php esc_html_e( 'Location description', 'lohkareet' ); ?></strong></label><br>
-		<textarea class="widefat" rows="6" id="lohkareet_location_description" name="lohkareet_location_description"><?php echo esc_textarea( $location ); ?></textarea>
-		<span class="description"><?php esc_html_e( 'Editorial text for the place. This is not the arrival instructions.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_arrival_point"><strong><?php esc_html_e( 'Arrival point', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_arrival_point" name="lohkareet_arrival_point" value="<?php echo esc_attr( $arrival_point ); ?>">
-		<span class="description"><?php esc_html_e( 'The named point a visitor navigates to, when that is not the event location itself.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_arrival_description"><strong><?php esc_html_e( 'Arrival instructions', 'lohkareet' ); ?></strong></label><br>
-		<textarea class="widefat" rows="4" id="lohkareet_arrival_description" name="lohkareet_arrival_description"><?php echo esc_textarea( $arrival ); ?></textarea>
-	</p>
-	<p>
-		<label for="lohkareet_map_latitude"><strong><?php esc_html_e( 'Latitude', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_map_latitude" name="lohkareet_map_latitude" inputmode="decimal" value="<?php echo esc_attr( $latitude ); ?>" placeholder="61.140131">
-	</p>
-	<p>
-		<label for="lohkareet_map_longitude"><strong><?php esc_html_e( 'Longitude', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_map_longitude" name="lohkareet_map_longitude" inputmode="decimal" value="<?php echo esc_attr( $longitude ); ?>" placeholder="23.132504">
-	</p>
-	<p>
-		<label for="lohkareet_map_point"><strong><?php esc_html_e( 'Mapped point', 'lohkareet' ); ?></strong></label><br>
-		<select id="lohkareet_map_point" name="lohkareet_map_point">
-			<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
-			<option value="event" <?php selected( $map_point, 'event' ); ?>><?php esc_html_e( 'Event location', 'lohkareet' ); ?></option>
-			<option value="arrival" <?php selected( $map_point, 'arrival' ); ?>><?php esc_html_e( 'Arrival point', 'lohkareet' ); ?></option>
-		</select>
-		<span class="description"><?php esc_html_e( 'Decimal degrees for one verified point. Say whether that point is the event location or only the arrival point. Leave the coordinates empty when the point is not confirmed.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_map_url"><strong><?php esc_html_e( 'Google Maps URL', 'lohkareet' ); ?></strong></label><br>
-		<input type="url" class="widefat" id="lohkareet_map_url" name="lohkareet_map_url" value="<?php echo esc_attr( $map_url ); ?>" placeholder="https://">
-		<span class="description"><?php esc_html_e( 'Optional https link for the Google Maps button. Leave this empty to build the link from the coordinates. This is not the embedded map.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_zoneatlas_url"><strong><?php esc_html_e( 'Zoneatlas URL', 'lohkareet' ); ?></strong></label><br>
-		<input type="url" class="widefat" id="lohkareet_zoneatlas_url" name="lohkareet_zoneatlas_url" value="<?php echo esc_attr( $zoneatlas ); ?>" placeholder="https://">
-		<span class="description"><?php esc_html_e( 'Https address of this event’s Zoneatlas map. Leave this empty to show the series map.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_artist_name"><strong><?php esc_html_e( 'Performing artist', 'lohkareet' ); ?></strong></label><br>
-		<input type="text" class="widefat" id="lohkareet_artist_name" name="lohkareet_artist_name" value="<?php echo esc_attr( $artist ); ?>">
-		<span class="description"><?php esc_html_e( 'This is the main performing artist. Recurring works are assigned below and are not additional artists.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_artist_status"><strong><?php esc_html_e( 'Artist status', 'lohkareet' ); ?></strong></label><br>
-		<select id="lohkareet_artist_status" name="lohkareet_artist_status">
-			<option value="confirmed" <?php selected( $status, 'confirmed' ); ?>><?php esc_html_e( 'Confirmed', 'lohkareet' ); ?></option>
-			<option value="tentative" <?php selected( $status, 'tentative' ); ?>><?php esc_html_e( 'Tentative', 'lohkareet' ); ?></option>
-			<option value="unannounced" <?php selected( $status, 'unannounced' ); ?>><?php esc_html_e( 'Unannounced', 'lohkareet' ); ?></option>
-		</select>
-		<span class="description"><?php esc_html_e( 'The name is shown only when the status is confirmed or tentative.', 'lohkareet' ); ?></span>
-	</p>
-	<p>
-		<label for="lohkareet_artist_description"><strong><?php esc_html_e( 'Artist description', 'lohkareet' ); ?></strong></label><br>
-		<textarea class="widefat" rows="4" id="lohkareet_artist_description" name="lohkareet_artist_description"><?php echo esc_textarea( $artist_text ); ?></textarea>
-	</p>
-	<p>
-		<label for="lohkareet_artist_image"><strong><?php esc_html_e( 'Artist image', 'lohkareet' ); ?></strong></label><br>
-		<input type="hidden" id="lohkareet_artist_image" name="lohkareet_artist_image" value="<?php echo esc_attr( $artist_image ); ?>">
-		<span id="lohkareet-artist-image-preview">
-			<?php
-			if ( '' !== $artist_image ) {
-				echo wp_get_attachment_image( (int) $artist_image, 'medium' );
-			}
-			?>
-		</span><br>
-		<button type="button" class="button" id="lohkareet-artist-image-button"><?php esc_html_e( 'Select image', 'lohkareet' ); ?></button>
-		<button type="button" class="button-link" id="lohkareet-artist-image-remove"><?php esc_html_e( 'Remove image', 'lohkareet' ); ?></button>
-		<span class="description"><?php esc_html_e( 'Separate from the event’s featured image.', 'lohkareet' ); ?></span>
-	</p>
+	<fieldset class="lohkareet-event-section">
+		<legend><strong><?php esc_html_e( 'Event place', 'lohkareet' ); ?></strong></legend>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_municipality', __( 'Municipality', 'lohkareet' ), 'lohkareet_municipality' ); ?><br>
+			<select id="lohkareet_municipality" name="lohkareet_municipality">
+				<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
+				<?php foreach ( lohkareet_get_municipalities() as $name ) : ?>
+					<option value="<?php echo esc_attr( $name ); ?>" <?php selected( $municipality, $name ); ?>><?php echo esc_html( $name ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_venue', __( 'Venue', 'lohkareet' ), 'lohkareet_venue' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_venue" name="lohkareet_venue" value="<?php echo esc_attr( $venue ); ?>">
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_address', __( 'Street address', 'lohkareet' ), 'lohkareet_address' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_address" name="lohkareet_address" value="<?php echo esc_attr( $address ); ?>">
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_location_description', __( 'Location description', 'lohkareet' ), 'lohkareet_location_description' ); ?><br>
+			<textarea class="widefat" rows="6" id="lohkareet_location_description" name="lohkareet_location_description"><?php echo esc_textarea( $location ); ?></textarea>
+			<span class="description"><?php esc_html_e( 'Editorial text for the place. This is not the arrival instructions.', 'lohkareet' ); ?></span>
+		</p>
+	</fieldset>
+
+	<fieldset class="lohkareet-event-section">
+		<legend><strong><?php esc_html_e( 'Arrival', 'lohkareet' ); ?></strong></legend>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_arrival_point', __( 'Arrival point', 'lohkareet' ), 'lohkareet_arrival_point' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_arrival_point" name="lohkareet_arrival_point" value="<?php echo esc_attr( $arrival_point ); ?>">
+			<span class="description"><?php esc_html_e( 'The named point a visitor navigates to, when that is not the event location itself.', 'lohkareet' ); ?></span>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_arrival_description', __( 'Arrival instructions', 'lohkareet' ), 'lohkareet_arrival_description' ); ?><br>
+			<textarea class="widefat" rows="4" id="lohkareet_arrival_description" name="lohkareet_arrival_description"><?php echo esc_textarea( $arrival ); ?></textarea>
+		</p>
+	</fieldset>
+
+	<fieldset class="lohkareet-event-section">
+		<legend><strong><?php esc_html_e( 'Maps', 'lohkareet' ); ?></strong></legend>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_map_latitude', __( 'Latitude', 'lohkareet' ), 'lohkareet_map_latitude' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_map_latitude" name="lohkareet_map_latitude" inputmode="decimal" value="<?php echo esc_attr( $latitude ); ?>" placeholder="61.140131">
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_map_longitude', __( 'Longitude', 'lohkareet' ), 'lohkareet_map_longitude' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_map_longitude" name="lohkareet_map_longitude" inputmode="decimal" value="<?php echo esc_attr( $longitude ); ?>" placeholder="23.132504">
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_map_point', __( 'Mapped point', 'lohkareet' ), 'lohkareet_map_point' ); ?><br>
+			<select id="lohkareet_map_point" name="lohkareet_map_point">
+				<option value=""><?php esc_html_e( 'Unknown', 'lohkareet' ); ?></option>
+				<option value="event" <?php selected( $map_point, 'event' ); ?>><?php esc_html_e( 'Event location', 'lohkareet' ); ?></option>
+				<option value="arrival" <?php selected( $map_point, 'arrival' ); ?>><?php esc_html_e( 'Arrival point', 'lohkareet' ); ?></option>
+			</select>
+			<span class="description"><?php esc_html_e( 'Decimal degrees for one verified point. Say whether that point is the event location or only the arrival point. Leave the coordinates empty when the point is not confirmed.', 'lohkareet' ); ?></span>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_map_url', __( 'Google Maps URL', 'lohkareet' ), 'lohkareet_map_url' ); ?><br>
+			<input type="url" class="widefat" id="lohkareet_map_url" name="lohkareet_map_url" value="<?php echo esc_attr( $map_url ); ?>" placeholder="https://">
+			<span class="description"><?php esc_html_e( 'Optional https link for the Google Maps button. Leave this empty to build the link from the coordinates. This is not the embedded map.', 'lohkareet' ); ?></span>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_zoneatlas_url', __( 'Zoneatlas URL', 'lohkareet' ), 'lohkareet_zoneatlas_url' ); ?><br>
+			<input type="url" class="widefat" id="lohkareet_zoneatlas_url" name="lohkareet_zoneatlas_url" value="<?php echo esc_attr( $zoneatlas ); ?>" placeholder="https://">
+			<span class="description"><?php esc_html_e( 'Https address of this event’s Zoneatlas map. Leave this empty to show the series map.', 'lohkareet' ); ?></span>
+		</p>
+	</fieldset>
+
+	<fieldset class="lohkareet-event-section">
+		<legend><strong><?php esc_html_e( 'Performing artist', 'lohkareet' ); ?></strong></legend>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_name', __( 'Performing artist', 'lohkareet' ), 'lohkareet_artist_name' ); ?><br>
+			<input type="text" class="widefat" id="lohkareet_artist_name" name="lohkareet_artist_name" value="<?php echo esc_attr( $artist ); ?>">
+			<span class="description"><?php esc_html_e( 'This is the main performing artist. Recurring works are assigned below and are not additional artists.', 'lohkareet' ); ?></span>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_status', __( 'Artist status', 'lohkareet' ), 'lohkareet_artist_status' ); ?><br>
+			<select id="lohkareet_artist_status" name="lohkareet_artist_status">
+				<option value="confirmed" <?php selected( $status, 'confirmed' ); ?>><?php esc_html_e( 'Confirmed', 'lohkareet' ); ?></option>
+				<option value="tentative" <?php selected( $status, 'tentative' ); ?>><?php esc_html_e( 'Tentative', 'lohkareet' ); ?></option>
+				<option value="unannounced" <?php selected( $status, 'unannounced' ); ?>><?php esc_html_e( 'Unannounced', 'lohkareet' ); ?></option>
+			</select>
+			<span class="description"><?php esc_html_e( 'The name is shown only when the status is confirmed or tentative.', 'lohkareet' ); ?></span>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_description', __( 'Artist description', 'lohkareet' ), 'lohkareet_artist_description' ); ?><br>
+			<textarea class="widefat" rows="4" id="lohkareet_artist_description" name="lohkareet_artist_description"><?php echo esc_textarea( $artist_text ); ?></textarea>
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_image', __( 'Artist image', 'lohkareet' ), 'lohkareet_artist_image' ); ?><br>
+			<input type="hidden" id="lohkareet_artist_image" name="lohkareet_artist_image" value="<?php echo esc_attr( $artist_image ); ?>">
+			<span id="lohkareet-artist-image-preview">
+				<?php
+				if ( '' !== $artist_image ) {
+					echo wp_get_attachment_image( (int) $artist_image, 'medium' );
+				}
+				?>
+			</span><br>
+			<button type="button" class="button" id="lohkareet-artist-image-button"><?php esc_html_e( 'Select image', 'lohkareet' ); ?></button>
+			<button type="button" class="button-link" id="lohkareet-artist-image-remove"><?php esc_html_e( 'Remove image', 'lohkareet' ); ?></button>
+			<span class="description"><?php esc_html_e( 'Separate from the event’s featured image.', 'lohkareet' ); ?></span>
+		</p>
+	</fieldset>
 	<?php
-	lohkareet_render_social_fields( $post->ID, 'event' );
 	lohkareet_render_event_works_field( $post->ID );
+	lohkareet_render_social_fields( $post->ID, 'event' );
 	?>
 	<p class="description"><?php esc_html_e( 'Write the event description in the content editor. Set the event image as the featured image.', 'lohkareet' ); ?></p>
 	<?php
@@ -664,13 +710,77 @@ function lohkareet_enqueue_event_editor( $hook ) {
 		return;
 	}
 
+	$is_event = 'event' === $screen->post_type;
+	$version  = wp_get_theme()->get( 'Version' );
+	$deps     = array( 'media-editor' );
+
+	if ( $is_event ) {
+		$deps = array( 'media-editor', 'wp-plugins', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-i18n', 'wp-commands' );
+		wp_enqueue_style(
+			'lohkareet-event-editor',
+			get_theme_file_uri( 'assets/css/event-editor.css' ),
+			array(),
+			$version
+		);
+	}
+
 	wp_enqueue_media();
 	wp_enqueue_script(
 		'lohkareet-event-editor',
 		get_theme_file_uri( 'assets/js/event-editor.js' ),
-		array( 'media-editor' ),
-		wp_get_theme()->get( 'Version' ),
+		$deps,
+		$version,
 		true
+	);
+
+	if ( ! $is_event ) {
+		return;
+	}
+
+	wp_add_inline_script(
+		'lohkareet-event-editor',
+		'window.lohkareetEventEditor = ' . wp_json_encode(
+			array(
+				'postType'  => 'event',
+				'metaBoxId' => 'lohkareet_event_details',
+			)
+		) . ';',
+		'before'
+	);
+	lohkareet_inject_event_editor_translations();
+}
+
+/**
+ * Gives the event editor shortcut the same Finnish translations as PHP.
+ */
+function lohkareet_inject_event_editor_translations() {
+	$msgids = array(
+		'Go to event details',
+		'Lohkareet – event details',
+	);
+	$data   = array(
+		'' => array(
+			'domain' => 'lohkareet',
+			'lang'   => get_locale(),
+		),
+	);
+
+	foreach ( $msgids as $msgid ) {
+		$translated = __( $msgid, 'lohkareet' );
+
+		if ( $translated !== $msgid ) {
+			$data[ $msgid ] = array( $translated );
+		}
+	}
+
+	if ( count( $data ) < 2 ) {
+		return;
+	}
+
+	wp_add_inline_script(
+		'lohkareet-event-editor',
+		'wp.i18n.setLocaleData( ' . wp_json_encode( $data ) . ', "lohkareet" );',
+		'before'
 	);
 }
 add_action( 'admin_enqueue_scripts', 'lohkareet_enqueue_event_editor' );

@@ -1,0 +1,34 @@
+.lohkareet-event-section {
+	margin: 1.25em 0 0;
+	padding: 0.2em 1em 0.4em;
+	border: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.lohkareet-event-section > legend {
+	padding: 0 0.35em;
+}
+
+.lohkareet-event-scope {
+	display: inline-block;
+	margin-left: 0.35em;
+	padding: 0 0.45em;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+	color: #50575e;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	line-height: 1.7;
+	vertical-align: middle;
+}
+
+.lohkareet-event-scope.is-language {
+	border-color: #8c8f94;
+	background: #f6f7f7;
+}
+
+.lohkareet-event-details-jump .components-button {
+	width: 100%;
+	justify-content: center;
+}

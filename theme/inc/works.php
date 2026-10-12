@@ -491,8 +491,8 @@ function lohkareet_render_event_works_field( $post_id ) {
 		$order[ $id ] = $index + 1;
 	}
 
-	echo '<fieldset>';
-	echo '<legend><strong>' . esc_html__( 'Works at this event', 'lohkareet' ) . '</strong></legend>';
+	echo '<fieldset class="lohkareet-event-section">';
+	echo '<legend><strong>' . esc_html__( 'Works', 'lohkareet' ) . '</strong> ' . lohkareet_event_scope_mark( 'lohkareet_work_ids' ) . '</legend>';
 	echo '<p class="description">' . esc_html__( 'Tick a work to show it here. The number sets its order. The description is edited on the work, not on this event.', 'lohkareet' ) . '</p>';
 	echo '<input type="hidden" name="lohkareet_works_present" value="1">';
 
