@@ -7,11 +7,12 @@
 	}
 
 	// Seconds of timeline queued per pixel of ordinary document scroll.
-	// A 100px wheel notch queues about 0.12s. It never maps position to duration.
-	var GAIN = 0.0012;
-	var EASE = 0.22;
-	var MAX_STEP = 0.06;
-	var MAX_PENDING = 0.28;
+	// A 100px wheel notch queues about 0.36s of the five-second clip.
+	// It never maps page position to duration.
+	var GAIN = 0.0036;
+	var EASE = 0.32;
+	var MAX_STEP = 0.14;
+	var MAX_PENDING = 1.05;
 	var DEAD = 0.012;
 
 	var motion = window.matchMedia( '(prefers-reduced-motion: reduce)' );
@@ -32,11 +33,39 @@
 		return Math.min( max, Math.max( min, value ) );
 	}
 
-	function canSeek() {
+	function seekSpan() {
+		var span = 0;
+
 		try {
-			return video.seekable && video.seekable.length > 0;
+			var ranges = video.seekable;
+
+			if ( ! ranges ) {
+				return 0;
+			}
+
+			for ( var i = 0; i < ranges.length; i++ ) {
+				span = Math.max( span, ranges.end( i ) - ranges.start( i ) );
+			}
 		} catch ( error ) {
-			return false;
+			return 0;
+		}
+
+		return span;
+	}
+
+	function canScrub() {
+		return seekSpan() >= 1;
+	}
+
+	function setRate( rate ) {
+		if ( video.playbackRate === rate ) {
+			return;
+		}
+
+		try {
+			video.playbackRate = rate;
+		} catch ( error ) {
+			video.playbackRate = 1;
 		}
 	}
 
@@ -51,6 +80,7 @@
 		stopLoop();
 		pending = 0;
 		lastY = window.scrollY;
+		setRate( 1 );
 		video.loop = false;
 		video.pause();
 	}
@@ -64,6 +94,7 @@
 		video.defaultMuted = true;
 		video.playsInline = true;
 		video.loop = true;
+		setRate( 1 );
 
 		var attempt = video.play();
 
@@ -131,11 +162,12 @@
 
 		if ( Math.abs( pending ) < DEAD ) {
 			pending = 0;
+			setRate( 1 );
 			startPlayback();
 			return;
 		}
 
-		if ( ! metadataReady || ! canSeek() ) {
+		if ( ! metadataReady ) {
 			schedule();
 			return;
 		}
@@ -153,6 +185,17 @@
 		}
 
 		seekingFrames = 0;
+
+		if ( ! canScrub() ) {
+			// Some browsers report this file as unseekable and snap currentTime
+			// back to the start. Play the queued motion as a speed change instead.
+			setRate( clamp( 1 + pending * 8, 0.2, 4.5 ) );
+			pending *= 0.94;
+			schedule();
+			return;
+		}
+
+		setRate( 1 );
 
 		var step = clamp( pending * EASE, -MAX_STEP, MAX_STEP );
 		pending -= step;

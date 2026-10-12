@@ -292,6 +292,40 @@ footer.wp-block-template-part {
 	margin: 0;
 }
 
+.lohkareet-footer__municipalities a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	max-width: 100%;
+	line-height: 0;
+}
+
+.lohkareet-footer__municipalities a:focus-visible {
+	outline: 1px solid currentColor;
+	outline-offset: 0.35rem;
+}
+
+.lohkareet-footer__municipalities a:focus-visible img {
+	opacity: 1;
+}
+
+.lohkareet-footer__municipalities a img {
+	transition: filter 200ms linear;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.lohkareet-footer__municipalities a:hover img {
+		filter: brightness(1.2);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lohkareet-footer__municipalities a img {
+		transition: none;
+	}
+}
+
 .lohkareet-footer__municipalities img {
 	display: block;
 	width: auto;

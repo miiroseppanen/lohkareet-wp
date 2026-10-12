@@ -904,18 +904,73 @@ function lohkareet_get_municipality_logos() {
 }
 
 /**
- * Closing row of municipality marks. They are not links.
+ * Closing row of municipality marks.
+ *
+ * Each mark links to the one published event in the current language whose
+ * lohkareet_municipality value matches the logo name. Without that unique
+ * event the mark stays an image.
+ *
+ * @return string
  */
 function lohkareet_get_municipality_logo_markup() {
 	$html = '<ul class="lohkareet-footer__municipalities">';
 
 	foreach ( lohkareet_get_municipality_logos() as $logo ) {
-		$html .= '<li>' . lohkareet_get_municipality_logo_image( $logo ) . '</li>';
+		$image = lohkareet_get_municipality_logo_image( $logo );
+		$url   = lohkareet_get_municipality_event_url( $logo['name'] );
+
+		$html .= '<li>';
+
+		if ( '' !== $url ) {
+			$html .= '<a href="' . esc_url( $url ) . '">' . $image . '</a>';
+		} else {
+			$html .= $image;
+		}
+
+		$html .= '</li>';
 	}
 
 	$html .= '</ul>';
 
 	return $html;
+}
+
+/**
+ * Permalink of the current language's published event for one municipality.
+ *
+ * The name is compared exactly with lohkareet_municipality. Zero matches and
+ * more than one match both return an empty string, so the logo is not sent
+ * to another municipality's page.
+ *
+ * @param string $name Municipality name used by the logo.
+ * @return string
+ */
+function lohkareet_get_municipality_event_url( $name ) {
+	if ( ! is_string( $name ) || '' === $name ) {
+		return '';
+	}
+
+	$matches = array();
+
+	foreach ( lohkareet_get_events() as $event ) {
+		if ( ! $event instanceof WP_Post ) {
+			continue;
+		}
+
+		if ( lohkareet_get_event_meta_string( $event->ID, 'lohkareet_municipality' ) !== $name ) {
+			continue;
+		}
+
+		$matches[] = $event;
+	}
+
+	if ( 1 !== count( $matches ) ) {
+		return '';
+	}
+
+	$url = get_permalink( $matches[0] );
+
+	return is_string( $url ) ? $url : '';
 }
 
 /**
