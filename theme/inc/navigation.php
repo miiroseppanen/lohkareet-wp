@@ -57,7 +57,7 @@ function lohkareet_render_site_mark() {
 	return '<a ' . get_block_wrapper_attributes(
 		array(
 			'class' => 'lohkareet-header__mark',
-			'href'  => esc_url( home_url( '/' ) ),
+			'href'  => esc_url( lohkareet_get_front_page_url() ),
 		)
 	) . '>' . esc_html__( 'Lohkareet', 'lohkareet' ) . '</a>';
 }
