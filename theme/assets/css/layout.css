@@ -26,8 +26,9 @@
 }
 
 html {
-	scroll-padding-top: 5.5rem;
+	scroll-padding-top: calc(5.5rem + env(safe-area-inset-top, 0px));
 	overflow-x: clip;
+	background: #000;
 }
 
 html,
@@ -832,7 +833,7 @@ a.lohkareet-event-summary {
 .lohkareet-page-hero__mark {
 	position: absolute;
 	z-index: 1;
-	top: 3.15rem;
+	top: calc(3.15rem + env(safe-area-inset-top, 0px));
 	right: var(--page-gutter);
 	display: flex;
 	align-items: flex-start;
@@ -859,7 +860,7 @@ a.lohkareet-event-summary {
 }
 
 body.admin-bar .lohkareet-page-hero__mark {
-	top: calc(3.15rem + var(--wp-admin--admin-bar--height, 32px));
+	top: calc(3.15rem + var(--wp-admin--admin-bar--height, 32px) + env(safe-area-inset-top, 0px));
 }
 
 .lohkareet-page-hero__grid {
@@ -889,6 +890,46 @@ body.admin-bar .lohkareet-page-hero__mark {
 	line-height: 0.9;
 	text-transform: uppercase;
 	text-wrap: balance;
+}
+
+/*
+ * Varustautuminen and Preparation are single uppercase words. On a phone the
+ * shared 2.5rem floor is wider than the padded grid, so the glyphs paint past
+ * the viewport. Break only those two titles, and only while the word does not
+ * fit. The break is a syllable boundary (varustau-tuminen, prepara-tion).
+ * From the width where the word fits, the marker disappears and the title is
+ * one line again. Other heroes are unchanged.
+ */
+.lohkareet-page-hero__break {
+	display: none;
+}
+
+@media (max-width: 33.5rem) {
+	.lohkareet-entry-varustautuminen .lohkareet-page-hero__break {
+		display: inline;
+	}
+
+	.lohkareet-entry-varustautuminen .lohkareet-page-hero__break::before {
+		content: "-";
+	}
+
+	.lohkareet-entry-varustautuminen .lohkareet-page-hero__break + .lohkareet-page-hero__rest {
+		display: block;
+	}
+}
+
+@media (max-width: 26rem) {
+	.lohkareet-entry-preparation .lohkareet-page-hero__break {
+		display: inline;
+	}
+
+	.lohkareet-entry-preparation .lohkareet-page-hero__break::before {
+		content: "-";
+	}
+
+	.lohkareet-entry-preparation .lohkareet-page-hero__break + .lohkareet-page-hero__rest {
+		display: block;
+	}
 }
 
 .lohkareet-page-hero p {

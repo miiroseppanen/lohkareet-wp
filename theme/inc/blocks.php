@@ -128,6 +128,32 @@ function lohkareet_block_category( $categories ) {
 add_filter( 'block_categories_all', 'lohkareet_block_category' );
 
 /**
+ * Hero title HTML, with a syllable break for the two words that do not fit a phone.
+ *
+ * The marker is hidden from the width where the word fits on one line, so the
+ * stored title, the menu, and other heroes stay untouched.
+ *
+ * @param string $title Page title.
+ * @return string
+ */
+function lohkareet_get_page_hero_title_html( $title ) {
+	$breaks = array(
+		'varustautuminen' => array( 'Varustau', 'tuminen' ),
+		'preparation'     => array( 'Prepara', 'tion' ),
+	);
+	$key    = strtolower( $title );
+
+	if ( ! isset( $breaks[ $key ] ) ) {
+		return esc_html( $title );
+	}
+
+	return esc_html( $breaks[ $key ][0] )
+		. '<span class="lohkareet-page-hero__break" aria-hidden="true"></span><span class="lohkareet-page-hero__rest">'
+		. esc_html( $breaks[ $key ][1] )
+		. '</span>';
+}
+
+/**
  * Black opening field for subpages.
  *
  * The front page keeps its video hero. This block is empty there.
@@ -176,7 +202,12 @@ function lohkareet_render_page_hero() {
 	$html .= $mark;
 	$html .= '<div class="lohkareet-page-hero__grid editorial-container">';
 	$html .= $before;
-	$html .= '<h1 class="lohkareet-page-hero__title">' . esc_html( $title ) . '</h1>';
+	$title_html = lohkareet_get_page_hero_title_html( $title );
+	$label      = false !== strpos( $title_html, 'lohkareet-page-hero__break' )
+		? ' aria-label="' . esc_attr( $title ) . '"'
+		: '';
+
+	$html .= '<h1 class="lohkareet-page-hero__title"' . $label . '>' . $title_html . '</h1>';
 	$html .= $extra;
 	$html .= '</div></section>';
 

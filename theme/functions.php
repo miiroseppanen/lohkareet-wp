@@ -99,6 +99,23 @@ function lohkareet_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'lohkareet_enqueue_assets' );
 
 /**
+ * Lets the dark page edge continue into the iOS safe area and the Safari toolbar.
+ *
+ * WordPress already prints a viewport meta. This replaces that tag so the
+ * document does not contain two. theme-color is set for both system
+ * appearances, because Safari otherwise keeps a white toolbar in light mode.
+ * The color is the same black as the footer and the event hero.
+ */
+function lohkareet_print_browser_chrome_meta() {
+	remove_action( 'wp_head', '_block_template_viewport_meta_tag', 0 );
+
+	echo '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />' . "\n";
+	echo '<meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />' . "\n";
+	echo '<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />' . "\n";
+}
+add_action( 'wp_head', 'lohkareet_print_browser_chrome_meta', -1 );
+
+/**
  * Asks an administrator to use a static front page.
  *
  * front-page.html is used for the site front whether or not a page is assigned.

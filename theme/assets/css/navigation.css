@@ -56,7 +56,7 @@ header.wp-block-template-part .lohkareet-header__links {
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 1.5rem;
-	padding: var(--lohkareet-nav-inset-y) var(--page-gutter, clamp(1.25rem, 3vw, 3.5rem));
+	padding: calc(var(--lohkareet-nav-inset-y) + env(safe-area-inset-top, 0px)) var(--page-gutter, clamp(1.25rem, 3vw, 3.5rem)) var(--lohkareet-nav-inset-y);
 	pointer-events: none;
 }
 
@@ -367,7 +367,7 @@ header.wp-block-template-part button:focus-visible {
 	html.lohkareet-js header.wp-block-template-part.is-menu-open .lohkareet-header__toggle {
 		position: absolute;
 		z-index: 2;
-		top: var(--lohkareet-nav-inset-y);
+		top: calc(var(--lohkareet-nav-inset-y) + env(safe-area-inset-top, 0px));
 		right: var(--lohkareet-nav-inset-x);
 	}
 
@@ -379,7 +379,7 @@ header.wp-block-template-part button:focus-visible {
 		align-items: flex-start;
 		justify-content: flex-end;
 		width: auto;
-		padding: clamp(4.5rem, 16vh, 7rem) clamp(1.25rem, 5vw, 2.5rem) clamp(2rem, 8vh, 4rem);
+		padding: clamp(4.5rem, 16vh, 7rem) clamp(1.25rem, 5vw, 2.5rem) calc(clamp(2rem, 8vh, 4rem) + env(safe-area-inset-bottom, 0px));
 		pointer-events: auto;
 		gap: 0;
 	}
