@@ -824,6 +824,9 @@ function lohkareet_render_site_footer() {
 	$html .= '<a href="' . esc_url( 'https://www.operaatiopirkanmaa.fi/' ) . '">';
 	$html .= '<img src="' . esc_url( get_theme_file_uri( 'assets/images/operaatio_pirkanmaa-logo-white.png' ) ) . '" alt="' . esc_attr__( 'Operaatio Pirkanmaa', 'lohkareet' ) . '" width="1000" height="559" decoding="async" />';
 	$html .= '</a>';
+	$html .= '<a class="lohkareet-footer__tampere" href="' . esc_url( 'https://tampere.fi/' ) . '">';
+	$html .= '<img src="' . esc_url( get_theme_file_uri( 'assets/images/tampere.finland_rgb_nega.png' ) ) . '" alt="' . esc_attr__( 'Tampere.Finland', 'lohkareet' ) . '" width="2928" height="1126" decoding="async" />';
+	$html .= '</a>';
 	$html .= '</div>';
 	$html .= '<div class="lohkareet-footer__colophon">';
 	$html .= lohkareet_get_footer_language_markup();

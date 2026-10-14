@@ -85,26 +85,50 @@ footer.wp-block-template-part {
 }
 
 .lohkareet-footer__credit {
+	--partner-gap: clamp(1.25rem, 3vw, 2.25rem);
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: flex-start;
-	gap: clamp(1.25rem, 3vw, 2.25rem);
-	justify-self: start;
+	gap: var(--partner-gap);
+	justify-self: stretch;
+	width: 100%;
+	container-type: inline-size;
 }
 
 .lohkareet-footer__credit a {
+	--partner-h: min(6rem, calc((100cqi - (2 * var(--partner-gap))) / 7));
 	display: flex;
+	flex: 0 0 auto;
 	line-height: 0;
 }
 
 .lohkareet-footer__credit img {
 	display: block;
 	width: auto;
-	height: clamp(4.25rem, 14vw, 6rem);
-	max-width: min(11rem, 42vw);
-	opacity: 0.2;
+	height: var(--partner-h);
+	max-width: none;
+	opacity: 0.3;
 	transition: opacity 200ms linear;
+}
+
+/*
+ * Tampere.Finland is a wide wordmark inside a large transparent margin.
+ * The frame is half the height of the Operaatio Pirkanmaa mark. The row
+ * still scales down together so the three marks stay on one line.
+ */
+.lohkareet-footer__credit .lohkareet-footer__tampere {
+	align-items: center;
+	justify-content: center;
+	height: calc(var(--partner-h) * 0.407);
+	aspect-ratio: 4.338;
+	overflow: hidden;
+}
+
+.lohkareet-footer__credit .lohkareet-footer__tampere img {
+	height: calc(var(--partner-h) * 0.8425);
+	max-width: none;
+	max-height: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -122,6 +146,16 @@ footer.wp-block-template-part {
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 0.85rem;
+	font-size: clamp(0.68rem, 2.4vw, 0.75rem);
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	line-height: 1.35;
+	text-transform: uppercase;
+}
+
+.lohkareet-footer__languages,
+.lohkareet-footer__privacy,
+.lohkareet-footer__copyright {
 	font-size: clamp(0.68rem, 2.4vw, 0.75rem);
 	font-weight: 400;
 	letter-spacing: 0.14em;
@@ -206,14 +240,13 @@ footer.wp-block-template-part {
 
 @media (min-width: 48rem) {
 	.lohkareet-footer {
-		padding-block: var(--space-16) var(--space-12);
+		padding-block: var(--space-16) 0;
 	}
 
 	.lohkareet-footer__grid {
 		grid-template-columns: repeat(6, minmax(0, 1fr));
-		min-height: 56svh;
-		align-content: space-between;
-		row-gap: var(--space-16);
+		align-content: start;
+		row-gap: clamp(6.5rem, 12vw, 10rem);
 	}
 
 	.lohkareet-footer__identity {
@@ -254,7 +287,6 @@ footer.wp-block-template-part {
 @media (min-width: 64rem) {
 	.lohkareet-footer__grid {
 		grid-template-columns: repeat(12, minmax(0, 1fr));
-		min-height: 62svh;
 	}
 
 	.lohkareet-footer__identity {
@@ -269,8 +301,8 @@ footer.wp-block-template-part {
 	}
 
 	.lohkareet-footer__credit {
-		grid-column: 1 / 5;
-		justify-self: start;
+		grid-column: 1 / 9;
+		justify-self: stretch;
 	}
 
 	.lohkareet-footer__colophon {
@@ -334,12 +366,12 @@ footer.wp-block-template-part {
 }
 
 .lohkareet-footer__municipalities a img {
-	transition: filter 200ms linear;
+	transition: opacity 200ms linear;
 }
 
 @media (hover: hover) and (pointer: fine) {
 	.lohkareet-footer__municipalities a:hover img {
-		filter: brightness(1.2);
+		opacity: 1;
 	}
 }
 
@@ -355,7 +387,7 @@ footer.wp-block-template-part {
 	height: calc(var(--municipality-ink) * var(--logo-fit, 1));
 	max-width: 100%;
 	object-fit: contain;
-	opacity: 0.5;
+	opacity: 0.3;
 }
 
 @media (min-width: 48rem) {
@@ -363,17 +395,13 @@ footer.wp-block-template-part {
 		--municipality-ink: clamp(1.15rem, 2.1vw, 1.45rem);
 		grid-template-columns: repeat(6, minmax(0, 1fr));
 		column-gap: var(--grid-gap);
-		row-gap: clamp(1.75rem, 5vw, 2.75rem);
-		margin-top: clamp(4rem, 8vw, 7rem);
+		row-gap: clamp(1.5rem, 3vw, 2rem);
+		margin-top: clamp(2rem, 4vw, 2.75rem);
 	}
 
 	.lohkareet-footer__municipalities li,
 	.lohkareet-footer__municipalities li:last-child {
 		grid-column: span 2;
-	}
-
-	.lohkareet-footer__municipalities img {
-		opacity: 1;
 	}
 }
 
@@ -382,6 +410,7 @@ footer.wp-block-template-part {
 		display: flex;
 		flex-direction: column;
 		padding-top: clamp(1.5rem, 3vh, 2.5rem);
+		padding-bottom: 0;
 	}
 
 	.lohkareet-footer__municipalities {
@@ -394,11 +423,9 @@ footer.wp-block-template-part {
 		column-gap: clamp(0.65rem, 1.1vw, 1.35rem);
 		row-gap: 0;
 		margin-top: 0;
-		margin-bottom: clamp(2.75rem, 6vw, 5rem);
-	}
-
-	.lohkareet-footer__municipalities img {
-		opacity: 1;
+		margin-bottom: clamp(1.5rem, 2.5vw, 2.25rem);
+		height: calc(var(--municipality-ink) * 2.8);
+		overflow: hidden;
 	}
 
 	.lohkareet-footer__municipalities li,
@@ -429,7 +456,7 @@ footer.wp-block-template-part {
 		max-width: 100%;
 		box-sizing: border-box;
 		margin-block: clamp(2.75rem, 8vw, 4.5rem) 0;
-		padding-block: 0.55rem;
+		padding-block: 0.1rem;
 	}
 
 	.lohkareet-footer__logo-track {
@@ -450,8 +477,10 @@ footer.wp-block-template-part {
 		justify-content: flex-start;
 		width: max-content;
 		max-width: none;
+		height: calc(var(--municipality-ink) * 2.8);
 		margin: 0;
 		padding: 0;
+		overflow: hidden;
 		column-gap: 0;
 		row-gap: 0;
 	}
@@ -468,7 +497,7 @@ footer.wp-block-template-part {
 	}
 
 	.lohkareet-footer__logo-rail .lohkareet-footer__municipalities a {
-		padding-block: 0.45rem;
+		padding-block: 0;
 		scroll-margin-inline: 1rem;
 	}
 
@@ -530,5 +559,83 @@ footer.wp-block-template-part {
 
 	to {
 		transform: translateX(-50%);
+	}
+}
+
+/*
+ * Phone footer. The language sits with the navigation, the partner marks
+ * sit above the municipality line, and the copyright closes the footer.
+ * Desktop keeps the poster grid.
+ */
+@media (max-width: 47.99rem) {
+	.lohkareet-footer {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		column-gap: 1.25rem;
+		row-gap: 0;
+	}
+
+	.lohkareet-footer__grid,
+	.lohkareet-footer__colophon {
+		display: contents;
+	}
+
+	.lohkareet-footer__identity,
+	.lohkareet-footer__nav,
+	.lohkareet-footer__languages,
+	.lohkareet-footer__credit,
+	.lohkareet-footer__privacy,
+	.lohkareet-footer__copyright {
+		box-sizing: border-box;
+	}
+
+	.lohkareet-footer__identity {
+		grid-column: 1 / -1;
+		grid-row: 1;
+		margin-bottom: 2.25rem;
+		padding-inline: var(--page-gutter);
+	}
+
+	.lohkareet-footer__nav {
+		grid-column: 1;
+		grid-row: 2;
+		margin-bottom: 3.5rem;
+		padding-inline-start: var(--page-gutter);
+	}
+
+	.lohkareet-footer__languages {
+		grid-column: 2;
+		grid-row: 2;
+		align-self: end;
+		justify-self: end;
+		margin-bottom: 3.5rem;
+		padding-inline-end: var(--page-gutter);
+	}
+
+	.lohkareet-footer__credit {
+		grid-column: 1 / -1;
+		grid-row: 3;
+		margin-bottom: 1.35rem;
+		padding-inline: var(--page-gutter);
+	}
+
+	.lohkareet-footer__logo-rail {
+		grid-column: 1 / -1;
+		grid-row: 4;
+		margin-block: 0 1.35rem;
+	}
+
+	.lohkareet-footer__privacy {
+		grid-column: 1 / -1;
+		grid-row: 5;
+		margin-bottom: 0.65rem;
+		padding-inline: var(--page-gutter);
+	}
+
+	.lohkareet-footer__copyright {
+		grid-column: 1 / -1;
+		grid-row: 6;
+		padding-inline: var(--page-gutter);
 	}
 }
