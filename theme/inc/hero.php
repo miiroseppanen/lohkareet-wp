@@ -2,8 +2,9 @@
 /**
  * Front-page hero.
  *
- * Video: theme/assets/video/hero-anim.mp4
- * Logo:  theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg
+ * Video:    theme/assets/video/lohkare_animaatio.mp4
+ * Fallback: theme/assets/images/lohkare_animaatio-fallback.jpg
+ * Logo:     theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg
  *
  * Both are theme files. They are not editable fields and they are not copied
  * elsewhere. The logo is the original white Siirtymä mark.
@@ -83,8 +84,9 @@ function lohkareet_render_hero( $attributes = array(), $content = '', $block = n
 		wp_enqueue_script( 'lohkareet-hero-video' );
 	}
 
-	$video = lohkareet_theme_asset_uri( 'assets/video/hero-anim.mp4' );
-	$logo  = lohkareet_theme_asset_uri( 'assets/images/siirtyma-Eventimage-profilelogo-white.svg' );
+	$video    = lohkareet_theme_asset_uri( 'assets/video/lohkare_animaatio.mp4' );
+	$fallback = lohkareet_theme_asset_uri( 'assets/images/lohkare_animaatio-fallback.jpg' );
+	$logo     = lohkareet_theme_asset_uri( 'assets/images/siirtyma-Eventimage-profilelogo-white.svg' );
 
 	$classes = 'lohkareet-hero';
 
@@ -95,9 +97,14 @@ function lohkareet_render_hero( $attributes = array(), $content = '', $block = n
 	$html = '<div ' . get_block_wrapper_attributes( array( 'class' => $classes ) ) . '>';
 
 	if ( '' !== $video ) {
-		$html .= '<video class="lohkareet-hero__video" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1">';
-		$html .= '<source src="' . esc_url( $video ) . '" type="video/mp4">';
-		$html .= '</video>';
+		// The source stays off the element until the fallback has loaded.
+		$html .= '<div class="lohkareet-hero__picture">';
+		$html .= '<video class="lohkareet-hero__video" muted playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-src="' . esc_url( $video ) . '"></video>';
+		$html .= '</div>';
+	}
+
+	if ( '' !== $fallback ) {
+		$html .= '<img class="lohkareet-hero__fallback" src="' . esc_url( $fallback ) . '" alt="" width="1386" height="1920" decoding="async" fetchpriority="high">';
 	}
 
 	$html .= '<div class="lohkareet-hero__shade" aria-hidden="true"></div>';

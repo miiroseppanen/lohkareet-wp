@@ -165,6 +165,7 @@ theme/
     │   ├── hero-video.js     # Subtle scroll influence on the hero video
     │   └── navigation.js     # Mobile menu open, close, and focus
     └── video/
+        ├── lohkare_animaatio.mp4
         └── hero-anim.mp4
 ```
 
@@ -182,13 +183,13 @@ The Adobe Fonts kit must allow the site’s domain, including a local host if yo
 
 `templates/front-page.html` places `lohkareet/hero` between the header and the page content. The block is registered in `inc/hero.php`. The introduction, the next-event and event-list blocks, the map, and the short note on Siirtymä are the front page’s own content in WordPress, so the copy stays editable. The theme file does not contain that copy.
 
-`.lohkareet-hero` is a normal document section, `90svh` tall, and it is not sticky. The next block follows it in document flow, so a strip of that block is already visible at the bottom of the first screen. There is no extra scroll region and no scrub distance. The video is `theme/assets/video/hero-anim.mp4`, with `object-fit: cover`. The white Siirtymä mark is `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg`, shown above the text LOHKAREET. Both stay the same in Finnish and English.
+`.lohkareet-hero` is a normal document section, `90svh` tall, and it is not sticky. The next block follows it in document flow, so a strip of that block is already visible at the bottom of the first screen. There is no extra scroll region and no scrub distance. The video is `theme/assets/video/lohkare_animaatio.mp4`. A still, `theme/assets/images/lohkare_animaatio-fallback.jpg` (1386×1920), covers it until the first frame is ready. The video uses the same frame size and `object-fit: cover`. The white Siirtymä mark is `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg`, shown above the text LOHKAREET. Both stay the same in Finnish and English.
 
 On load the video plays when the browser allows it. Page scroll stays ordinary. While the hero is at least 20% visible, `assets/js/hero-video.js` reads the change in `scrollY` on animation frames and queues a small timeline nudge: about `0.0012` seconds per pixel, at most `0.28` seconds waiting, and at most `0.06` seconds applied in one frame. Scrolling down advances the playhead a little. Scrolling up eases it slightly backward. When scrolling stops, that queue drains and normal forward playback continues. Scroll position is not mapped to the video duration. The script is enqueued only when the hero renders on the public site.
 
 `prefers-reduced-motion: reduce` leaves the video on a still frame and does not couple scroll to the timeline. Without JavaScript the video does not autoplay, and the logo and LOHKAREET still show. The video is decorative.
 
-`hero-anim.mp4` is about 8.9 seconds at 24fps, with a keyframe every second. Re-encoding it with more frequent keyframes may make the small seeks smoother. Do not paper over that in JavaScript.
+`lohkare_animaatio.mp4` is 15 seconds at 30fps, with a keyframe every two seconds. Scroll distance is seconds per pixel, and the loop point uses the file’s own duration. Re-encoding it with more frequent keyframes may make the small seeks smoother. Do not paper over that in JavaScript. The previous `hero-anim.mp4` is unused.
 
 `templates/index.html` remains the required fallback. WordPress uses a more specific template when it has one.
 
@@ -318,7 +319,7 @@ With these dates, the next complete event on 12 October 2026 is Punkalaidun. The
 | Task | Where |
 | --- | --- |
 | Colors, fonts, spacing, content width | `theme/theme.json`. Presicav itself is Adobe Fonts kit `lgz0wqd`, enqueued in `functions.php` |
-| Hero video or Siirtymä logo | `theme/assets/video/hero-anim.mp4` and `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg` |
+| Hero video, fallback still, or Siirtymä logo | `theme/assets/video/lohkare_animaatio.mp4`, `theme/assets/images/lohkare_animaatio-fallback.jpg`, and `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg` |
 | Hero scroll and overlay | `theme/assets/css/hero.css` and `theme/assets/js/hero-video.js` |
 | Header or footer | `theme/parts/`, `theme/inc/navigation.php`, `theme/inc/footer.php` |
 | Home page structure | `theme/templates/front-page.html` |
@@ -393,6 +394,6 @@ Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.59`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.60`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.

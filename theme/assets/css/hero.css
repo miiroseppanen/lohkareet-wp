@@ -10,13 +10,25 @@
 	color: #fff;
 }
 
-.lohkareet-hero__video {
+.lohkareet-hero__picture {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.lohkareet-hero__video,
+.lohkareet-hero__fallback {
 	position: absolute;
 	inset: 0;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	pointer-events: none;
+}
+
+.lohkareet-hero.is-video-ready .lohkareet-hero__fallback,
+.lohkareet-hero.is-video-missing .lohkareet-hero__video {
+	visibility: hidden;
 }
 
 .lohkareet-hero__shade {

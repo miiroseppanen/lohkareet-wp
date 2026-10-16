@@ -7,8 +7,8 @@
 	}
 
 	// Seconds of timeline queued per pixel of ordinary document scroll.
-	// A 100px wheel notch queues about 0.36s of the five-second clip.
-	// It never maps page position to duration.
+	// A 100px wheel notch queues about 0.36s. The clip length comes from
+	// the loaded file. It never maps page position to duration.
 	var GAIN = 0.0036;
 	var EASE = 0.32;
 	var MAX_STEP = 0.14;
@@ -16,6 +16,7 @@
 	var DEAD = 0.012;
 
 	var motion = window.matchMedia( '(prefers-reduced-motion: reduce)' );
+	var fallback = hero.querySelector( '.lohkareet-hero__fallback' );
 	var metadataReady = false;
 	var duration = 0;
 	var seekFailed = false;
@@ -102,6 +103,10 @@
 			attempt.catch( function () {
 				video.pause();
 			} );
+		}
+
+		if ( video.readyState >= 2 ) {
+			presentFrame();
 		}
 	}
 
@@ -256,8 +261,63 @@
 		} );
 	}
 
+	function revealVideo() {
+		if ( hero.classList.contains( 'is-video-ready' ) || hero.classList.contains( 'is-video-missing' ) ) {
+			return;
+		}
+
+		hero.classList.add( 'is-video-ready' );
+	}
+
+	function presentFrame() {
+		if ( typeof video.requestVideoFrameCallback === 'function' ) {
+			video.requestVideoFrameCallback( function () {
+				revealVideo();
+			} );
+			return;
+		}
+
+		revealVideo();
+	}
+
+	function armVideo() {
+		var src = video.getAttribute( 'data-src' );
+
+		if ( ! src || video.getAttribute( 'src' ) ) {
+			return;
+		}
+
+		video.muted = true;
+		video.defaultMuted = true;
+		video.playsInline = true;
+		video.preload = 'auto';
+		video.src = src;
+		video.load();
+	}
+
 	video.addEventListener( 'loadedmetadata', rememberMetadata );
-	video.addEventListener( 'error', giveUp );
+	video.addEventListener( 'loadeddata', function () {
+		if ( ! isReduced() && visible ) {
+			startPlayback();
+		}
+
+		presentFrame();
+	} );
+	video.addEventListener( 'error', function () {
+		seekFailed = true;
+		pending = 0;
+		stopLoop();
+		hero.classList.remove( 'is-video-ready' );
+		hero.classList.add( 'is-video-missing' );
+		video.pause();
+	} );
+
+	if ( fallback && ! ( fallback.complete && fallback.naturalWidth > 0 ) ) {
+		fallback.addEventListener( 'load', armVideo, { once: true } );
+		fallback.addEventListener( 'error', armVideo, { once: true } );
+	} else {
+		armVideo();
+	}
 
 	if ( video.readyState >= 1 ) {
 		rememberMetadata();
