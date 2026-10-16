@@ -115,6 +115,7 @@ Create these as normal pages, then link each English page to its Finnish page in
 | --- | --- | --- | --- |
 | Home | Etusivu | Home | `front-page.html` |
 | About Lohkareet | Lohkareista | About Lohkareet | `page.html` |
+| Behind the project | Taustalla | Behind the project | `page.html` |
 | Preparing for the event | Varustautuminen | Preparing for the event | `page.html` |
 | Events | Tapahtumat | Events | `archive-event.html`, not a page |
 
