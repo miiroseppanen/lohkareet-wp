@@ -410,7 +410,7 @@ footer.wp-block-template-part {
 		display: flex;
 		flex-direction: column;
 		padding-top: clamp(1.5rem, 3vh, 2.5rem);
-		padding-bottom: 0;
+		padding-bottom: 1.5rem;
 	}
 
 	.lohkareet-footer__municipalities {
