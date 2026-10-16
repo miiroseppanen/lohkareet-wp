@@ -117,6 +117,72 @@ HTML
 HTML
 				,
 			),
+			array(
+				'key'     => 'taustalla',
+				'title'   => 'Taustalla',
+				'content' => <<<'HTML'
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Yhdessä toteutettu</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Siirtymä – Lohkareet syntyy yhteistyössä Pirkanmaan kuntien, paikallisten yhdistysten ja kulttuuritoimijoiden kanssa.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Kunnat ja niiden alueilla toimivat yhdistykset ovat mukana tapahtumien paikallisessa toteutuksessa. Yhteistyö tuo yhteen paikallistuntemuksen, luonnonympäristöt ja kokeellisen musiikin.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Operaatio Pirkanmaa organisoi tapahtumasarjan kuntayhteistyötä ja rakentaa yhteyksiä eri paikkakuntien välille.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Yhteistyön ansiosta Lohkareet ei ole vain joukko eri paikoissa järjestettäviä konsertteja, vaan yhteinen tapahtumasarja, jossa jokainen kunta ja tapahtumapaikka tuo kokonaisuuteen oman luonteensa.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Siirtymä</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Siirtymä on ambient-musiikin ja kokeellisen äänitaiteen ympärille rakentuva tapahtumakokonaisuus, jossa kuuntelu, tila ja ympäristö kohtaavat.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Siirtymä etsii musiikille uusia esityspaikkoja ja tapoja tulla kuulluksi. Se kutsuu pysähtymään äänen äärelle, kokemaan ympäristön toisin ja tarkastelemaan musiikin suhdetta paikkaan.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Suomen ambientyhdistys</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Suomen ambientyhdistys toimii ambient-musiikin ja siihen liittyvän kulttuurin parissa.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><a href="https://ambientry.fi">ambientry.fi</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Lohkareet</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Lohkareet on Siirtymän paikkasidonnainen tapahtumasarja, jossa musiikki viedään metsien ja siirtolohkareiden äärelle eri puolille Pirkanmaata.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Jokainen tapahtumapaikka muodostaa oman kuunteluympäristönsä. Musiikki ei ole irrallaan ympäröivästä maisemasta, vaan tapahtuu sen kanssa samassa tilassa.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Lohkareet tuo yhteen kokeellisen musiikin, paikalliset luonnonympäristöt ja yhteisen kuuntelukokemuksen.</p>
+<!-- /wp:paragraph -->
+HTML
+				,
+			),
 		),
 		'contributors' => array(
 			array(
@@ -324,6 +390,12 @@ HTML
 				'kind'  => 'post-type',
 				'type'  => 'page',
 				'key'   => 'lohkareista',
+			),
+			array(
+				'label' => 'Taustalla',
+				'kind'  => 'post-type',
+				'type'  => 'page',
+				'key'   => 'taustalla',
 			),
 			array(
 				'label' => 'Varustautuminen',
