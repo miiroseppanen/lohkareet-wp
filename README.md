@@ -162,6 +162,7 @@ theme/
     │   └── siirtyma-Eventimage-profilelogo-white.svg
     ├── js/
     │   ├── blocks-editor.js  # Editor preview only
+    │   ├── hero-events.js    # Opacity cycle of date, artist, and municipality
     │   ├── hero-video.js     # Subtle scroll influence on the hero video
     │   └── navigation.js     # Mobile menu open, close, and focus
     └── video/
@@ -188,6 +189,8 @@ The Adobe Fonts kit must allow the site’s domain, including a local host if yo
 On load the video plays when the browser allows it. Page scroll stays ordinary. While the hero is at least 20% visible, `assets/js/hero-video.js` reads the change in `scrollY` on animation frames and queues a small timeline nudge: about `0.0012` seconds per pixel, at most `0.28` seconds waiting, and at most `0.06` seconds applied in one frame. Scrolling down advances the playhead a little. Scrolling up eases it slightly backward. When scrolling stops, that queue drains and normal forward playback continues. Scroll position is not mapped to the video duration. The script is enqueued only when the hero renders on the public site.
 
 `prefers-reduced-motion: reduce` leaves the video on a still frame and does not couple scroll to the timeline. Without JavaScript the video does not autoplay, and the logo and LOHKAREET still show. The video is decorative.
+
+Along the bottom of the hero, published events in the current language cycle through a complete date, the stored artist name, and the municipality. Each fact fades in with opacity only, the three hold, then they fade out together and the next event follows in date order. The row links to that language’s event. A single qualifying event, reduced motion, or no JavaScript shows the first match and does not cycle. Events missing a full date, a public artist name, or a municipality are left out. The video timeline is separate from this cycle.
 
 `lohkare_animaatio.mp4` is 15 seconds at 30fps, with a keyframe every two seconds. Scroll distance is seconds per pixel, and the loop point uses the file’s own duration. Re-encoding it with more frequent keyframes may make the small seeks smoother. Do not paper over that in JavaScript. The previous `hero-anim.mp4` is unused.
 
@@ -321,6 +324,7 @@ With these dates, the next complete event on 12 October 2026 is Punkalaidun. The
 | Colors, fonts, spacing, content width | `theme/theme.json`. Presicav itself is Adobe Fonts kit `lgz0wqd`, enqueued in `functions.php` |
 | Hero video, fallback still, or Siirtymä logo | `theme/assets/video/lohkare_animaatio.mp4`, `theme/assets/images/lohkare_animaatio-fallback.jpg`, and `theme/assets/images/siirtyma-Eventimage-profilelogo-white.svg` |
 | Hero scroll and overlay | `theme/assets/css/hero.css` and `theme/assets/js/hero-video.js` |
+| Hero event cycle | `theme/inc/hero.php`, `theme/assets/css/hero.css`, and `theme/assets/js/hero-events.js` |
 | Header or footer | `theme/parts/`, `theme/inc/navigation.php`, `theme/inc/footer.php` |
 | Home page structure | `theme/templates/front-page.html` |
 | Event page structure | `theme/templates/single-event.html` |
@@ -394,6 +398,6 @@ Leave WordPress core, `wp-config.php`, uploads, the database, and plugins on the
 - Escape output, sanitize input, and keep the event meta nonce on the editor form.
 - Keep the public site responsive. The map is a full-width frame with a bounded height. Do not rely on the iframe's inline styles.
 - Keep focus outlines. The page title stays the `h1`. Event cards use the next heading level under the section title.
-- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.61`.
+- Bump `Version` in `style.css` when CSS or the editor script should be cache-busted. The current theme version is `0.4.64`.
 - Presicav stays on Adobe Fonts. Do not commit font files or add a local `@font-face` for it.
 - Keep theme UI strings in English inside `__()`, with Finnish in `theme/languages/fi.l10n.php`. Polylang is installed in production and is not bundled in the theme. Do not call Polylang functions unless `function_exists()` says they are there.

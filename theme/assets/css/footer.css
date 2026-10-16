@@ -600,7 +600,7 @@ footer.wp-block-template-part {
 	.lohkareet-footer__nav {
 		grid-column: 1;
 		grid-row: 2;
-		margin-bottom: 3.5rem;
+		margin-bottom: 6.5rem;
 		padding-inline-start: var(--page-gutter);
 	}
 
@@ -609,7 +609,7 @@ footer.wp-block-template-part {
 		grid-row: 2;
 		align-self: end;
 		justify-self: end;
-		margin-bottom: 3.5rem;
+		margin-bottom: 6.5rem;
 		padding-inline-end: var(--page-gutter);
 	}
 
@@ -637,5 +637,15 @@ footer.wp-block-template-part {
 		grid-column: 1 / -1;
 		grid-row: 6;
 		padding-inline: var(--page-gutter);
+	}
+}
+
+@media (max-width: 63.99rem) {
+	.lohkareet-footer {
+		padding-top: 1.5rem;
+	}
+
+	.lohkareet-footer__grid {
+		row-gap: clamp(9rem, 16vw, 12rem);
 	}
 }

@@ -217,6 +217,20 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 	padding-top: var(--section-space);
 }
 
+.home .lohkareet-grid .lohkareet-next-event {
+	box-sizing: border-box;
+	width: calc(100% + (2 * (var(--page-gutter) + var(--content-breakout))));
+	max-width: none;
+	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
+	padding: var(--page-gutter);
+	padding-inline: calc(var(--page-gutter) + var(--content-breakout));
+	background: #f2f2f2;
+}
+
+.home .lohkareet-grid .lohkareet-next-event + .lohkareet-map {
+	margin-top: calc(var(--space-4) * -1);
+}
+
 .lohkareet-event-list {
 	row-gap: var(--space-6);
 }

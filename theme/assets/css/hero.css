@@ -89,3 +89,135 @@
 		font-size: 7.3vw;
 	}
 }
+
+.lohkareet-hero__events {
+	position: absolute;
+	z-index: 2;
+	right: 0;
+	bottom: calc(1.35rem + env(safe-area-inset-bottom, 0px));
+	left: 0;
+	display: flex;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 100%;
+	padding-inline: clamp(1rem, 4vw, 2.5rem);
+	pointer-events: none;
+	container-type: inline-size;
+}
+
+@media (min-width: 64rem) {
+	.lohkareet-hero__events {
+		bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+	}
+}
+
+.lohkareet-hero__cycle {
+	display: grid;
+	grid-template-columns: max-content max-content max-content;
+	column-gap: clamp(1.25rem, 3vw, 2.75rem);
+	justify-content: center;
+	width: max-content;
+	max-width: 100%;
+}
+
+.lohkareet-hero__event {
+	grid-area: 1 / 1 / 2 / -1;
+	display: grid;
+	grid-template-columns: subgrid;
+	column-gap: inherit;
+	align-items: center;
+	justify-items: center;
+	margin: 0;
+	color: #fff;
+	font-family: var(--wp--preset--font-family--presicav, "presicav", "Helvetica Neue", Helvetica, Arial, sans-serif);
+	font-size: clamp(0.9375rem, 0.9vw, 1rem);
+	font-weight: 400;
+	line-height: 1.45;
+	text-align: center;
+	text-decoration: none;
+	pointer-events: none;
+}
+
+.lohkareet-hero__event:visited {
+	color: #fff;
+}
+
+.lohkareet-hero__event.is-current {
+	z-index: 1;
+	pointer-events: auto;
+}
+
+.lohkareet-hero__event:focus {
+	outline: none;
+}
+
+.lohkareet-hero__event:focus-visible {
+	outline: 1px solid #fff;
+	outline-offset: 0.35rem;
+}
+
+.lohkareet-hero__fact {
+	opacity: 0;
+	white-space: nowrap;
+	transition: opacity 0.7s ease-in-out;
+}
+
+.lohkareet-hero__cycle.is-static .lohkareet-hero__event:first-child .lohkareet-hero__fact,
+.lohkareet-hero__cycle.is-live .lohkareet-hero__event.is-date .lohkareet-hero__fact--date,
+.lohkareet-hero__cycle.is-live .lohkareet-hero__event.is-artist .lohkareet-hero__fact--date,
+.lohkareet-hero__cycle.is-live .lohkareet-hero__event.is-artist .lohkareet-hero__fact--artist,
+.lohkareet-hero__cycle.is-live .lohkareet-hero__event.is-place .lohkareet-hero__fact {
+	opacity: 1;
+}
+
+.lohkareet-hero__cycle.is-static .lohkareet-hero__fact {
+	transition: none;
+}
+
+@container (max-width: 42rem) {
+	.lohkareet-hero__cycle {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto auto auto;
+		row-gap: 0.15rem;
+		width: 100%;
+	}
+
+	.lohkareet-hero__event {
+		grid-area: 1 / 1 / -1 / -1;
+		grid-template-rows: subgrid;
+		grid-template-columns: subgrid;
+	}
+
+	.lohkareet-hero__fact {
+		grid-column: 1;
+		max-width: 100%;
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.lohkareet-hero__fact--date {
+		grid-row: 1;
+	}
+
+	.lohkareet-hero__fact--artist {
+		grid-row: 2;
+	}
+
+	.lohkareet-hero__fact--municipality {
+		grid-row: 3;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lohkareet-hero__fact {
+		transition: none;
+	}
+
+	.lohkareet-hero__event:first-child .lohkareet-hero__fact {
+		opacity: 1;
+	}
+
+	.lohkareet-hero__event:not(:first-child) .lohkareet-hero__fact {
+		opacity: 0;
+	}
+}
