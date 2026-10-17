@@ -163,6 +163,37 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 	text-underline-offset: 0.18em;
 }
 
+.lohkareet-entry-taustalla .wp-block-post-content > .wp-block-image,
+.lohkareet-entry-behind-the-project .wp-block-post-content > .wp-block-image {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+.lohkareet-entry-taustalla .wp-block-post-content > .wp-block-image figure,
+.lohkareet-entry-behind-the-project .wp-block-post-content > .wp-block-image figure,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image {
+	margin: 0;
+}
+
+.lohkareet-entry-taustalla .wp-block-post-content > .wp-block-image img,
+.lohkareet-entry-behind-the-project .wp-block-post-content > .wp-block-image img,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image img,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.lohkareet-entry-taustalla .wp-block-post-content figcaption,
+.lohkareet-entry-behind-the-project .wp-block-post-content figcaption {
+	margin-top: var(--space-2);
+	font-size: 0.8125rem;
+	line-height: 1.45;
+	color: #6b6b6b;
+	letter-spacing: 0.02em;
+}
+
 .lohkareet-grid .lohkareet-map,
 .lohkareet-grid .wp-block-post-content > .lohkareet-map {
 	grid-column: 1 / -1;
@@ -508,6 +539,15 @@ a.lohkareet-event-summary {
 		grid-column: 3 / 7;
 	}
 
+	.lohkareet-entry-taustalla .wp-block-post-content > .wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > .wp-block-image,
+	.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image {
+		grid-column: 1 / -1;
+		margin-top: var(--space-3);
+		margin-bottom: var(--space-6);
+	}
+
 	.lohkareet-event-summary > .lohkareet-event-summary__body {
 		grid-column: 1 / 6;
 	}
@@ -751,6 +791,43 @@ a.lohkareet-event-summary {
 	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(4) ~ p,
 	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(4) ~ p {
 		grid-column: 5 / 11;
+	}
+
+	.lohkareet-entry-taustalla .wp-block-post-content > .wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > .wp-block-image,
+	.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image {
+		grid-column: 1 / -1;
+		margin-top: var(--space-4);
+		margin-bottom: var(--space-8);
+	}
+
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(1) ~ .wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(1) ~ .wp-block-image,
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(1) ~ figure.wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(1) ~ figure.wp-block-image {
+		grid-column: 6 / 13;
+	}
+
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(2) ~ .wp-block-image:not(h2:nth-of-type(3) ~ .wp-block-image),
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(2) ~ .wp-block-image:not(h2:nth-of-type(3) ~ .wp-block-image),
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(2) ~ figure.wp-block-image:not(h2:nth-of-type(3) ~ figure.wp-block-image),
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(2) ~ figure.wp-block-image:not(h2:nth-of-type(3) ~ figure.wp-block-image) {
+		grid-column: 1 / 7;
+	}
+
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(3) ~ .wp-block-image:not(h2:nth-of-type(4) ~ .wp-block-image),
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(3) ~ .wp-block-image:not(h2:nth-of-type(4) ~ .wp-block-image),
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(3) ~ figure.wp-block-image:not(h2:nth-of-type(4) ~ figure.wp-block-image),
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(3) ~ figure.wp-block-image:not(h2:nth-of-type(4) ~ figure.wp-block-image) {
+		grid-column: 5 / 12;
+	}
+
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(4) ~ .wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(4) ~ .wp-block-image,
+	.lohkareet-entry-taustalla .wp-block-post-content > h2:nth-of-type(4) ~ figure.wp-block-image,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > h2:nth-of-type(4) ~ figure.wp-block-image {
+		grid-column: 2 / 9;
 	}
 
 	.single-event main .wp-block-post-title {
