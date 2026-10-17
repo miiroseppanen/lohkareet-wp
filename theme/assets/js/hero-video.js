@@ -15,6 +15,13 @@
 	var MAX_PENDING = 1.05;
 	var DEAD = 0.012;
 
+	// Horizontal swipe scrubbing: pixels of horizontal movement for the full
+	// video duration. Lower values increase sensitivity.
+	var SWIPE_FULL_DURATION_PX = 300;
+
+	// Movement threshold before the gesture direction is locked.
+	var SWIPE_DIRECTION_THRESHOLD = 8;
+
 	var motion = window.matchMedia( '(prefers-reduced-motion: reduce)' );
 	var fallback = hero.querySelector( '.lohkareet-hero__fallback' );
 	var metadataReady = false;
@@ -26,12 +33,42 @@
 	var rafId = 0;
 	var seekingFrames = 0;
 
+	// Horizontal swipe state.
+	var swipePointerId = null;
+	var swipeStartX = 0;
+	var swipeStartY = 0;
+	var swipeStartTime = 0;
+	var swipeDirection = null;
+	var swipeScrollBlocked = false;
+
 	function isReduced() {
 		return motion.matches;
 	}
 
 	function clamp( value, min, max ) {
 		return Math.min( max, Math.max( min, value ) );
+	}
+
+	function isTouchCapable() {
+		return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	}
+
+	function isInteractiveTarget( element ) {
+		if ( ! element ) {
+			return false;
+		}
+
+		var tag = element.tagName;
+
+		if ( tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' ) {
+			return true;
+		}
+
+		if ( element.closest( 'a, button, [role="button"]' ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	function seekSpan() {
@@ -222,6 +259,15 @@
 			return;
 		}
 
+		// After a horizontal swipe ends, the first scroll resets the baseline
+		// without jumping the video back to a scroll-derived position.
+		if ( swipeScrollBlocked ) {
+			swipeScrollBlocked = false;
+			pending = 0;
+			lastY = window.scrollY;
+			return;
+		}
+
 		schedule();
 	}
 
@@ -337,6 +383,135 @@
 	}
 
 	window.addEventListener( 'scroll', onScroll, { passive: true } );
+
+	// Horizontal swipe scrubbing for touch devices.
+	function onPointerDown( e ) {
+		if ( ! isTouchCapable() || e.pointerType !== 'touch' ) {
+			return;
+		}
+
+		if ( isReduced() || seekFailed || ! visible ) {
+			return;
+		}
+
+		if ( ! metadataReady || duration <= 0 ) {
+			return;
+		}
+
+		if ( isInteractiveTarget( e.target ) ) {
+			return;
+		}
+
+		swipePointerId = e.pointerId;
+		swipeStartX = e.clientX;
+		swipeStartY = e.clientY;
+		swipeStartTime = video.currentTime;
+		swipeDirection = null;
+
+		hero.setPointerCapture( e.pointerId );
+	}
+
+	function onPointerMove( e ) {
+		if ( swipePointerId === null || swipePointerId !== e.pointerId ) {
+			return;
+		}
+
+		if ( isReduced() || seekFailed ) {
+			endSwipe( e );
+			return;
+		}
+
+		var deltaX = e.clientX - swipeStartX;
+		var deltaY = e.clientY - swipeStartY;
+
+		// Determine direction if not yet locked.
+		if ( swipeDirection === null ) {
+			var absX = Math.abs( deltaX );
+			var absY = Math.abs( deltaY );
+
+			if ( absX < SWIPE_DIRECTION_THRESHOLD && absY < SWIPE_DIRECTION_THRESHOLD ) {
+				return;
+			}
+
+			if ( absX > absY ) {
+				swipeDirection = 'horizontal';
+				// Stop scroll-based updates and clear the queue.
+				swipeScrollBlocked = true;
+				pending = 0;
+				stopLoop();
+				video.pause();
+			} else {
+				swipeDirection = 'vertical';
+				endSwipe( e );
+				return;
+			}
+		}
+
+		if ( swipeDirection !== 'horizontal' ) {
+			return;
+		}
+
+		e.preventDefault();
+
+		// Map horizontal movement to video time.
+		var progress = deltaX / SWIPE_FULL_DURATION_PX;
+		var newTime = swipeStartTime + progress * duration;
+
+		// Wrap around for looping.
+		newTime = wrapTime( newTime );
+
+		if ( ! isFinite( newTime ) || newTime < 0 ) {
+			newTime = 0;
+		}
+
+		if ( newTime > duration ) {
+			newTime = duration;
+		}
+
+		try {
+			video.currentTime = newTime;
+		} catch ( err ) {
+			// Ignore seek errors during swipe.
+		}
+	}
+
+	function onPointerUp( e ) {
+		if ( swipePointerId === null || swipePointerId !== e.pointerId ) {
+			return;
+		}
+
+		endSwipe( e );
+	}
+
+	function onPointerCancel( e ) {
+		if ( swipePointerId === null || swipePointerId !== e.pointerId ) {
+			return;
+		}
+
+		endSwipe( e );
+	}
+
+	function endSwipe( e ) {
+		if ( swipePointerId !== null ) {
+			try {
+				hero.releasePointerCapture( swipePointerId );
+			} catch ( err ) {
+				// Ignore if capture was already released.
+			}
+		}
+
+		swipePointerId = null;
+		swipeDirection = null;
+		// swipeScrollBlocked stays true until the next scroll event.
+	}
+
+	if ( isTouchCapable() && typeof hero.setPointerCapture === 'function' ) {
+		hero.style.touchAction = 'pan-y';
+		hero.addEventListener( 'pointerdown', onPointerDown );
+		hero.addEventListener( 'pointermove', onPointerMove );
+		hero.addEventListener( 'pointerup', onPointerUp );
+		hero.addEventListener( 'pointercancel', onPointerCancel );
+	}
 
 	if ( isReduced() ) {
 		holdStill();
