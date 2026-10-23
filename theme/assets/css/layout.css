@@ -1004,51 +1004,9 @@ a.lohkareet-event-summary {
 	pointer-events: none;
 }
 
-.lohkareet-page-hero.has-image .lohkareet-page-hero__mark,
-.lohkareet-page-hero.has-image .lohkareet-page-hero__grid {
-	z-index: 2;
-}
-
 .lohkareet-page-hero.has-image .lohkareet-page-hero__grid {
 	position: relative;
-}
-
-.lohkareet-page-hero.has-image .lohkareet-page-hero__mark img {
-	background: #000;
-	outline: 0.35rem solid #000;
-}
-
-.lohkareet-page-hero__mark {
-	position: absolute;
-	z-index: 1;
-	top: calc(3.15rem + env(safe-area-inset-top, 0px));
-	right: var(--page-gutter);
-	display: flex;
-	align-items: flex-start;
-	justify-content: flex-end;
-	width: min(10.8rem, 55.2vw);
-	height: 3.3rem;
-	margin: 0;
-	pointer-events: none;
-}
-
-.lohkareet-page-hero__mark img {
-	display: block;
-	width: auto;
-	height: auto;
-	max-width: 100%;
-	max-height: 100%;
-	object-fit: contain;
-	object-position: right top;
-}
-
-.lohkareet-page-hero__mark.is-stacked {
-	width: 5.7rem;
-	height: 6rem;
-}
-
-body.admin-bar .lohkareet-page-hero__mark {
-	top: calc(3.15rem + var(--wp-admin--admin-bar--height, 32px) + env(safe-area-inset-top, 0px));
+	z-index: 2;
 }
 
 .lohkareet-page-hero__grid {
