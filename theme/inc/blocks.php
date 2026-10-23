@@ -154,6 +154,30 @@ function lohkareet_get_page_hero_title_html( $title ) {
 }
 
 /**
+ * Puts a real space between the English homepage title's two words.
+ *
+ * The Finnish title splits one compound, siirtolohkareille, across two spans.
+ * English reuses those spans for "for" and "glacial erratics".
+ *
+ * @param string $content Post content.
+ */
+function lohkareet_space_english_intro_heading( $content ) {
+	if ( ! is_string( $content ) || ! is_front_page() || 'en' !== lohkareet_get_current_language() ) {
+		return $content;
+	}
+
+	$spaced = preg_replace(
+		'/(<span class="lohkareet-intro-heading__word">[^<]*<\/span>)(<span class="lohkareet-intro-heading__word">)/',
+		'$1 $2',
+		$content,
+		1
+	);
+
+	return is_string( $spaced ) ? $spaced : $content;
+}
+add_filter( 'the_content', 'lohkareet_space_english_intro_heading', 8 );
+
+/**
  * Black opening field for subpages.
  *
  * The front page keeps its video hero. This block is empty there.
@@ -167,7 +191,8 @@ function lohkareet_render_page_hero() {
 	$before = '';
 	$extra  = '';
 
-	$mark = '';
+	$mark  = '';
+	$image = '';
 
 	if ( is_singular( 'event' ) ) {
 		$post_id = get_queried_object_id();
@@ -175,6 +200,7 @@ function lohkareet_render_page_hero() {
 		$before  = lohkareet_get_event_hero_when_html( $post_id );
 		$extra   = lohkareet_get_event_hero_place_html( $post_id );
 		$mark    = lohkareet_get_event_hero_logo_html( $post_id );
+		$image   = lohkareet_get_event_hero_image_html( $post_id );
 	} elseif ( is_singular() ) {
 		$title = get_the_title();
 	} elseif ( is_post_type_archive( 'event' ) ) {
@@ -198,7 +224,14 @@ function lohkareet_render_page_hero() {
 		return '';
 	}
 
-	$html  = '<section ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-page-hero' ) ) . '>';
+	$classes = 'lohkareet-page-hero';
+
+	if ( '' !== $image ) {
+		$classes .= ' has-image';
+	}
+
+	$html  = '<section ' . get_block_wrapper_attributes( array( 'class' => $classes ) ) . '>';
+	$html .= $image;
 	$html .= $mark;
 	$html .= '<div class="lohkareet-page-hero__grid editorial-container">';
 	$html .= $before;
@@ -344,25 +377,13 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 	}
 
 	$name         = '' !== $municipality ? $municipality : $title;
-	$when_html    = lohkareet_get_event_listing_when_html( $post_id );
+	$when_html    = lohkareet_get_event_card_when_html( $post_id );
 	$place        = lohkareet_get_event_listing_place( $post_id );
-	$artist       = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_name' );
-	$status       = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_status' );
-	$thumbnail_id = get_post_thumbnail_id( $post_id );
+	$artist = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_name' );
+	$status = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_status' );
 
 	$html  = '<a class="lohkareet-event-summary" href="' . esc_url( $permalink ) . '">';
 	$html .= '<span class="lohkareet-event-summary__body">';
-
-	if ( $thumbnail_id ) {
-		$html .= wp_get_attachment_image(
-			$thumbnail_id,
-			'medium_large',
-			false,
-			array(
-				'class' => 'lohkareet-event-card__image',
-			)
-		);
-	}
 
 	if ( '' !== $when_html ) {
 		$html .= '<p class="lohkareet-event-summary__when">' . $when_html . '</p>';
@@ -372,11 +393,11 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 
 	if ( '' !== $place ) {
 		$html .= '<p class="lohkareet-event-summary__place">' . esc_html( $place ) . '</p>';
+	} else {
+		$html .= '<p class="lohkareet-event-summary__place">' . esc_html__( 'The venue will be confirmed.', 'lohkareet' ) . '</p>';
 	}
 
-	if ( 'confirmed' === $status && '' !== $artist ) {
-		$html .= '<p class="lohkareet-event-summary__artist">' . esc_html( $artist ) . '</p>';
-	}
+	$html .= '<p class="lohkareet-event-summary__artist">' . lohkareet_get_event_card_artist_html( $artist, $status ) . '</p>';
 
 	$html .= '</span>';
 	$html .= '<span class="lohkareet-event-summary__arrow" aria-hidden="true">';
@@ -386,6 +407,84 @@ function lohkareet_get_event_card_html( $event, $heading_level ) {
 	$html .= '</a>';
 
 	return $html;
+}
+
+/**
+ * Date line for one event card.
+ *
+ * A complete date stays as the compact listing line. A month or a year
+ * without a day is shown as stored, with the time called out when no clock
+ * exists. An event with no date says so instead of leaving the row blank.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_card_when_html( $post_id ) {
+	$when = lohkareet_get_event_listing_when_html( $post_id );
+
+	if ( '' === $when ) {
+		$when = lohkareet_get_event_date_html( $post_id );
+	}
+
+	if ( '' === $when ) {
+		return esc_html__( 'The date will be confirmed.', 'lohkareet' );
+	}
+
+	if ( '' === lohkareet_get_event_listing_time_html( $post_id ) ) {
+		$when .= ' · ' . esc_html__( 'The time will be confirmed.', 'lohkareet' );
+	}
+
+	return $when;
+}
+
+/**
+ * Artist line for one event card. Uses the same words as the event page.
+ *
+ * @param string $artist Artist name.
+ * @param string $status confirmed, tentative, or unannounced.
+ */
+function lohkareet_get_event_card_artist_html( $artist, $status ) {
+	if ( 'confirmed' === $status && '' !== $artist ) {
+		return esc_html( $artist );
+	}
+
+	if ( 'tentative' === $status && '' !== $artist ) {
+		return esc_html(
+			sprintf(
+				/* translators: %s: artist name that is not yet confirmed. */
+				__( 'Tentative: %s', 'lohkareet' ),
+				$artist
+			)
+		);
+	}
+
+	return esc_html__( 'The artist will be announced later.', 'lohkareet' );
+}
+
+/**
+ * Link to the preparation page in the language of this request.
+ *
+ * The label is the published page title. An unpublished page adds nothing.
+ */
+function lohkareet_get_preparation_link_html() {
+	if ( ! function_exists( 'lohkareet_get_published_page_by_slug' ) || ! function_exists( 'lohkareet_navigation_page_for_current_language' ) ) {
+		return '';
+	}
+
+	$page = lohkareet_get_published_page_by_slug( 'varustautuminen' );
+
+	if ( ! $page instanceof WP_Post ) {
+		return '';
+	}
+
+	$page_id = lohkareet_navigation_page_for_current_language( $page->ID );
+	$url     = get_permalink( $page_id );
+	$label   = get_the_title( $page_id );
+
+	if ( ! is_string( $url ) || '' === $url || ! is_string( $label ) || '' === trim( $label ) ) {
+		return '';
+	}
+
+	return '<section class="lohkareet-event-prepare"><p class="lohkareet-arrival__link"><a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a></p></section>';
 }
 
 /**
@@ -447,6 +546,34 @@ function lohkareet_render_event_details( $attributes, $content, $block ) {
  */
 function lohkareet_get_event_facts_html( $post_id ) {
 	return lohkareet_get_event_hero_when_html( $post_id ) . lohkareet_get_event_hero_place_html( $post_id );
+}
+
+/**
+ * Event image for the hero. Empty when the event has no featured image.
+ *
+ * The same image is not printed on the front page. Listings stay text.
+ *
+ * @param int $post_id Event ID.
+ */
+function lohkareet_get_event_hero_image_html( $post_id ) {
+	$thumbnail_id = (int) get_post_thumbnail_id( $post_id );
+
+	if ( $thumbnail_id <= 0 || ! wp_attachment_is_image( $thumbnail_id ) ) {
+		return '';
+	}
+
+	return wp_get_attachment_image(
+		$thumbnail_id,
+		'full',
+		false,
+		array(
+			'class'         => 'lohkareet-page-hero__image',
+			'sizes'         => '100vw',
+			'loading'       => 'eager',
+			'fetchpriority' => 'high',
+			'decoding'      => 'async',
+		)
+	);
 }
 
 /**
@@ -658,7 +785,7 @@ function lohkareet_get_work_html( $work_id ) {
  * @param int $post_id Event ID.
  */
 function lohkareet_get_event_context_html( $post_id ) {
-	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id );
+	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id ) . lohkareet_get_preparation_link_html();
 }
 
 /**

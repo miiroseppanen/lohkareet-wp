@@ -907,7 +907,7 @@ function lohkareet_get_municipality_logos() {
 			'name'   => 'Lempäälä',
 			'width'  => 103,
 			'height' => 39,
-			'fit'    => '1',
+			'fit'    => '2.2',
 		),
 		array(
 			'file'   => 'palkane.png',

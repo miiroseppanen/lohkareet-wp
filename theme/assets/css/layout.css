@@ -117,10 +117,12 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 .lohkareet-grid .wp-block-post-content > p,
 .lohkareet-grid .wp-block-post-content > ul,
 .lohkareet-grid .wp-block-post-content > ol,
-.lohkareet-programme__description {
+.lohkareet-programme__description,
+.lohkareet-programme > p {
 	max-width: var(--measure);
 	font-size: inherit;
 	line-height: inherit;
+	text-wrap: pretty;
 }
 
 .lohkareet-grid .wp-block-post-content > h2,
@@ -386,7 +388,8 @@ a.lohkareet-event-summary {
 .lohkareet-programme h2,
 .lohkareet-programme__type,
 .lohkareet-programme__title,
-.lohkareet-programme__description {
+.lohkareet-programme__description,
+.lohkareet-programme > p {
 	grid-column: 1 / -1;
 	margin: 0;
 }
@@ -402,7 +405,8 @@ a.lohkareet-event-summary {
 }
 
 .lohkareet-place,
-.lohkareet-arrival {
+.lohkareet-arrival,
+.lohkareet-event-prepare {
 	display: grid;
 	grid-column: 1 / -1;
 	grid-template-columns: subgrid;
@@ -478,6 +482,12 @@ a.lohkareet-event-summary {
 .lohkareet-arrival__link a:focus-visible {
 	outline: 1px solid currentColor;
 	outline-offset: 0.25rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.lohkareet-arrival__link a:hover {
+		opacity: 0.72;
+	}
 }
 
 .lohkareet-visually-hidden {
@@ -580,7 +590,7 @@ a.lohkareet-event-summary {
 
 	.single-event .lohkareet-programme__image {
 		grid-column: 1 / 4;
-		grid-row: 1;
+		grid-row: 1 / span 3;
 		align-self: start;
 	}
 
@@ -856,20 +866,9 @@ a.lohkareet-event-summary {
 		grid-row: 2;
 	}
 
-	.single-event .wp-block-post-featured-image {
-		grid-column: 1 / 8;
-		grid-row: 3;
-		padding-top: var(--space-8);
-	}
-
-	.single-event .wp-block-post-featured-image img {
-		width: 100%;
-		height: auto;
-	}
-
 	.single-event .lohkareet-programme__image {
 		grid-column: 1 / 8;
-		grid-row: 1;
+		grid-row: 1 / span 3;
 		align-self: start;
 	}
 
@@ -913,7 +912,8 @@ a.lohkareet-event-summary {
 	.single-event .lohkareet-arrival > h2,
 	.single-event .lohkareet-place__text,
 	.single-event .lohkareet-arrival__text,
-	.single-event .lohkareet-arrival__link {
+	.single-event .lohkareet-arrival__link,
+	.single-event .lohkareet-event-prepare {
 		grid-column: 1 / 8;
 	}
 
@@ -983,6 +983,39 @@ a.lohkareet-event-summary {
 	padding: var(--header-clearance) 0 var(--space-8);
 	background: #000;
 	color: #fff;
+}
+
+.lohkareet-page-hero__image {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+
+.lohkareet-page-hero.has-image::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.22) 46%, rgba(0, 0, 0, 0.62) 100%);
+	pointer-events: none;
+}
+
+.lohkareet-page-hero.has-image .lohkareet-page-hero__mark,
+.lohkareet-page-hero.has-image .lohkareet-page-hero__grid {
+	z-index: 2;
+}
+
+.lohkareet-page-hero.has-image .lohkareet-page-hero__grid {
+	position: relative;
+}
+
+.lohkareet-page-hero.has-image .lohkareet-page-hero__mark img {
+	background: #000;
+	outline: 0.35rem solid #000;
 }
 
 .lohkareet-page-hero__mark {

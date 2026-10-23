@@ -28,7 +28,13 @@ body:has(.lohkareet-page-hero) header.wp-block-template-part:not(.is-past-hero) 
 	mix-blend-mode: normal;
 }
 
-header.wp-block-template-part.is-over-footer {
+header.wp-block-template-part.is-past-hero:not(.is-menu-open):not(.is-over-footer) {
+	background: #fff;
+	color: #141414;
+}
+
+header.wp-block-template-part.is-over-footer:not(.is-menu-open) {
+	background: #000;
 	color: #fff;
 	mix-blend-mode: normal;
 }
@@ -242,6 +248,10 @@ html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-
 
 	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher__trigger {
 		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		min-width: 2.75rem;
+		padding-block: 0.65rem;
 	}
 
 	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher li.is-current {
@@ -327,8 +337,13 @@ header.wp-block-template-part button:focus-visible {
 	}
 
 	html.lohkareet-js header.wp-block-template-part .lohkareet-header__toggle {
-		display: block;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
 		margin-left: auto;
+		padding: 0.65rem 0.15rem;
 	}
 
 	html.lohkareet-js header.wp-block-template-part.is-menu-open,
@@ -402,6 +417,9 @@ header.wp-block-template-part button:focus-visible {
 
 	header.wp-block-template-part.is-menu-open .lohkareet-header__home,
 	header.wp-block-template-part.is-menu-open .wp-block-navigation-item__content {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
 		max-width: 100%;
 		hyphens: auto;
 		overflow-wrap: break-word;
@@ -418,10 +436,16 @@ header.wp-block-template-part button:focus-visible {
 	}
 
 	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher a {
-		opacity: 0.45;
+		display: inline-flex;
+		align-items: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		color: #767676;
+		opacity: 1;
 	}
 
 	header.wp-block-template-part.is-menu-open .lohkareet-language-switcher [aria-current="page"] {
+		color: inherit;
 		opacity: 1;
 	}
 

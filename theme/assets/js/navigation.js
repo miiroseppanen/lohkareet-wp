@@ -215,21 +215,37 @@
 	}
 
 	var hero = document.querySelector( '.lohkareet-hero, .lohkareet-page-hero' );
+	var heroWatch = null;
 
-	if ( ! hero || typeof window.IntersectionObserver !== 'function' ) {
-		header.classList.add( 'is-past-hero' );
-	} else {
-		var heroWatch = new IntersectionObserver(
+	function watchHero() {
+		if ( heroWatch ) {
+			heroWatch.disconnect();
+		}
+
+		if ( ! hero || typeof window.IntersectionObserver !== 'function' ) {
+			header.classList.add( 'is-past-hero' );
+			return;
+		}
+
+		var band = Math.round( header.getBoundingClientRect().height ) || 76;
+
+		heroWatch = new IntersectionObserver(
 			function ( entries ) {
 				var visible = entries[ 0 ] && entries[ 0 ].isIntersecting;
 				header.classList.toggle( 'is-over-hero', visible );
 				header.classList.toggle( 'is-past-hero', ! visible );
 			},
-			{ threshold: 0 }
+			{
+				rootMargin: '-' + band + 'px 0px 0px 0px',
+				threshold: 0,
+			}
 		);
 
 		heroWatch.observe( hero );
 	}
+
+	watchHero();
+	window.addEventListener( 'resize', watchHero );
 
 	var footer = document.querySelector( 'footer.wp-block-template-part' );
 

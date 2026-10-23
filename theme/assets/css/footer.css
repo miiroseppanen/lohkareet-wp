@@ -172,15 +172,15 @@ footer.wp-block-template-part {
 .lohkareet-footer__languages li + li::before {
 	content: "/";
 	margin-right: 0.55em;
-	opacity: 0.45;
+	color: #767676;
 }
 
-.lohkareet-footer__languages a {
-	opacity: 0.45;
+.lohkareet-footer .lohkareet-footer__languages a {
+	color: #767676;
 }
 
 .lohkareet-footer__languages .is-current span {
-	opacity: 1;
+	color: inherit;
 }
 
 .lohkareet-footer__copyright {
@@ -218,10 +218,11 @@ footer.wp-block-template-part {
 		opacity: 0.72;
 	}
 
-	.lohkareet-footer__languages a:hover,
-	.lohkareet-footer__languages a:focus-visible,
+	.lohkareet-footer .lohkareet-footer__languages a:hover,
+	.lohkareet-footer .lohkareet-footer__languages a:focus-visible,
 	.lohkareet-footer__privacy:hover,
 	.lohkareet-footer__privacy:focus-visible {
+		color: inherit;
 		opacity: 1;
 	}
 }
