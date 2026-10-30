@@ -915,7 +915,7 @@ add_filter( 'rank_math/frontend/title', 'lohkareet_map_document_title', 20 );
  * Full-window map. The embed URL is the same source as the front page.
  */
 function lohkareet_get_fullscreen_map_html() {
-	$url = lohkareet_get_zoneatlas_map_url();
+	$url = lohkareet_without_cooperative_gestures( lohkareet_get_zoneatlas_map_url() );
 
 	if ( '' === $url ) {
 		return '';

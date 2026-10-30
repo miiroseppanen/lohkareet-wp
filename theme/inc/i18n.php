@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * language of the map. Replace the values here, or with the
  * lohkareet_zoneatlas_urls filter. Keep cooperativeGesturesEnabled=true;
  * lohkareet_with_cooperative_gestures() adds it when it is missing.
+ * The full-page map turns the flag off so the map itself scrolls.
  *
  * @return array<string, string> Language slug => https URL.
  */
@@ -101,6 +102,31 @@ function lohkareet_with_cooperative_gestures( $url ) {
 	$separator = false === strpos( $url, '?' ) ? '?' : '&';
 
 	return $url . $separator . 'cooperativeGesturesEnabled=true';
+}
+
+/**
+ * Turns cooperative gestures off so wheel and touch scroll the map.
+ *
+ * Used only by the full-page map. The front-page embed and event maps stay on.
+ *
+ * @param string $url Embed URL.
+ */
+function lohkareet_without_cooperative_gestures( $url ) {
+	$url = lohkareet_sanitize_https_url( $url );
+
+	if ( '' === $url ) {
+		return '';
+	}
+
+	if ( false !== strpos( $url, 'cooperativeGesturesEnabled=' ) ) {
+		$replaced = preg_replace( '/cooperativeGesturesEnabled=[^&#]*/', 'cooperativeGesturesEnabled=false', $url, 1 );
+
+		return is_string( $replaced ) ? $replaced : $url;
+	}
+
+	$separator = false === strpos( $url, '?' ) ? '?' : '&';
+
+	return $url . $separator . 'cooperativeGesturesEnabled=false';
 }
 
 /**
