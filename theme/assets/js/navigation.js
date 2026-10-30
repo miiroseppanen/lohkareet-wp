@@ -284,3 +284,70 @@
 	watchFooter();
 	window.addEventListener( 'resize', watchFooter );
 }() );
+
+( function () {
+	var stage = document.querySelector( '.lohkareet-map-stage' );
+
+	if ( ! stage ) {
+		return;
+	}
+
+	var header = document.querySelector( 'header.wp-block-template-part' );
+	var frame = stage.querySelector( 'iframe' );
+	var status = stage.querySelector( '[data-lohkareet-map-status]' );
+	var fallback = stage.querySelector( '[data-lohkareet-map-fallback]' );
+	function place() {
+		if ( ! header || header.classList.contains( 'is-menu-open' ) ) {
+			return;
+		}
+
+		var bottom = header.getBoundingClientRect().bottom;
+
+		if ( bottom > 0 ) {
+			document.body.style.setProperty( '--lohkareet-map-offset', Math.ceil( bottom ) + 'px' );
+		}
+	}
+
+	place();
+	window.addEventListener( 'resize', place );
+	window.addEventListener( 'orientationchange', place );
+
+	if ( window.visualViewport ) {
+		window.visualViewport.addEventListener( 'resize', place );
+	}
+
+	if ( header && typeof window.MutationObserver === 'function' ) {
+		new MutationObserver( place ).observe( header, { attributes: true, attributeFilter: [ 'class' ] } );
+	}
+
+	if ( ! frame ) {
+		return;
+	}
+
+	var settled = false;
+
+	function showMap() {
+		settled = true;
+
+		if ( status ) {
+			status.hidden = true;
+		}
+
+		if ( fallback ) {
+			fallback.hidden = true;
+		}
+	}
+
+	frame.addEventListener( 'load', showMap );
+	window.setTimeout( function () {
+		if ( settled || ! fallback ) {
+			return;
+		}
+
+		if ( status ) {
+			status.hidden = true;
+		}
+
+		fallback.hidden = false;
+	}, 8000 );
+}() );

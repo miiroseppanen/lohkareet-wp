@@ -26,9 +26,13 @@ function lohkareet_register_blocks() {
 					'type'    => 'string',
 					'default' => '',
 				),
-				'title' => array(
+				'title'  => array(
 					'type'    => 'string',
 					'default' => 'Lohkareet',
+				),
+				'layout' => array(
+					'type'    => 'string',
+					'default' => '',
 				),
 			),
 			'render_callback' => 'lohkareet_render_zoneatlas_map',
@@ -178,6 +182,548 @@ function lohkareet_space_english_intro_heading( $content ) {
 add_filter( 'the_content', 'lohkareet_space_english_intro_heading', 8 );
 
 /**
+ * Whether this page is Varustautuminen in either language.
+ *
+ * @param WP_Post $post Page being rendered.
+ */
+function lohkareet_is_preparation_post( $post ) {
+	$slugs = array( $post->post_name );
+
+	if ( function_exists( 'pll_get_post' ) ) {
+		foreach ( array( 'fi', 'en' ) as $language ) {
+			$translated = pll_get_post( $post->ID, $language );
+
+			if ( $translated ) {
+				$slugs[] = (string) get_post_field( 'post_name', $translated );
+			}
+		}
+	}
+
+	return in_array( 'varustautuminen', $slugs, true ) || in_array( 'preparation', $slugs, true );
+}
+
+/**
+ * Icons and short additions for one preparation paragraph.
+ *
+ * The stored paragraph is left as it is. A paragraph earns an icon only when
+ * its own words already carry that subject. The shoe sentence is not added:
+ * the paragraph already asks for sturdy waterproof shoes.
+ *
+ * @param string $paragraph Rendered paragraph HTML.
+ * @return array{icons: string[], notes: string[]}|null
+ */
+function lohkareet_prepare_paragraph_plan( $paragraph ) {
+	$text = html_entity_decode( wp_strip_all_tags( $paragraph ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	$text = preg_replace( '/\s+/u', ' ', trim( (string) $text ) );
+
+	if ( ! is_string( $text ) || '' === $text ) {
+		return null;
+	}
+
+	$coat  = str_starts_with( $text, 'Syksyinen ja talvinen metsä' ) || str_starts_with( $text, 'Pukeudu lämpimästi' ) || str_starts_with( $text, 'Dress warmly' );
+	$lamp  = str_starts_with( $text, 'Otsa- tai taskulamppu' );
+	$icons = array();
+	$notes = array();
+
+	if ( $coat ) {
+		$icons[] = 'takki';
+	}
+
+	if ( $coat && ( str_contains( $text, 'jalkine' ) || str_contains( $text, 'shoe' ) ) ) {
+		$icons[] = 'kenka';
+	}
+
+	if ( $lamp || ( $coat && ( str_contains( $text, 'lamp' ) || str_contains( $text, 'torch' ) ) ) ) {
+		$icons[] = 'lamppu';
+		$notes[] = 'charge';
+		$notes[] = 'glare';
+	}
+
+	if ( ! $icons ) {
+		return null;
+	}
+
+	return array(
+		'icons' => $icons,
+		'notes' => $notes,
+	);
+}
+
+/**
+ * One preparation drawing. Empty alt: the neighbouring paragraph says the same thing.
+ *
+ * @param string $icon Icon key.
+ */
+function lohkareet_prepare_icon_html( $icon ) {
+	$files = array(
+		'takki'   => 'ikoni-takki.png',
+		'kenka'   => 'ikoni-kenka.png',
+		'lamppu'  => 'ikoni-lamppu.png',
+		'haikase' => 'ikoni-haikase.png',
+		'auto'    => 'ikoni-auto.png',
+	);
+
+	if ( ! isset( $files[ $icon ] ) ) {
+		return '';
+	}
+
+	$url = get_theme_file_uri( 'assets/images/' . $files[ $icon ] );
+
+	return '<img class="lohkareet-prepare__icon lohkareet-prepare__icon--' . esc_attr( $icon ) . '" src="' . esc_url( $url ) . '" alt="" width="1024" height="1024" decoding="async" />';
+}
+
+/**
+ * Visible text of one rendered paragraph.
+ *
+ * @param string $paragraph Paragraph HTML.
+ */
+function lohkareet_prepare_plain_text( $paragraph ) {
+	$text = html_entity_decode( wp_strip_all_tags( $paragraph ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	$text = preg_replace( '/\s+/u', ' ', trim( (string) $text ) );
+
+	return is_string( $text ) ? $text : '';
+}
+
+/**
+ * Which stored addition a paragraph is, when the editor holds it.
+ *
+ * @param string $paragraph Paragraph HTML.
+ */
+function lohkareet_prepare_stored_note_key( $paragraph ) {
+	$text = lohkareet_prepare_plain_text( $paragraph );
+
+	if ( '' === $text ) {
+		return '';
+	}
+
+	if ( str_starts_with( $text, 'Turn off your headlamp' ) ) {
+		return 'headlamp';
+	}
+
+	if ( str_contains( $text, 'paluumatkalle' ) || str_contains( $text, 'way back' ) ) {
+		return 'charge';
+	}
+
+	if ( str_contains( $text, 'suoraan kasvoihin' ) || str_contains( $text, 'other visitors' ) ) {
+		return 'glare';
+	}
+
+	if ( str_contains( $text, 'autolla perille' ) || str_contains( $text, 'reached by car' ) ) {
+		return 'arrival';
+	}
+
+	return '';
+}
+
+/**
+ * Whether this addition belongs with the paragraph's icons.
+ *
+ * @param string                              $key  Note key.
+ * @param array{icons: string[], notes: string[]} $plan Icon plan.
+ */
+function lohkareet_prepare_note_belongs( $key, $plan ) {
+	if ( in_array( $key, array( 'headlamp', 'charge', 'glare' ), true ) ) {
+		return in_array( 'charge', $plan['notes'], true );
+	}
+
+	return false;
+}
+
+/**
+ * A short addition. English is the source; Finnish lives in the translation file.
+ *
+ * Used only when the editor does not already contain the sentence.
+ *
+ * @param string $note charge, glare, or headlamp.
+ */
+function lohkareet_prepare_note_html( $note ) {
+	if ( 'charge' === $note ) {
+		$text = __( 'Make sure the light has enough power for the way back as well.', 'lohkareet' );
+	} elseif ( 'glare' === $note ) {
+		$text = __( 'Avoid shining the light straight into other visitors’ faces. Point it at the ground when you need to, and let your eyes adjust to the dark.', 'lohkareet' );
+	} elseif ( 'headlamp' === $note ) {
+		$text = 'Turn off your headlamp when you arrive at the boulder, when it is safe to do so.';
+	} else {
+		return '';
+	}
+
+	return '<p class="wp-block-paragraph">' . esc_html( $text ) . '</p>';
+}
+
+/**
+ * The sentence to show: the editor's own paragraph, or the shared line if it is missing.
+ *
+ * @param string                              $key       Note key.
+ * @param string                              $paragraph Anchor paragraph.
+ * @param array<string, string>               $found     Editor paragraphs already matched.
+ * @param array{icons: string[], notes: string[]} $plan  Icon plan.
+ * @param array<string, bool>                 $present   Notes already stored somewhere on the page.
+ */
+function lohkareet_prepare_note_piece( $key, $paragraph, $found, $plan, $present = array() ) {
+	if ( isset( $found[ $key ] ) ) {
+		return $found[ $key ];
+	}
+
+	if ( ! empty( $present[ $key ] ) || ! lohkareet_prepare_note_belongs( $key, $plan ) ) {
+		return '';
+	}
+
+	$stored = lohkareet_prepare_plain_text( $paragraph );
+
+	if ( 'headlamp' === $key ) {
+		if ( 'en' !== lohkareet_get_current_language() || str_contains( $stored, 'sammuttaa otsalampun' ) || str_contains( $stored, 'Turn off your headlamp' ) ) {
+			return '';
+		}
+	} elseif ( '' !== lohkareet_prepare_stored_note_key( $paragraph ) && lohkareet_prepare_stored_note_key( $paragraph ) === $key ) {
+		return '';
+	}
+
+	return lohkareet_prepare_note_html( $key );
+}
+
+/**
+ * Wraps one stored paragraph with its drawings. The paragraph HTML is not rewritten.
+ *
+ * @param string                              $paragraph Anchor paragraph.
+ * @param array{icons: string[], notes: string[]} $plan  Icons and additions.
+ * @param array<string, string>               $found     Editor paragraphs for the additions.
+ * @param array<string, bool>                 $present   Notes already stored somewhere on the page.
+ */
+function lohkareet_prepare_group_html( $paragraph, $plan, $found = array(), $present = array() ) {
+	$clothing = array();
+	$lamp     = false;
+
+	foreach ( $plan['icons'] as $icon ) {
+		if ( 'lamppu' === $icon ) {
+			$lamp = true;
+			continue;
+		}
+
+		$clothing[] = $icon;
+	}
+
+	$headlamp = lohkareet_prepare_note_piece( 'headlamp', $paragraph, $found, $plan, $present );
+	$charge   = lohkareet_prepare_note_piece( 'charge', $paragraph, $found, $plan, $present );
+	$light    = $headlamp . $charge;
+	$split    = $lamp && $clothing && '' !== $light;
+	$html     = '<div class="lohkareet-prepare">';
+
+	if ( $split ) {
+		$marks = '';
+
+		foreach ( $clothing as $icon ) {
+			$marks .= lohkareet_prepare_icon_html( $icon );
+		}
+
+		$html .= '<div class="lohkareet-prepare__marks">' . $marks . '</div>';
+		$html .= '<div class="lohkareet-prepare__text">' . $paragraph . '</div>';
+		$html .= '<div class="lohkareet-prepare__marks">' . lohkareet_prepare_icon_html( 'lamppu' ) . '</div>';
+		$html .= '<div class="lohkareet-prepare__text">' . $light . '</div>';
+	} else {
+		$marks = '';
+
+		foreach ( $plan['icons'] as $icon ) {
+			$marks .= lohkareet_prepare_icon_html( $icon );
+		}
+
+		$html .= '<div class="lohkareet-prepare__marks">' . $marks . '</div>';
+		$html .= '<div class="lohkareet-prepare__text">' . $paragraph . $light . '</div>';
+	}
+
+	$glare = lohkareet_prepare_note_piece( 'glare', $paragraph, $found, $plan, $present );
+
+	if ( '' !== $glare ) {
+		$html .= '<div class="lohkareet-prepare__marks">' . lohkareet_prepare_icon_html( 'haikase' ) . '</div>';
+		$html .= '<div class="lohkareet-prepare__text">' . $glare . '</div>';
+	}
+
+	return $html . '</div>';
+}
+
+/**
+ * The car icon belongs with shared rides, not with parking or driving directions.
+ *
+ * @return array{heading: string, paragraphs: string[]}
+ */
+function lohkareet_carpool_copy() {
+	return array(
+		'heading'    => __( 'Share the journey', 'lohkareet' ),
+		'paragraphs' => array(
+			__( 'Whenever possible, share a ride and travel together to reduce the environmental impact of getting there.', 'lohkareet' ),
+			__( 'Every location requires a walk for the final part of the journey. Check the event-specific directions and allow enough time to reach the site on foot.', 'lohkareet' ),
+		),
+	);
+}
+
+/**
+ * A phrase that identifies one carpool paragraph in either language.
+ *
+ * @param string $text Plain text.
+ */
+function lohkareet_carpool_body_marker( $text ) {
+	if ( str_contains( $text, 'share a ride' ) ) {
+		return 'share a ride';
+	}
+
+	if ( str_contains( $text, 'kimppakyytejä ja saavu' ) ) {
+		return 'kimppakyytejä ja saavu';
+	}
+
+	if ( str_contains( $text, 'final part of the journey' ) ) {
+		return 'final part of the journey';
+	}
+
+	if ( str_contains( $text, 'viimeinen osuus' ) ) {
+		return 'viimeinen osuus';
+	}
+
+	return '';
+}
+
+/**
+ * Whether this paragraph is the carpool heading.
+ *
+ * @param string $text Plain text.
+ */
+function lohkareet_prepare_is_carpool_heading( $text ) {
+	return str_starts_with( $text, 'Suosi kimppakyytejä' ) || str_starts_with( $text, 'Share the journey' );
+}
+
+/**
+ * Heading and paragraphs for the carpool icon. Editor paragraphs replace the shared lines.
+ *
+ * @param string   $heading    Heading text. Empty uses the shared heading.
+ * @param string[] $paragraphs Editor paragraph HTML already found.
+ */
+function lohkareet_carpool_text_html( $heading = '', $paragraphs = array() ) {
+	$copy = lohkareet_carpool_copy();
+
+	if ( '' === trim( $heading ) ) {
+		$heading = $copy['heading'];
+	}
+
+	$html  = '<h2>' . esc_html( $heading ) . '</h2>';
+	$found = '';
+
+	foreach ( $paragraphs as $paragraph ) {
+		$plain = lohkareet_prepare_plain_text( $paragraph );
+
+		if ( '' === $plain || '' === lohkareet_carpool_body_marker( $plain ) ) {
+			continue;
+		}
+
+		$found .= ' ' . $plain;
+		$html  .= str_starts_with( $paragraph, '<p' ) ? $paragraph : '<p>' . esc_html( $plain ) . '</p>';
+	}
+
+	foreach ( $copy['paragraphs'] as $paragraph ) {
+		$marker = lohkareet_carpool_body_marker( $paragraph );
+
+		if ( '' === $marker || str_contains( $found, $marker ) ) {
+			continue;
+		}
+
+		$html .= '<p>' . esc_html( $paragraph ) . '</p>';
+	}
+
+	return $html;
+}
+
+/**
+ * Car icon beside the carpool text. Same drawing and scale as the other preparation icons.
+ *
+ * @param string $text_html Heading and paragraphs.
+ */
+function lohkareet_get_carpool_group_html( $text_html ) {
+	return '<div class="lohkareet-prepare"><div class="lohkareet-prepare__marks">' . lohkareet_prepare_icon_html( 'auto' ) . '</div><div class="lohkareet-prepare__text">' . $text_html . '</div></div>';
+}
+
+/**
+ * The same short carpool note on every event page, apart from the arrival instructions.
+ */
+function lohkareet_get_carpool_section_html() {
+	return '<section class="lohkareet-share">' . lohkareet_get_carpool_group_html( lohkareet_carpool_text_html() ) . '</section>';
+}
+
+/**
+ * Places the preparation drawings beside the paragraphs that already say those things.
+ *
+ * Stored sentences stay in the editor. This only wraps them on the way out.
+ *
+ * @param string $content Rendered page content.
+ */
+function lohkareet_decorate_preparation_content( $content ) {
+	if ( ! is_string( $content ) || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+
+	$post = get_post();
+
+	if ( ! $post instanceof WP_Post || 'page' !== $post->post_type || ! lohkareet_is_preparation_post( $post ) ) {
+		return $content;
+	}
+
+	if ( str_contains( $content, 'lohkareet-prepare' ) ) {
+		return $content;
+	}
+
+	if ( ! preg_match_all( '/<(p|h2)\b[^>]*>.*?<\/\1>/s', $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+		return $content;
+	}
+
+	$paragraphs  = $matches[0];
+	$skip        = array();
+	$html        = '';
+	$cursor      = 0;
+	$saw_carpool = false;
+	$present     = array(
+		'headlamp' => str_contains( $content, 'Turn off your headlamp' ) || str_contains( $content, 'sammuttaa otsalampun' ),
+		'charge'   => str_contains( $content, 'paluumatkalle' ) || str_contains( $content, 'way back' ),
+		'glare'    => str_contains( $content, 'suoraan kasvoihin' ) || str_contains( $content, 'other visitors' ),
+	);
+
+	foreach ( $paragraphs as $index => $paragraph ) {
+		if ( isset( $skip[ $index ] ) ) {
+			continue;
+		}
+
+		$markup = $paragraph[0];
+		$start  = $paragraph[1];
+		$html  .= substr( $content, $cursor, $start - $cursor );
+		$plain  = lohkareet_prepare_plain_text( $markup );
+
+		if ( 'arrival' === lohkareet_prepare_stored_note_key( $markup ) ) {
+			$cursor = $start + strlen( $markup );
+			continue;
+		}
+
+		if ( lohkareet_prepare_is_carpool_heading( $plain ) ) {
+			$bodies   = array();
+			$cursor   = $start + strlen( $markup );
+			$previous = $cursor;
+
+			for ( $next = $index + 1; $next < count( $paragraphs ); $next++ ) {
+				$between = substr( $content, $previous, $paragraphs[ $next ][1] - $previous );
+
+				if ( '' !== trim( wp_strip_all_tags( $between ) ) ) {
+					break;
+				}
+
+				$body = lohkareet_prepare_plain_text( $paragraphs[ $next ][0] );
+
+				if ( '' === lohkareet_carpool_body_marker( $body ) ) {
+					break;
+				}
+
+				$bodies[]      = $paragraphs[ $next ][0];
+				$skip[ $next ] = true;
+				$previous      = $paragraphs[ $next ][1] + strlen( $paragraphs[ $next ][0] );
+				$cursor        = $previous;
+			}
+
+			$html       .= lohkareet_get_carpool_group_html( lohkareet_carpool_text_html( $plain, $bodies ) );
+			$saw_carpool = true;
+			continue;
+		}
+
+		$plan = lohkareet_prepare_paragraph_plan( $markup );
+
+		if ( null === $plan ) {
+			$html  .= $markup;
+			$cursor = $start + strlen( $markup );
+			continue;
+		}
+
+		$found    = array();
+		$cursor   = $start + strlen( $markup );
+		$previous = $cursor;
+
+		for ( $next = $index + 1; $next < count( $paragraphs ); $next++ ) {
+			$between = substr( $content, $previous, $paragraphs[ $next ][1] - $previous );
+
+			if ( '' !== trim( wp_strip_all_tags( $between ) ) ) {
+				break;
+			}
+
+			$key = lohkareet_prepare_stored_note_key( $paragraphs[ $next ][0] );
+
+			if ( '' === $key || isset( $found[ $key ] ) || ! lohkareet_prepare_note_belongs( $key, $plan ) ) {
+				break;
+			}
+
+			$found[ $key ] = $paragraphs[ $next ][0];
+			$skip[ $next ] = true;
+			$previous      = $paragraphs[ $next ][1] + strlen( $paragraphs[ $next ][0] );
+			$cursor        = $previous;
+		}
+
+		$html .= lohkareet_prepare_group_html( $markup, $plan, $found, $present );
+	}
+
+	$html .= substr( $content, $cursor );
+
+	if ( $saw_carpool ) {
+		return $html;
+	}
+
+	$block    = lohkareet_get_carpool_group_html( lohkareet_carpool_text_html() );
+	$closings = array(
+		'Anna aikaa saapumiselle.',
+		'Allow time for arrival.',
+	);
+	$inserted = false;
+
+	foreach ( $closings as $closing ) {
+		$pos = strpos( $html, $closing );
+
+		if ( false === $pos ) {
+			continue;
+		}
+
+		$start = strrpos( substr( $html, 0, $pos ), '<p' );
+
+		if ( false === $start ) {
+			continue;
+		}
+
+		$html     = substr( $html, 0, $start ) . $block . substr( $html, $start );
+		$inserted = true;
+		break;
+	}
+
+	if ( $inserted ) {
+		return $html;
+	}
+
+	$anchors = array(
+		'Tarkemmat saapumisohjeet julkaistaan tapahtumakohtaisesti.',
+		'More specific arrival and safety instructions are published for each event.',
+	);
+
+	foreach ( $anchors as $anchor ) {
+		$pos = strpos( $html, $anchor );
+
+		if ( false === $pos ) {
+			continue;
+		}
+
+		$end = strpos( $html, '</p>', $pos );
+
+		if ( false === $end ) {
+			continue;
+		}
+
+		$end     += 4;
+		$html     = substr( $html, 0, $end ) . $block . substr( $html, $end );
+		$inserted = true;
+		break;
+	}
+
+	return $inserted ? $html : $html . $block;
+}
+add_filter( 'the_content', 'lohkareet_decorate_preparation_content', 12 );
+
+/**
  * Black opening field for subpages.
  *
  * The front page keeps its video hero. This block is empty there.
@@ -260,6 +806,11 @@ add_action( 'enqueue_block_editor_assets', 'lohkareet_enqueue_block_editor_asset
  */
 function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = null ) {
 	unset( $content, $block );
+
+	if ( isset( $attributes['layout'] ) && 'page' === $attributes['layout'] ) {
+		return lohkareet_get_fullscreen_map_html();
+	}
+
 	$url = isset( $attributes['url'] ) ? lohkareet_with_cooperative_gestures( $attributes['url'] ) : '';
 
 	if ( '' === $url ) {
@@ -282,7 +833,115 @@ function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = nu
 		esc_url( $url )
 	);
 
-	return '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
+	$html = '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
+
+	if ( is_front_page() ) {
+		$html .= lohkareet_get_map_page_button_html();
+	}
+
+	return $html;
+}
+
+/**
+ * Whether the current request is the full-page map.
+ */
+function lohkareet_is_map_page() {
+	if ( ! is_page() ) {
+		return false;
+	}
+
+	$post = get_queried_object();
+
+	return $post instanceof WP_Post && in_array( $post->post_name, array( 'kartta', 'map' ), true );
+}
+
+/**
+ * Published map page in the language of this request.
+ *
+ * The Finnish page is the lookup key. Polylang returns its English pair.
+ */
+function lohkareet_get_map_page_url() {
+	if ( ! function_exists( 'lohkareet_get_published_page_by_slug' ) || ! function_exists( 'lohkareet_navigation_page_for_current_language' ) ) {
+		return '';
+	}
+
+	$page = lohkareet_get_published_page_by_slug( 'kartta' );
+
+	if ( ! $page instanceof WP_Post ) {
+		return '';
+	}
+
+	$page_id = lohkareet_navigation_page_for_current_language( $page->ID );
+	$url     = get_permalink( $page_id );
+
+	return is_string( $url ) ? $url : '';
+}
+
+/**
+ * Link from the front-page embed to the map page. Empty until that page exists.
+ */
+function lohkareet_get_map_page_button_html() {
+	$url = lohkareet_get_map_page_url();
+
+	if ( '' === $url ) {
+		return '';
+	}
+
+	return '<p class="lohkareet-map-open lohkareet-arrival__link"><a href="' . esc_url( $url ) . '">' . esc_html__( 'Explore the map', 'lohkareet' ) . '</a></p>';
+}
+
+/**
+ * Document title for the map page. A Rank Math title stored on the page wins.
+ *
+ * @param string $title Title already chosen by WordPress or Rank Math.
+ */
+function lohkareet_map_document_title( $title ) {
+	if ( ! lohkareet_is_map_page() ) {
+		return $title;
+	}
+
+	$custom = get_post_meta( get_queried_object_id(), 'rank_math_title', true );
+
+	if ( is_string( $custom ) && '' !== trim( $custom ) ) {
+		return $title;
+	}
+
+	return __( 'Lohkareet – Map', 'lohkareet' );
+}
+add_filter( 'pre_get_document_title', 'lohkareet_map_document_title', 20 );
+add_filter( 'rank_math/frontend/title', 'lohkareet_map_document_title', 20 );
+
+/**
+ * Full-window map. The embed URL is the same source as the front page.
+ */
+function lohkareet_get_fullscreen_map_html() {
+	$url = lohkareet_get_zoneatlas_map_url();
+
+	if ( '' === $url ) {
+		return '';
+	}
+
+	$page    = get_queried_object();
+	$heading = $page instanceof WP_Post ? get_the_title( $page ) : '';
+
+	if ( '' === trim( $heading ) ) {
+		$heading = __( 'Map', 'lohkareet' );
+	}
+
+	$iframe = sprintf(
+		'<iframe class="lohkareet-map__frame" title="%1$s" src="%2$s" allow="fullscreen; geolocation" allowfullscreen></iframe>',
+		esc_attr__( 'Lohkareet – interactive map', 'lohkareet' ),
+		esc_url( $url )
+	);
+
+	$fallback = sprintf(
+		'<p class="lohkareet-map-stage__fallback lohkareet-arrival__link" data-lohkareet-map-fallback hidden><a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s<span class="lohkareet-visually-hidden"> %3$s</span></a></p>',
+		esc_url( $url ),
+		esc_html__( 'Open the map', 'lohkareet' ),
+		esc_html__( 'Opens in a new tab.', 'lohkareet' )
+	);
+
+	return '<main id="wp--skip-link--target" class="lohkareet-map-page"><h1 class="lohkareet-visually-hidden">' . esc_html( $heading ) . '</h1><div class="lohkareet-map-stage"><p class="lohkareet-map-stage__status" data-lohkareet-map-status>' . esc_html__( 'The map is loading.', 'lohkareet' ) . '</p>' . $iframe . $fallback . '</div></main>';
 }
 
 /**
@@ -761,7 +1420,7 @@ function lohkareet_get_work_html( $work_id ) {
  * @param int $post_id Event ID.
  */
 function lohkareet_get_event_context_html( $post_id ) {
-	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id ) . lohkareet_get_preparation_link_html();
+	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id ) . lohkareet_get_preparation_link_html() . lohkareet_get_carpool_section_html();
 }
 
 /**

@@ -20,7 +20,7 @@ header.wp-block-template-part {
 
 body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) {
 	color: #fff;
-	mix-blend-mode: difference;
+	mix-blend-mode: normal;
 }
 
 body:has(.lohkareet-page-hero) header.wp-block-template-part:not(.is-past-hero) {
@@ -28,7 +28,9 @@ body:has(.lohkareet-page-hero) header.wp-block-template-part:not(.is-past-hero) 
 	mix-blend-mode: normal;
 }
 
-header.wp-block-template-part.is-past-hero:not(.is-menu-open):not(.is-over-footer) {
+header.wp-block-template-part.is-past-hero:not(.is-menu-open):not(.is-over-footer),
+body.lohkareet-entry-kartta header.wp-block-template-part:not(.is-menu-open),
+body.lohkareet-entry-map header.wp-block-template-part:not(.is-menu-open) {
 	background: #fff;
 	color: #141414;
 }
@@ -207,7 +209,7 @@ html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-
 		display: grid;
 		grid-template-columns: repeat(12, minmax(0, 1fr));
 		column-gap: var(--grid-gap, clamp(0.75rem, 1.25vw, 1.5rem));
-		align-items: start;
+		align-items: center;
 		justify-content: stretch;
 	}
 
@@ -215,7 +217,7 @@ html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-
 		display: flex;
 		grid-column: 5 / -1;
 		grid-row: 1;
-		align-items: baseline;
+		align-items: center;
 		justify-content: flex-end;
 		width: auto;
 		column-gap: clamp(1rem, 2.2vw, 2.15rem);
@@ -229,6 +231,7 @@ html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-
 	header.wp-block-template-part .lohkareet-header__mark {
 		grid-column: 1 / 5;
 		grid-row: 1;
+		align-self: center;
 		justify-self: start;
 		z-index: 1;
 		font-size: clamp(0.7rem, 0.85vw, 0.84rem);
@@ -244,6 +247,9 @@ html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher.is-
 
 	header.wp-block-template-part .lohkareet-language-switcher {
 		justify-self: end;
+		font-size: clamp(0.7rem, 0.85vw, 0.84rem);
+		letter-spacing: 0.12em;
+		line-height: 1.2;
 	}
 
 	html.lohkareet-js header.wp-block-template-part .lohkareet-language-switcher__trigger {
