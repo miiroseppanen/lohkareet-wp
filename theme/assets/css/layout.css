@@ -265,7 +265,7 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 }
 
 .home .lohkareet-grid .lohkareet-visit--bridge + .lohkareet-map {
-	margin-top: clamp(2.75rem, 7vw, 5.5rem);
+	margin-top: 0;
 }
 
 .home .lohkareet-grid .lohkareet-map:has(+ .lohkareet-map-open) {
@@ -465,6 +465,18 @@ a.lohkareet-event-summary {
 	width: 100%;
 	max-width: none;
 	height: auto;
+	margin: 0;
+}
+
+.single-event .lohkareet-programme__work:has(.lohkareet-visit) {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	row-gap: var(--space-2);
+}
+
+.single-event .lohkareet-programme__work .lohkareet-visit {
+	width: 100%;
 	margin: 0;
 }
 
@@ -1020,6 +1032,14 @@ body.admin-bar.lohkareet-entry-map {
 		grid-column: 1 / 7;
 	}
 
+	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work):has(.lohkareet-visit) {
+		grid-column: 1 / 7;
+	}
+
+	.single-event .lohkareet-programme__work:nth-child(2 of .lohkareet-programme__work):has(.lohkareet-visit) {
+		grid-column: 8 / 13;
+	}
+
 	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) h2,
 	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) .lohkareet-programme__type,
 	.single-event .lohkareet-programme__work:nth-child(1 of .lohkareet-programme__work) .lohkareet-programme__title,
@@ -1478,15 +1498,30 @@ body.admin-bar.lohkareet-entry-map {
 	position: absolute;
 	z-index: 2;
 	right: clamp(0.75rem, 1.6vw, 1.35rem);
-	bottom: clamp(0.65rem, 1.4vw, 1.15rem);
+	bottom: clamp(0.55rem, 1.2vw, 0.9rem);
 	margin: 0;
 	color: #fff;
-	font-size: 0.72rem;
+	font-size: 0.5rem;
 	font-weight: 400;
-	letter-spacing: 0.12em;
+	letter-spacing: 0.08em;
 	line-height: 1.2;
 	text-transform: uppercase;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+	opacity: 0.6;
+	transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lohkareet-visit:hover .lohkareet-visit__credit,
+.lohkareet-visit:focus-within .lohkareet-visit__credit {
+	color: #fff;
+	opacity: 1;
+}
+
+@media (min-width: 48rem) {
+	.lohkareet-visit__credit {
+		font-size: 0.62rem;
+		letter-spacing: 0.1em;
+	}
 }
 
 .home .lohkareet-grid .wp-block-post-content > .lohkareet-visit--bridge,
@@ -1501,33 +1536,31 @@ body.admin-bar.lohkareet-entry-map {
 	margin-inline: calc((var(--page-gutter) + var(--content-breakout)) * -1);
 }
 
-.home .lohkareet-grid .wp-block-post-content > .lohkareet-visit--bridge {
-	margin-top: clamp(2.5rem, 6vw, 4.5rem);
-	margin-bottom: 0;
-}
-
-.home .lohkareet-grid .wp-block-post-content > .lohkareet-visits--home {
-	margin-top: var(--section-space);
-}
-
+.home .lohkareet-grid .wp-block-post-content > .lohkareet-visit--bridge,
+.home .lohkareet-grid .wp-block-post-content > .lohkareet-visits--home,
 .lohkareet-entry-varustautuminen .lohkareet-grid .wp-block-post-content > .lohkareet-visit--preparation,
-.lohkareet-entry-preparation .lohkareet-grid .wp-block-post-content > .lohkareet-visit--preparation {
-	margin-top: var(--section-space);
-}
-
+.lohkareet-entry-preparation .lohkareet-grid .wp-block-post-content > .lohkareet-visit--preparation,
 .post-type-archive-event .lohkareet-grid > .lohkareet-visits--archive {
-	margin-top: var(--section-space);
+	margin-top: calc(var(--space-4) * -1);
+	margin-bottom: calc(var(--space-4) * -1);
 }
 
 .lohkareet-visits {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: clamp(4.5rem, 11vw, 8.5rem);
+	gap: 0;
 }
 
-.lohkareet-visits--archive {
-	gap: clamp(3.5rem, 8vw, 6.5rem);
+@media (min-width: 36rem) {
+	.lohkareet-visits .lohkareet-visit--portrait {
+		margin-top: clamp(2rem, 5vw, 3.5rem);
+		margin-bottom: clamp(2rem, 5vw, 3.5rem);
+	}
+
+	.lohkareet-visits .lohkareet-visit--portrait + .lohkareet-visit--portrait {
+		margin-top: 0;
+	}
 }
 
 .lohkareet-visits .lohkareet-visit--portrait {

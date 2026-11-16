@@ -178,15 +178,9 @@ function lohkareet_append_front_visit_gallery( $content ) {
 
 	$keys = array(
 		'punkalaidun-4',
-		'punkalaidun-9',
 		'punkalaidun-12',
 		'punkalaidun-27',
-		'nokia-2',
-		'nokia-4',
-		'nokia-5',
-		'nokia-6',
 		'nokia-11',
-		'nokia-16',
 	);
 
 	return $content . lohkareet_get_visit_gallery_html( $keys, 'home' );
@@ -216,6 +210,30 @@ function lohkareet_append_preparation_visit_photo( $content ) {
 	return $content . lohkareet_get_visit_figure_html( 'nokia-2', 'preparation' );
 }
 add_filter( 'the_content', 'lohkareet_append_preparation_visit_photo', 13 );
+
+/**
+ * Photograph for a work, when one of the visit pictures belongs to it.
+ *
+ * QODOVV uses the Nokia boulder projection. The Lindgren sound work uses
+ * the red-lit boulder with visitors. The credit still names the Nokia visit.
+ *
+ * @param int $work_id Work ID.
+ */
+function lohkareet_get_work_visit_figure_html( $work_id ) {
+	$names = function_exists( 'lohkareet_work_contributor_names' ) ? lohkareet_work_contributor_names( $work_id ) : array();
+	$title = function_exists( 'lohkareet_translated_meta_string' ) ? lohkareet_translated_meta_string( $work_id, 'lohkareet_work_title' ) : '';
+	$label = strtolower( remove_accents( implode( ' ', $names ) . ' ' . $title . ' ' . get_the_title( $work_id ) ) );
+
+	if ( str_contains( $label, 'qodovv' ) ) {
+		return lohkareet_get_visit_figure_html( 'nokia-4', 'work' );
+	}
+
+	if ( str_contains( $label, 'lindgren' ) ) {
+		return lohkareet_get_visit_figure_html( 'nokia-6', 'work' );
+	}
+
+	return '';
+}
 
 /**
  * A few photographs after the event archive list.

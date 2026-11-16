@@ -334,8 +334,13 @@ header.wp-block-template-part button:focus-visible {
 		display: none;
 	}
 
-	html.lohkareet-js header.wp-block-template-part .lohkareet-header__bar {
+	html.lohkareet-js header.wp-block-template-part:not(.is-menu-open) .lohkareet-header__bar {
+		align-items: center;
 		justify-content: space-between;
+	}
+
+	html.lohkareet-js header.wp-block-template-part:not(.is-menu-open) .lohkareet-header__mark {
+		align-self: center;
 	}
 
 	body:has(.lohkareet-hero) header.wp-block-template-part:not(.is-past-hero) .lohkareet-header__mark {

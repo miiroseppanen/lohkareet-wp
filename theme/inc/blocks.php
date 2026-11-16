@@ -836,7 +836,6 @@ function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = nu
 	$html = '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
 
 	if ( is_front_page() ) {
-		$html  = lohkareet_get_visit_figure_html( 'nokia-4', 'bridge' ) . $html;
 		$html .= lohkareet_get_map_page_button_html();
 	}
 
@@ -1393,6 +1392,7 @@ function lohkareet_get_work_html( $work_id ) {
 	}
 
 	$html = '<section class="lohkareet-programme__work">';
+	$html .= lohkareet_get_work_visit_figure_html( $work_id );
 
 	if ( $names ) {
 		$html .= '<h2>' . implode( '<br>', array_map( 'esc_html', $names ) ) . '</h2>';
