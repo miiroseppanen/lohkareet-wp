@@ -836,6 +836,7 @@ function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = nu
 	$html = '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
 
 	if ( is_front_page() ) {
+		$html  = lohkareet_get_visit_figure_html( 'nokia-16', 'bridge' ) . $html;
 		$html .= lohkareet_get_map_page_button_html();
 	}
 

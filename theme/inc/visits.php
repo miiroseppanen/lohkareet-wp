@@ -245,7 +245,7 @@ function lohkareet_event_list_with_visits( $html ) {
 		return $html;
 	}
 
-	$keys = array( 'nokia-16', 'punkalaidun-9', 'nokia-5' );
+	$keys = array( 'punkalaidun-9', 'nokia-5' );
 
 	return $html . lohkareet_get_visit_gallery_html( $keys, 'archive' );
 }
