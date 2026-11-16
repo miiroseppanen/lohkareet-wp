@@ -123,7 +123,12 @@ function lohkareet_get_visit_figure_html( $key, $variant = '' ) {
 		$classes[] = 'lohkareet-visit--shift';
 	}
 
-	$credit = 'Henrik Laakkonen · ' . $photo['event'];
+	$credit = sprintf(
+		/* translators: 1: photographer, 2: place where the photograph was taken. */
+		__( 'Photo: %1$s · %2$s', 'lohkareet' ),
+		'Henrik Laakkonen',
+		$photo['event']
+	);
 
 	return sprintf(
 		'<figure class="%1$s"><img src="%2$s" alt="%3$s" width="%4$d" height="%5$d" decoding="async" loading="lazy"><figcaption class="lohkareet-visit__credit">%6$s</figcaption></figure>',
@@ -212,6 +217,60 @@ function lohkareet_append_preparation_visit_photo( $content ) {
 add_filter( 'the_content', 'lohkareet_append_preparation_visit_photo', 13 );
 
 /**
+ * Whether this page is Lohkareista in either language.
+ *
+ * @param WP_Post $post Page being rendered.
+ */
+function lohkareet_is_about_post( $post ) {
+	$slugs = array( $post->post_name );
+
+	if ( function_exists( 'pll_get_post' ) ) {
+		foreach ( array( 'fi', 'en' ) as $language ) {
+			$translated = pll_get_post( $post->ID, $language );
+
+			if ( $translated ) {
+				$slugs[] = (string) get_post_field( 'post_name', $translated );
+			}
+		}
+	}
+
+	return in_array( 'lohkareista', $slugs, true ) || in_array( 'about', $slugs, true );
+}
+
+/**
+ * The Nokia boulder portrait after the first paragraph of Lohkareista.
+ *
+ * @param string $content Rendered page content.
+ */
+function lohkareet_insert_about_visit_photo( $content ) {
+	if ( ! is_string( $content ) || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+
+	$post = get_post();
+
+	if ( ! $post instanceof WP_Post || 'page' !== $post->post_type || ! lohkareet_is_about_post( $post ) ) {
+		return $content;
+	}
+
+	if ( str_contains( $content, 'lohkareet-visits--about' ) ) {
+		return $content;
+	}
+
+	$gallery  = lohkareet_get_visit_gallery_html( array( 'nokia-5' ), 'about' );
+	$position = strpos( $content, '</p>' );
+
+	if ( false === $position || '' === $gallery ) {
+		return $content;
+	}
+
+	$position += strlen( '</p>' );
+
+	return substr( $content, 0, $position ) . $gallery . substr( $content, $position );
+}
+add_filter( 'the_content', 'lohkareet_insert_about_visit_photo', 14 );
+
+/**
  * Photograph for a work, when one of the visit pictures belongs to it.
  *
  * QODOVV uses the Nokia boulder projection. The Lindgren sound work uses
@@ -245,7 +304,7 @@ function lohkareet_event_list_with_visits( $html ) {
 		return $html;
 	}
 
-	$keys = array( 'punkalaidun-9', 'nokia-5' );
+	$keys = array( 'punkalaidun-9' );
 
 	return $html . lohkareet_get_visit_gallery_html( $keys, 'archive' );
 }

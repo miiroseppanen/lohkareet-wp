@@ -174,6 +174,7 @@ return array(
 		'Whenever possible, share a ride and travel together to reduce the environmental impact of getting there.' => 'Suosi mahdollisuuksien mukaan kimppakyytejä ja saavu yhdessä muiden kanssa. Näin vähennämme tapahtumien liikenteestä aiheutuvaa ympäristökuormitusta.',
 		'Every location requires a walk for the final part of the journey. Check the event-specific directions and allow enough time to reach the site on foot.' => 'Kaikille tapahtumapaikoille kuljetaan viimeinen osuus jalan. Tarkista tapahtumakohtaiset saapumisohjeet ja varaa aikaa myös kävelymatkaan.',
 		'Fields marked FI + EN are copied to the translation. Fields marked for this language stay on this version.' => 'FI + EN -merkityt kentät kopioidaan käännökseen. Vain tälle kielelle merkityt kentät jäävät tähän versioon.',
+		'Photo: %1$s · %2$s'                       => 'Kuva: %1$s · %2$s',
 		'A person at a table of equipment in the forest, with visitors and small lights behind, at Lohkareet in Punkalaidun.' => 'Ihminen laitteiden ääressä metsässä, vierailijoita ja pieniä valoja taustalla, Lohkareet Punkalaidulla.',
 		'People sitting and standing in a dark forest among small lights at Lohkareet in Punkalaidun.' => 'Ihmisiä istumassa ja seisomassa pimeässä metsässä pienten valojen keskellä, Lohkareet Punkalaidulla.',
 		'People and a dog on mossy ground in the forest at Lohkareet in Punkalaidun.' => 'Ihmisiä ja koira sammaleisella maalla metsässä, Lohkareet Punkalaidulla.',
