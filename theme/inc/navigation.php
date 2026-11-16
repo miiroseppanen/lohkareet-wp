@@ -113,6 +113,49 @@ function lohkareet_render_menu_home() {
 }
 
 /**
+ * Public Instagram profile for Siirtymä.
+ */
+function lohkareet_instagram_url() {
+	return 'https://www.instagram.com/siirtyma/';
+}
+
+/**
+ * Link to the Instagram profile.
+ *
+ * @param string $class Optional class on the anchor.
+ */
+function lohkareet_instagram_link_html( $class = '' ) {
+	$class_attr = '' !== $class ? ' class="' . esc_attr( $class ) . '"' : '';
+
+	return '<a' . $class_attr . ' href="' . esc_url( lohkareet_instagram_url() ) . '">' . esc_html__( 'Instagram', 'lohkareet' ) . '</a>';
+}
+
+/**
+ * Adds the Instagram link to the mobile menu, after the page links.
+ *
+ * Desktop hides this copy. The footer has its own link from 60rem up.
+ *
+ * @param string $content Rendered block HTML.
+ * @param array  $block   Parsed block.
+ */
+function lohkareet_append_instagram_to_header_menu( $content, $block ) {
+	if ( is_admin() || ! is_string( $content ) || '' === $content || ! is_array( $block ) ) {
+		return $content;
+	}
+
+	if ( 'core/navigation' !== ( isset( $block['blockName'] ) ? $block['blockName'] : '' ) ) {
+		return $content;
+	}
+
+	if ( str_contains( $content, 'lohkareet-header__instagram' ) ) {
+		return $content;
+	}
+
+	return $content . lohkareet_instagram_link_html( 'lohkareet-header__instagram' );
+}
+add_filter( 'render_block', 'lohkareet_append_instagram_to_header_menu', 10, 2 );
+
+/**
  * Renders the mobile menu button. Desktop CSS hides it.
  */
 function lohkareet_render_menu_toggle() {

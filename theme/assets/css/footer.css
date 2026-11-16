@@ -84,6 +84,12 @@ footer.wp-block-template-part {
 	overflow-wrap: break-word;
 }
 
+@media (max-width: 60rem) {
+	.lohkareet-footer__instagram {
+		display: none;
+	}
+}
+
 .lohkareet-footer__credit {
 	--partner-gap: clamp(1.25rem, 3vw, 2.25rem);
 	display: flex;

@@ -808,6 +808,10 @@ function lohkareet_render_site_footer() {
 		$nav .= '<li><a' . $attrs . '>' . esc_html( $link['label'] ) . '</a></li>';
 	}
 
+	if ( function_exists( 'lohkareet_instagram_link_html' ) ) {
+		$nav .= '<li class="lohkareet-footer__instagram">' . lohkareet_instagram_link_html() . '</li>';
+	}
+
 	$nav .= '</ul>';
 
 	$html  = '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-footer' ) ) . '>';
