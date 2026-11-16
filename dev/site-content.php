@@ -278,8 +278,8 @@ HTML
 				'location'     => "Ritajärven luonnonsuojelualue on metsäjärvien, kallioiden ja kivikkoisten rinteiden maisema Sastamalan keskellä. Pirkanmaan ELY-keskus perusti 127 hehtaarin suojelualueen keväällä 2015. Valkeajärvi, Ylinen Ritajärvi, Alinen Ritajärvi ja Heinijärven länsiosa muodostavat alueen ytimen. Eteläosassa on Ritarijärvi.\n\nAlue on tunnettu kivikoista ja suurista siirtolohkareista. Kivien mittakaava ja ympäröivä metsä ovat osa tapahtuman kokemusta: näkymä ja kuuntelupaikka muuttuvat maastossa liikkuessa.",
 				'artist'       => 'Jori Hulkkonen',
 				'status'       => 'confirmed',
-				'description'  => '',
-				'image'        => '',
+				'description'  => 'Jori Hulkkonen on viime vuosina syventynyt synth-popiin, kokeelliseen musiikkiin ja downtempoon. Hänellä on synth-pop-yhtye Sin Cos Tan, ja yhdessä Jimi Tenorin kanssa hän on tehnyt elokuvaprojektin NUNTIUS. Elektronisen musiikin ura alkoi debyyttisinglestä vuonna 1993.',
+				'image'        => 'jori-hulkkonen-2025.jpg',
 				'works'        => array( 'qodovv-boulder', 'lindgren-sound' ),
 			),
 			array(
