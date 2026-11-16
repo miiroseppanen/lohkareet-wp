@@ -17,6 +17,7 @@ require get_theme_file_path( 'inc/event-post-type.php' );
 require get_theme_file_path( 'inc/event-helpers.php' );
 require get_theme_file_path( 'inc/event-meta.php' );
 require get_theme_file_path( 'inc/works.php' );
+require get_theme_file_path( 'inc/visits.php' );
 require get_theme_file_path( 'inc/blocks.php' );
 require get_theme_file_path( 'inc/hero.php' );
 require get_theme_file_path( 'inc/navigation.php' );

@@ -836,6 +836,7 @@ function lohkareet_render_zoneatlas_map( $attributes, $content = '', $block = nu
 	$html = '<div ' . get_block_wrapper_attributes( array( 'class' => 'lohkareet-map' ) ) . '>' . $iframe . '</div>';
 
 	if ( is_front_page() ) {
+		$html  = lohkareet_get_visit_figure_html( 'nokia-4', 'bridge' ) . $html;
 		$html .= lohkareet_get_map_page_button_html();
 	}
 
@@ -993,7 +994,7 @@ function lohkareet_render_event_list( $attributes, $content = '', $block = null 
 	if ( ! $events ) {
 		$html .= '<p>' . esc_html__( 'No events have been published yet.', 'lohkareet' ) . '</p>';
 		$html .= $show_heading ? '</section>' : '</div>';
-		return $html;
+		return lohkareet_event_list_with_visits( $html );
 	}
 
 	$html .= '<ul class="lohkareet-event-list">';
@@ -1007,7 +1008,7 @@ function lohkareet_render_event_list( $attributes, $content = '', $block = null 
 	$html .= '</ul>';
 	$html .= $show_heading ? '</section>' : '</div>';
 
-	return $html;
+	return lohkareet_event_list_with_visits( $html );
 }
 
 /**

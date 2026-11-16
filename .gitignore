@@ -12,3 +12,6 @@ uploads/
 
 # Persistent local WordPress runtime. The theme stays in git.
 .local/
+
+# Full-size visit photographs. The theme serves the lighter copies beside this folder.
+theme/assets/images/henrik_laakkonen/source/
