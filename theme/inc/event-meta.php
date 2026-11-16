@@ -36,6 +36,9 @@ function lohkareet_event_meta_fields() {
 		'lohkareet_artist_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_artist_status'         => 'lohkareet_sanitize_artist_status',
 		'lohkareet_artist_image'          => 'lohkareet_sanitize_image_id',
+		'lohkareet_artist_start_time'     => 'lohkareet_sanitize_time',
+		'lohkareet_artist_end_time'       => 'lohkareet_sanitize_time',
+		'lohkareet_work_times'            => 'lohkareet_sanitize_work_times',
 		'lohkareet_social_image'          => 'lohkareet_sanitize_image_id',
 		'lohkareet_social_description'    => 'lohkareet_sanitize_plain_textarea',
 		'lohkareet_work_ids'              => 'lohkareet_sanitize_work_id_list',
@@ -70,6 +73,9 @@ function lohkareet_shared_event_meta_keys() {
 		'lohkareet_artist_name',
 		'lohkareet_artist_status',
 		'lohkareet_artist_image',
+		'lohkareet_artist_start_time',
+		'lohkareet_artist_end_time',
+		'lohkareet_work_times',
 		'lohkareet_social_image',
 		'lohkareet_work_ids',
 	);
@@ -297,6 +303,9 @@ function lohkareet_render_event_meta_box( $post ) {
 	$artist_text = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_description' );
 	$status      = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_status' );
 	$artist_image = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_image' );
+	$artist_start = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_start_time' );
+	$artist_end   = lohkareet_get_event_meta_string( $post->ID, 'lohkareet_artist_end_time' );
+	$artist_usual = lohkareet_format_clock_range_text( ...lohkareet_event_artist_performance_times( $post->ID ) );
 
 	if ( '' === $status ) {
 		$status = 'unannounced';
@@ -424,6 +433,22 @@ function lohkareet_render_event_meta_box( $post ) {
 			<span class="description"><?php esc_html_e( 'The name is shown only when the status is confirmed or tentative.', 'lohkareet' ); ?></span>
 		</p>
 		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_start_time', __( 'Performance start', 'lohkareet' ), 'lohkareet_artist_start_time', false ); ?><br>
+			<input type="time" id="lohkareet_artist_start_time" name="lohkareet_artist_start_time" value="<?php echo esc_attr( $artist_start ); ?>">
+		</p>
+		<p>
+			<?php lohkareet_event_field_label( 'lohkareet_artist_end_time', __( 'Performance end', 'lohkareet' ), 'lohkareet_artist_end_time', false ); ?><br>
+			<input type="time" id="lohkareet_artist_end_time" name="lohkareet_artist_end_time" value="<?php echo esc_attr( $artist_end ); ?>">
+			<span class="description">
+				<?php
+				esc_html_e( 'Leave empty to start one hour after the event and play for 45 minutes. A time saved here replaces that side for this event.', 'lohkareet' );
+				if ( '' !== $artist_usual && '' === $artist_start && '' === $artist_end ) {
+					echo ' ' . esc_html( sprintf( __( 'Usual: %s', 'lohkareet' ), $artist_usual ) );
+				}
+				?>
+			</span>
+		</p>
+		<p>
 			<?php lohkareet_event_field_label( 'lohkareet_artist_description', __( 'Artist description', 'lohkareet' ), 'lohkareet_artist_description' ); ?><br>
 			<textarea class="widefat" rows="4" id="lohkareet_artist_description" name="lohkareet_artist_description"><?php echo esc_textarea( $artist_text ); ?></textarea>
 		</p>
@@ -489,7 +514,7 @@ function lohkareet_save_event_meta( $post_id ) {
 	$values = array();
 
 	foreach ( lohkareet_event_meta_fields() as $key => $sanitize_callback ) {
-		if ( 'lohkareet_work_ids' === $key ) {
+		if ( 'lohkareet_work_ids' === $key || 'lohkareet_work_times' === $key ) {
 			continue;
 		}
 
@@ -501,6 +526,12 @@ function lohkareet_save_event_meta( $post_id ) {
 
 	if ( null !== $work_ids ) {
 		$values['lohkareet_work_ids'] = lohkareet_sanitize_work_id_list( $work_ids );
+	}
+
+	$work_times = lohkareet_event_work_times_from_request();
+
+	if ( null !== $work_times ) {
+		$values['lohkareet_work_times'] = $work_times;
 	}
 
 	if ( '' !== $values['lohkareet_date_day'] && '' === $values['lohkareet_date_month'] ) {
@@ -630,6 +661,44 @@ function lohkareet_sanitize_time( $value, ...$unused ) {
 	}
 
 	return sprintf( '%02d:%02d', $hour, $minute );
+}
+
+/**
+ * Sanitizes per-work clocks stored as id|HH:MM|HH:MM rows.
+ *
+ * An empty side is kept, so one clock can be set without the other.
+ * A row with both sides empty is dropped.
+ *
+ * @param mixed $value Raw value.
+ */
+function lohkareet_sanitize_work_times( $value, ...$unused ) {
+	unset( $unused );
+	$rows = array();
+
+	foreach ( explode( ',', lohkareet_sanitize_scalar( $value ) ) as $part ) {
+		$bits = explode( '|', $part );
+
+		if ( 3 !== count( $bits ) ) {
+			continue;
+		}
+
+		$id = absint( $bits[0] );
+
+		if ( $id <= 0 || 'work' !== get_post_type( $id ) ) {
+			continue;
+		}
+
+		$start = lohkareet_sanitize_time( $bits[1] );
+		$end   = lohkareet_sanitize_time( $bits[2] );
+
+		if ( '' === $start && '' === $end ) {
+			continue;
+		}
+
+		$rows[ $id ] = $id . '|' . $start . '|' . $end;
+	}
+
+	return implode( ',', $rows );
 }
 
 /**

@@ -273,6 +273,46 @@ function lohkareet_event_work_ids_from_request() {
 }
 
 /**
+ * Reads the work clocks typed on the event form.
+ *
+ * Returns null when this request did not include the works field.
+ *
+ * @return string|null Sanitized schedule, or null to leave the stored value.
+ */
+function lohkareet_event_work_times_from_request() {
+	if ( ! isset( $_POST['lohkareet_works_present'] ) ) {
+		return null;
+	}
+
+	$starts = array();
+	$ends   = array();
+
+	if ( isset( $_POST['lohkareet_work_start'] ) && is_array( $_POST['lohkareet_work_start'] ) ) {
+		$starts = wp_unslash( $_POST['lohkareet_work_start'] );
+	}
+
+	if ( isset( $_POST['lohkareet_work_end'] ) && is_array( $_POST['lohkareet_work_end'] ) ) {
+		$ends = wp_unslash( $_POST['lohkareet_work_end'] );
+	}
+
+	$parts = array();
+
+	foreach ( array_unique( array_merge( array_keys( $starts ), array_keys( $ends ) ) ) as $raw_id ) {
+		$id    = absint( $raw_id );
+		$start = isset( $starts[ $raw_id ] ) ? $starts[ $raw_id ] : '';
+		$end   = isset( $ends[ $raw_id ] ) ? $ends[ $raw_id ] : '';
+
+		if ( is_array( $start ) || is_array( $end ) ) {
+			continue;
+		}
+
+		$parts[] = $id . '|' . (string) $start . '|' . (string) $end;
+	}
+
+	return lohkareet_sanitize_work_times( implode( ',', $parts ) );
+}
+
+/**
  * Posts of one internal type, in the original language when Polylang is active.
  *
  * @param string $post_type contributor or work.
@@ -494,6 +534,7 @@ function lohkareet_render_event_works_field( $post_id ) {
 	echo '<fieldset class="lohkareet-event-section">';
 	echo '<legend><strong>' . esc_html__( 'Works', 'lohkareet' ) . '</strong> ' . lohkareet_event_scope_mark( 'lohkareet_work_ids' ) . '</legend>';
 	echo '<p class="description">' . esc_html__( 'Tick a work to show it here. The number sets its order. The description is edited on the work, not on this event.', 'lohkareet' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Leave a work’s times empty to use its usual hours. QODOVV, Metsän Salaisuudet, and the Lindgren sound work run from the event’s start to its end. A time saved here replaces that side for this event.', 'lohkareet' ) . '</p>';
 	echo '<input type="hidden" name="lohkareet_works_present" value="1">';
 
 	$works = lohkareet_get_library_posts( 'work' );
@@ -502,11 +543,24 @@ function lohkareet_render_event_works_field( $post_id ) {
 		echo '<p class="description">' . esc_html__( 'No works have been added yet.', 'lohkareet' ) . '</p>';
 	}
 
+	$overrides = lohkareet_event_work_time_overrides( $post_id );
+
 	foreach ( $works as $work ) {
 		$checked  = in_array( $work->ID, $selected, true );
 		$position = $checked ? (string) $order[ $work->ID ] : '';
+		$start    = isset( $overrides[ $work->ID ] ) ? $overrides[ $work->ID ]['start'] : '';
+		$end      = isset( $overrides[ $work->ID ] ) ? $overrides[ $work->ID ]['end'] : '';
+		$usual    = lohkareet_format_clock_range_text( ...lohkareet_event_work_performance_times( $post_id, $work->ID ) );
 		echo '<p><label><input type="checkbox" name="lohkareet_work_selected[]" value="' . esc_attr( (string) $work->ID ) . '" ' . checked( $checked, true, false ) . '> ' . esc_html( get_the_title( $work ) ) . '</label> ';
-		echo '<label>' . esc_html__( 'Order', 'lohkareet' ) . ' <input type="number" min="1" class="small-text" name="lohkareet_work_position[' . esc_attr( (string) $work->ID ) . ']" value="' . esc_attr( $position ) . '"></label></p>';
+		echo '<label>' . esc_html__( 'Order', 'lohkareet' ) . ' <input type="number" min="1" class="small-text" name="lohkareet_work_position[' . esc_attr( (string) $work->ID ) . ']" value="' . esc_attr( $position ) . '"></label> ';
+		echo '<label>' . esc_html__( 'Start time', 'lohkareet' ) . ' <input type="time" name="lohkareet_work_start[' . esc_attr( (string) $work->ID ) . ']" value="' . esc_attr( $start ) . '"></label> ';
+		echo '<label>' . esc_html__( 'End time', 'lohkareet' ) . ' <input type="time" name="lohkareet_work_end[' . esc_attr( (string) $work->ID ) . ']" value="' . esc_attr( $end ) . '"></label>';
+
+		if ( '' !== $usual && '' === $start && '' === $end ) {
+			echo ' <span class="description">' . esc_html( sprintf( __( 'Usual: %s', 'lohkareet' ), $usual ) ) . '</span>';
+		}
+
+		echo '</p>';
 	}
 
 	echo '</fieldset>';
@@ -631,4 +685,89 @@ function lohkareet_work_contributor_names( $work_id ) {
 	}
 
 	return $names;
+}
+
+/**
+ * Whether a work stays up for the whole event unless this event says otherwise.
+ *
+ * QODOVV and Metsän Salaisuudet are the named pieces. The published Lindgren
+ * sound work uses the same hours until its title is Metsän Salaisuudet.
+ *
+ * @param int $work_id Work ID.
+ */
+function lohkareet_work_uses_event_hours( $work_id ) {
+	$names = lohkareet_work_contributor_names( $work_id );
+	$title = function_exists( 'lohkareet_translated_meta_string' ) ? lohkareet_translated_meta_string( $work_id, 'lohkareet_work_title' ) : '';
+	$label = strtolower( remove_accents( implode( ' ', $names ) . ' ' . $title . ' ' . get_the_title( $work_id ) ) );
+
+	return str_contains( $label, 'qodovv' ) || str_contains( $label, 'salaisuudet' ) || str_contains( $label, 'lindgren' );
+}
+
+/**
+ * Saved work clocks for one event, keyed by work ID.
+ *
+ * Stored as `id|HH:MM|HH:MM` rows. An empty side means that side is not overridden.
+ *
+ * @param int $post_id Event ID.
+ * @return array<int, array{start: string, end: string}>
+ */
+function lohkareet_event_work_time_overrides( $post_id ) {
+	$raw  = lohkareet_get_event_meta_string( $post_id, 'lohkareet_work_times' );
+	$rows = array();
+
+	if ( '' === $raw ) {
+		return $rows;
+	}
+
+	foreach ( explode( ',', $raw ) as $part ) {
+		$bits = explode( '|', $part );
+
+		if ( 3 !== count( $bits ) ) {
+			continue;
+		}
+
+		$id = absint( $bits[0] );
+
+		if ( $id <= 0 ) {
+			continue;
+		}
+
+		$rows[ $id ] = array(
+			'start' => lohkareet_sanitize_time( $bits[1] ),
+			'end'   => lohkareet_sanitize_time( $bits[2] ),
+		);
+	}
+
+	return $rows;
+}
+
+/**
+ * A work’s clocks on one event.
+ *
+ * A saved time replaces that side. QODOVV, Metsän Salaisuudet, and the
+ * Lindgren sound work otherwise use the event’s own start and end.
+ *
+ * @param int $post_id Event ID.
+ * @param int $work_id Work ID.
+ * @return array{0: string, 1: string}
+ */
+function lohkareet_event_work_performance_times( $post_id, $work_id ) {
+	$overrides = lohkareet_event_work_time_overrides( $post_id );
+	$work_id   = (int) $work_id;
+	$start     = isset( $overrides[ $work_id ] ) ? $overrides[ $work_id ]['start'] : '';
+	$end       = isset( $overrides[ $work_id ] ) ? $overrides[ $work_id ]['end'] : '';
+
+	if ( ! lohkareet_work_uses_event_hours( $work_id ) ) {
+		return array( $start, $end );
+	}
+
+	if ( '' === $start ) {
+		$start = lohkareet_get_event_meta_string( $post_id, 'lohkareet_start_time' );
+	}
+
+	if ( '' === $end ) {
+		$end = lohkareet_get_event_meta_string( $post_id, 'lohkareet_end_time' );
+	}
+
+	return array( $start, $end );
 }

@@ -1324,7 +1324,7 @@ function lohkareet_get_event_programme_html( $post_id ) {
 			continue;
 		}
 
-		$html .= lohkareet_get_work_html( $work_id );
+		$html .= lohkareet_get_work_html( $work_id, $post_id );
 	}
 
 	$html .= '</div>';
@@ -1351,7 +1351,7 @@ function lohkareet_get_performing_artist_html( $post_id, $artist, $status ) {
 	}
 
 	$html  = '<section class="lohkareet-programme__artist">';
-	$html .= '<h2>' . esc_html( $heading ) . '</h2>';
+	$html .= '<h2>' . esc_html( $heading ) . lohkareet_programme_time_html( ...lohkareet_event_artist_performance_times( $post_id ) ) . '</h2>';
 
 	$image_id = (int) lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_image' );
 
@@ -1380,9 +1380,10 @@ function lohkareet_get_performing_artist_html( $post_id, $artist, $status ) {
 /**
  * One assigned work. The contributor name is not translated.
  *
- * @param int $work_id Work ID.
+ * @param int $work_id  Work ID.
+ * @param int $event_id Event the work is shown on.
  */
-function lohkareet_get_work_html( $work_id ) {
+function lohkareet_get_work_html( $work_id, $event_id = 0 ) {
 	$names = lohkareet_work_contributor_names( $work_id );
 	$type  = lohkareet_translated_meta_string( $work_id, 'lohkareet_work_type' );
 	$title = lohkareet_translated_meta_string( $work_id, 'lohkareet_work_title' );
@@ -1396,7 +1397,8 @@ function lohkareet_get_work_html( $work_id ) {
 	$html .= lohkareet_get_work_visit_figure_html( $work_id );
 
 	if ( $names ) {
-		$html .= '<h2>' . implode( '<br>', array_map( 'esc_html', $names ) ) . '</h2>';
+		$time  = $event_id > 0 ? lohkareet_programme_time_html( ...lohkareet_event_work_performance_times( $event_id, $work_id ) ) : '';
+		$html .= '<h2>' . implode( '<br>', array_map( 'esc_html', $names ) ) . $time . '</h2>';
 	}
 
 	if ( '' !== $title ) {
@@ -1414,6 +1416,22 @@ function lohkareet_get_work_html( $work_id ) {
 	$html .= '</section>';
 
 	return $html;
+}
+
+/**
+ * A performance clock under a name.
+ *
+ * @param string $start Stored H:i value.
+ * @param string $end   Stored H:i value.
+ */
+function lohkareet_programme_time_html( $start, $end ) {
+	$html = lohkareet_format_clock_range_html( $start, $end );
+
+	if ( '' === $html ) {
+		return '';
+	}
+
+	return '<span class="lohkareet-programme__time">' . $html . '</span>';
 }
 
 /**

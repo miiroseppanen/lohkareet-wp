@@ -184,21 +184,101 @@ function lohkareet_get_event_date_html( $post_id ) {
  * @param int $post_id Event ID.
  */
 function lohkareet_get_event_time_html( $post_id ) {
-	$start = lohkareet_get_event_meta_string( $post_id, 'lohkareet_start_time' );
-	$end   = lohkareet_get_event_meta_string( $post_id, 'lohkareet_end_time' );
+	return lohkareet_format_clock_range_html(
+		lohkareet_get_event_meta_string( $post_id, 'lohkareet_start_time' ),
+		lohkareet_get_event_meta_string( $post_id, 'lohkareet_end_time' )
+	);
+}
 
-	if ( '' === $start && '' === $end ) {
+/**
+ * Moves a clock by a number of minutes, without crossing midnight.
+ *
+ * @param string $time    Stored H:i value.
+ * @param int    $minutes Minutes to add. Negative values move earlier.
+ */
+function lohkareet_shift_clock( $time, $minutes ) {
+	$time = lohkareet_sanitize_time( $time );
+
+	if ( '' === $time || ! preg_match( '/^(\d{2}):(\d{2})$/', $time, $matches ) ) {
 		return '';
 	}
 
-	$start_html = '' !== $start ? '<time datetime="' . esc_attr( $start ) . '">' . esc_html( $start ) . '</time>' : '';
-	$end_html   = '' !== $end ? '<time datetime="' . esc_attr( $end ) . '">' . esc_html( $end ) . '</time>' : '';
+	$total = ( (int) $matches[1] * 60 ) + (int) $matches[2] + (int) $minutes;
 
-	if ( '' !== $start && '' !== $end ) {
+	if ( $total < 0 || $total >= 24 * 60 ) {
+		return '';
+	}
+
+	return sprintf( '%02d:%02d', intdiv( $total, 60 ), $total % 60 );
+}
+
+/**
+ * Time markup for two clocks. Either side may be empty.
+ *
+ * @param string $start Stored H:i value.
+ * @param string $end   Stored H:i value.
+ */
+function lohkareet_format_clock_range_html( $start, $end ) {
+	$start = lohkareet_sanitize_time( $start );
+	$end   = lohkareet_sanitize_time( $end );
+
+	$part = static function ( $time ) {
+		if ( '' === $time ) {
+			return '';
+		}
+
+		return '<time datetime="' . esc_attr( $time ) . '">' . esc_html( $time ) . '</time>';
+	};
+
+	$start_html = $part( $start );
+	$end_html   = $part( $end );
+
+	if ( '' !== $start_html && '' !== $end_html ) {
 		return $start_html . '–' . $end_html;
 	}
 
 	return $start_html . $end_html;
+}
+
+/**
+ * Plain clock range, for the editor’s “usual time” note.
+ *
+ * @param string $start Stored H:i value.
+ * @param string $end   Stored H:i value.
+ */
+function lohkareet_format_clock_range_text( $start, $end ) {
+	$start = lohkareet_sanitize_time( $start );
+	$end   = lohkareet_sanitize_time( $end );
+
+	if ( '' !== $start && '' !== $end ) {
+		return $start . '–' . $end;
+	}
+
+	return $start . $end;
+}
+
+/**
+ * The live artist’s clocks for one event.
+ *
+ * A saved time replaces that side. Empty sides follow the usual set: one
+ * hour after the event starts, then 45 minutes.
+ *
+ * @param int $post_id Event ID.
+ * @return array{0: string, 1: string} Start and end, either of which may be empty.
+ */
+function lohkareet_event_artist_performance_times( $post_id ) {
+	$start = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_start_time' );
+	$end   = lohkareet_get_event_meta_string( $post_id, 'lohkareet_artist_end_time' );
+
+	if ( '' === $start ) {
+		$start = lohkareet_shift_clock( lohkareet_get_event_meta_string( $post_id, 'lohkareet_start_time' ), 60 );
+	}
+
+	if ( '' === $end ) {
+		$end = lohkareet_shift_clock( $start, 45 );
+	}
+
+	return array( $start, $end );
 }
 
 /**
