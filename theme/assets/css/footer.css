@@ -650,3 +650,10 @@ footer.wp-block-template-part {
 		row-gap: clamp(9rem, 16vw, 12rem);
 	}
 }
+
+@media (max-width: 47.99rem) {
+	.lohkareet-footer,
+	.home .lohkareet-footer {
+		padding-top: 4.5rem;
+	}
+}

@@ -1598,6 +1598,12 @@ body.admin-bar.lohkareet-entry-map {
 	align-self: center;
 }
 
+@media (max-width: 63.99rem) {
+	.lohkareet-visits .lohkareet-visit--portrait {
+		width: min(calc(100% - 20px), 34rem);
+	}
+}
+
 @media (min-width: 64rem) {
 	.lohkareet-visits .lohkareet-visit--portrait {
 		align-self: start;
