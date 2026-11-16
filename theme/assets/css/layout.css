@@ -187,13 +187,14 @@ body:has(.lohkareet-page-hero) .lohkareet-grid {
 	height: auto;
 }
 
-.lohkareet-entry-taustalla .wp-block-post-content figcaption,
-.lohkareet-entry-behind-the-project .wp-block-post-content figcaption {
-	margin-top: var(--space-2);
-	font-size: 0.8125rem;
-	line-height: 1.45;
-	color: #6b6b6b;
-	letter-spacing: 0.02em;
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image {
+	position: relative;
+}
+
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image figcaption,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image figcaption {
+	max-width: calc(100% - 2.4rem);
 }
 
 .lohkareet-grid .lohkareet-map,
@@ -1500,7 +1501,9 @@ body.admin-bar.lohkareet-entry-map {
 	height: auto;
 }
 
-.lohkareet-visit::after {
+.lohkareet-visit::after,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image:has(figcaption)::after,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image:has(figcaption)::after {
 	content: "";
 	position: absolute;
 	z-index: 1;
@@ -1512,7 +1515,9 @@ body.admin-bar.lohkareet-entry-map {
 	pointer-events: none;
 }
 
-.lohkareet-visit__credit {
+.lohkareet-visit__credit,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image figcaption,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image figcaption {
 	position: absolute;
 	z-index: 2;
 	right: clamp(0.75rem, 1.6vw, 1.35rem);
@@ -1523,6 +1528,7 @@ body.admin-bar.lohkareet-entry-map {
 	font-weight: 400;
 	letter-spacing: 0.08em;
 	line-height: 1.2;
+	text-align: right;
 	text-transform: uppercase;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 	opacity: 0.6;
@@ -1530,13 +1536,19 @@ body.admin-bar.lohkareet-entry-map {
 }
 
 .lohkareet-visit:hover .lohkareet-visit__credit,
-.lohkareet-visit:focus-within .lohkareet-visit__credit {
+.lohkareet-visit:focus-within .lohkareet-visit__credit,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image:hover figcaption,
+.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image:focus-within figcaption,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image:hover figcaption,
+.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image:focus-within figcaption {
 	color: #fff;
 	opacity: 1;
 }
 
 @media (min-width: 48rem) {
-	.lohkareet-visit__credit {
+	.lohkareet-visit__credit,
+	.lohkareet-entry-taustalla .wp-block-post-content > figure.wp-block-image figcaption,
+	.lohkareet-entry-behind-the-project .wp-block-post-content > figure.wp-block-image figcaption {
 		font-size: 0.62rem;
 		letter-spacing: 0.1em;
 	}
@@ -1579,6 +1591,7 @@ body.admin-bar.lohkareet-entry-map {
 
 .lohkareet-entry-varustautuminen .lohkareet-grid:has(> .wp-block-post-content > .lohkareet-visit--preparation:last-child) .wp-block-post-content > .lohkareet-visit--preparation,
 .lohkareet-entry-preparation .lohkareet-grid:has(> .wp-block-post-content > .lohkareet-visit--preparation:last-child) .wp-block-post-content > .lohkareet-visit--preparation {
+	margin-top: 0;
 	margin-bottom: 0;
 }
 

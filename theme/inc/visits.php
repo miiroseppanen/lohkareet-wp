@@ -238,6 +238,49 @@ function lohkareet_is_about_post( $post ) {
 }
 
 /**
+ * Whether this page is Taustalla in either language.
+ *
+ * @param WP_Post $post Page being rendered.
+ */
+function lohkareet_is_background_post( $post ) {
+	$slugs = array( $post->post_name );
+
+	if ( function_exists( 'pll_get_post' ) ) {
+		foreach ( array( 'fi', 'en' ) as $language ) {
+			$translated = pll_get_post( $post->ID, $language );
+
+			if ( $translated ) {
+				$slugs[] = (string) get_post_field( 'post_name', $translated );
+			}
+		}
+	}
+
+	return in_array( 'taustalla', $slugs, true ) || in_array( 'behind-the-project', $slugs, true );
+}
+
+/**
+ * Gives a photograph credit the same space after the colon as the others.
+ *
+ * @param string $content Rendered page content.
+ */
+function lohkareet_space_background_credits( $content ) {
+	if ( ! is_string( $content ) || is_admin() || ! in_the_loop() || ! is_main_query() || ! str_contains( $content, 'wp-element-caption' ) ) {
+		return $content;
+	}
+
+	$post = get_post();
+
+	if ( ! $post instanceof WP_Post || 'page' !== $post->post_type || ! lohkareet_is_background_post( $post ) ) {
+		return $content;
+	}
+
+	$spaced = preg_replace( '/(Kuva:|Photo:)(?!\s)/u', '$1 ', $content );
+
+	return is_string( $spaced ) ? $spaced : $content;
+}
+add_filter( 'the_content', 'lohkareet_space_background_credits', 12 );
+
+/**
  * The Nokia boulder portrait after the first paragraph of Lohkareista.
  *
  * @param string $content Rendered page content.
