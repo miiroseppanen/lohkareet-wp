@@ -1145,6 +1145,26 @@ body.admin-bar.lohkareet-entry-map {
 	padding-top: var(--section-space);
 }
 
+.lohkareet-survey {
+	max-width: var(--measure);
+	margin: 0;
+	padding-top: var(--space-4);
+	text-wrap: pretty;
+}
+
+.lohkareet-survey a {
+	color: inherit;
+	letter-spacing: 0.04em;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-transform: uppercase;
+	text-underline-offset: 0.18em;
+}
+
+.lohkareet-survey a .lohkareet-visually-hidden {
+	text-transform: none;
+}
+
 .lohkareet-prepare__text > h2 {
 	max-width: var(--measure);
 	margin: 0;

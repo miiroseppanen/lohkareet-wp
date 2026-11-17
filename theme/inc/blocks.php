@@ -542,7 +542,9 @@ function lohkareet_get_carpool_group_html( $text_html ) {
  * The same short carpool note on every event page, apart from the arrival instructions.
  */
 function lohkareet_get_carpool_section_html() {
-	return '<section class="lohkareet-share">' . lohkareet_get_carpool_group_html( lohkareet_carpool_text_html() ) . '</section>';
+	$text = lohkareet_carpool_text_html() . lohkareet_get_visitor_survey_html();
+
+	return '<section class="lohkareet-share">' . lohkareet_get_carpool_group_html( $text ) . '</section>';
 }
 
 /**
@@ -1441,6 +1443,26 @@ function lohkareet_programme_time_html( $start, $end ) {
  */
 function lohkareet_get_event_context_html( $post_id ) {
 	return lohkareet_get_event_place_html( $post_id ) . lohkareet_get_event_arrival_html( $post_id ) . lohkareet_get_preparation_link_html() . lohkareet_get_carpool_section_html();
+}
+
+/**
+ * The shared visitor survey. The same form closes every event page.
+ */
+function lohkareet_visitor_survey_url() {
+	return 'https://forms.gle/6hHuWPycwfv2kmx46';
+}
+
+/**
+ * One line at the end of an event page. The last word opens the form.
+ */
+function lohkareet_get_visitor_survey_html() {
+	$link = '<a href="' . esc_url( lohkareet_visitor_survey_url() ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'here', 'lohkareet' ) . '<span class="lohkareet-visually-hidden"> ' . esc_html__( 'Opens in a new tab.', 'lohkareet' ) . '</span></a>';
+
+	return '<p class="lohkareet-survey">' . sprintf(
+		/* translators: %s: link that opens the visitor survey. */
+		esc_html__( 'Answer a short visitor survey %s', 'lohkareet' ),
+		$link
+	) . '</p>';
 }
 
 /**
